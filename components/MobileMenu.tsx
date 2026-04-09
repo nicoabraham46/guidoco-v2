@@ -40,7 +40,7 @@ export default function MobileMenu() {
       {/* Menú desplegable */}
       {open && (
         <div
-          className="absolute left-0 right-0 top-full z-50 md:hidden"
+          className="absolute left-0 right-0 top-full z-50"
           style={{ backgroundColor: "#1a1a1a" }}
         >
           <nav>
