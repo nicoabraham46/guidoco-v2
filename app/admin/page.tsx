@@ -91,16 +91,16 @@ export default async function AdminPage() {
                     <td className="px-4 py-3 text-sm text-gray-500">
                       {p.id.slice(0, 8)}...
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium">
+                    <td className="px-4 py-3 text-sm font-medium" style={{ color: "#1a1a1a" }}>
                       {displayName}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       /{p.slug}
                     </td>
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm" style={{ color: "#1a1a1a" }}>
                       $ {formatARS(p.price)}
                     </td>
-                    <td className="px-4 py-3 text-sm">{p.stock ?? 0}</td>
+                    <td className="px-4 py-3 text-sm" style={{ color: "#1a1a1a" }}>{p.stock ?? 0}</td>
                     <td className="px-4 py-3 text-sm">
                       <Link
                         href={`/admin/${p.id}`}
