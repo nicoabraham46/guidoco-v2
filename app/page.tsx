@@ -5,6 +5,7 @@ import { supabaseServer } from "@/lib/supabase-server";
 import { formatARS } from "@/lib/format";
 import { sortImages, sanitizeImageUrl } from "@/lib/images";
 import { getUrgencyBadge, isNewProduct } from "@/lib/badges";
+import ProductTicker from "@/components/ProductTicker";
 
 export const metadata: Metadata = {
   title: "Guidoco | Coleccionables originales",
@@ -163,7 +164,7 @@ function SectionHeader({
 // ── Página principal ─────────────────────────────────────────────────────────
 
 export default async function Home() {
-  const [nuevosResult, ultimasResult] = await Promise.all([
+  const [nuevosResult, tickerResult] = await Promise.all([
     // 4 más recientes
     supabaseServer
       .from("products")
@@ -173,21 +174,17 @@ export default async function Home() {
       .order("created_at", { ascending: false })
       .limit(4)
       .then((r) => r.data ?? [], () => [] as Product[]),
-    // Últimas unidades: stock > 0 y <= 3
+    // Todos los productos en stock para el carrusel
     supabaseServer
       .from("products")
-      .select(
-        "id,name,title,slug,price,stock,category,created_at,product_images(url,sort_order)"
-      )
+      .select("id,name,title,slug,price,product_images(url,sort_order)")
       .gt("stock", 0)
-      .lte("stock", 3)
-      .order("stock", { ascending: true })
-      .limit(4)
-      .then((r) => r.data ?? [], () => [] as Product[]),
+      .order("created_at", { ascending: false })
+      .then((r) => r.data ?? [], () => []),
   ]);
 
   const nuevosIngresos = nuevosResult as Product[];
-  const ultimasUnidades = ultimasResult as Product[];
+  const tickerProducts = tickerResult as Product[];
 
   return (
     <main style={{ backgroundColor: "#e8ecf0", minHeight: "100vh" }}>
@@ -227,22 +224,16 @@ export default async function Home() {
         </section>
       )}
 
-      {/* ── 4. Últimas unidades ─────────────────────────────────────────────── */}
-      {ultimasUnidades.length > 0 && (
+      {/* ── 4. Carrusel de productos ─────────────────────────────────────────── */}
+      {tickerProducts.length > 0 && (
         <section style={{ backgroundColor: "#1C2B3A" }}>
-          <div className="mx-auto max-w-6xl px-6 py-14">
-            <SectionHeader
-              title="Últimas unidades"
-              href="/catalogo?stock=in"
-              linkLabel="Ver en stock →"
-              inverted
-            />
-            <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-              {ultimasUnidades.map((product) => (
-                <ProductCard key={product.id} product={product} inverted />
-              ))}
+          <div className="mx-auto max-w-6xl px-6 pt-10 pb-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-5 w-1 rounded-full" style={{ backgroundColor: "#C0392B" }} />
+              <h2 className="text-base font-bold text-white">Nuestros productos</h2>
             </div>
           </div>
+          <ProductTicker products={tickerProducts} />
         </section>
       )}
 

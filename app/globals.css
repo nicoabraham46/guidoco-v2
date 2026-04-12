@@ -47,3 +47,11 @@ body {
 .ticker-track:hover {
   animation-play-state: paused;
 }
+
+.product-ticker-track {
+  animation: ticker-scroll 40s linear infinite;
+}
+
+.product-ticker-track:hover {
+  animation-play-state: paused;
+}
