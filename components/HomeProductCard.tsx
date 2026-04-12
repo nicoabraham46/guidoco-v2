@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { formatARS } from "@/lib/format";
@@ -20,13 +17,10 @@ type Props = {
 };
 
 export default function HomeProductCard({ slug, name, cover, price, category }: Props) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <Link
       href={`/p/${slug}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className="product-card"
       style={{
         backgroundColor: "#243447",
         borderRadius: 12,
@@ -34,9 +28,7 @@ export default function HomeProductCard({ slug, name, cover, price, category }: 
         display: "flex",
         flexDirection: "column",
         textDecoration: "none",
-        border: hovered ? "1px solid #C0392B" : "1px solid transparent",
-        transform: hovered ? "translateY(-8px)" : "translateY(0)",
-        transition: "all 0.3s ease",
+        border: "1px solid transparent",
       }}
     >
       {/* Imagen */}
@@ -47,11 +39,8 @@ export default function HomeProductCard({ slug, name, cover, price, category }: 
             alt={name}
             fill
             sizes="(max-width: 768px) 50vw, 25vw"
-            style={{
-              objectFit: "cover",
-              transform: hovered ? "scale(1.08)" : "scale(1)",
-              transition: "transform 0.4s ease",
-            }}
+            className="card-image"
+            style={{ objectFit: "cover" }}
           />
         ) : (
           <div style={{ width: "100%", height: "100%", backgroundColor: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -61,18 +50,19 @@ export default function HomeProductCard({ slug, name, cover, price, category }: 
           </div>
         )}
 
-        {/* Overlay con "Ver producto" */}
-        <div style={{
-          position: "absolute",
-          inset: 0,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: hovered ? 1 : 0,
-          transition: "opacity 0.3s ease",
-          pointerEvents: "none",
-        }}>
+        {/* Overlay */}
+        <div
+          className="card-overlay"
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.4)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            pointerEvents: "none",
+          }}
+        >
           <span style={{
             color: "#fff",
             fontSize: 13,
@@ -87,21 +77,23 @@ export default function HomeProductCard({ slug, name, cover, price, category }: 
 
         {/* Badge de categoría */}
         {category && (
-          <span style={{
-            position: "absolute",
-            top: 8,
-            left: 8,
-            backgroundColor: hovered ? "#C0392B" : "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(4px)",
-            color: "#fff",
-            fontSize: 10,
-            fontWeight: 600,
-            padding: "3px 8px",
-            borderRadius: 20,
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            transition: "background-color 0.3s ease",
-          }}>
+          <span
+            className="card-badge"
+            style={{
+              position: "absolute",
+              top: 8,
+              left: 8,
+              backgroundColor: "rgba(0,0,0,0.55)",
+              backdropFilter: "blur(4px)",
+              color: "#fff",
+              fontSize: 10,
+              fontWeight: 600,
+              padding: "3px 8px",
+              borderRadius: 20,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
             {CATEGORY_LABELS[category] ?? category}
           </span>
         )}
