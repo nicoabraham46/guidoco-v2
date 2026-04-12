@@ -21,7 +21,7 @@ export default function MobileMenu() {
       <button
         aria-label={open ? "Cerrar menú" : "Abrir menú"}
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center justify-center md:hidden"
+        className="hidden"
         style={{ color: "white", background: "none", border: "none", padding: "4px", cursor: "pointer" }}
       >
         {open ? (

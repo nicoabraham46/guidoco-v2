@@ -7,6 +7,7 @@ import "./globals.css";
 import Link from "next/link";
 import { CartProvider } from "@/contexts/CartContext";
 import CartIcon from "@/components/CartIcon";
+import BottomNav from "@/components/BottomNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -106,7 +107,7 @@ export default function RootLayout({
             </div>
           </header>
 
-          <div>{children}</div>
+          <main className="pb-16 md:pb-0">{children}</main>
 
           {/* ── Footer ── */}
           <footer style={{ backgroundColor: "#1a1a1a" }}>
@@ -240,6 +241,7 @@ export default function RootLayout({
             </div>
           </footer>
 
+          <BottomNav />
         </CartProvider>
       </body>
     </html>
