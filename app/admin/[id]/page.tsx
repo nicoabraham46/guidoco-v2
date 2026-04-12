@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { supabaseServer } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import ProductImagesManager from "@/components/admin/ProductImagesManager";
 
@@ -11,7 +10,7 @@ export default async function AdminEditPage({
 }) {
   const { id } = await params;
 
-  const { data: product, error } = await supabaseServer
+  const { data: product, error } = await getSupabaseAdmin()
     .from("products")
     .select("id, title, name, slug, price, stock, description, category, product_images(id, url, sort_order)")
     .eq("id", id)
