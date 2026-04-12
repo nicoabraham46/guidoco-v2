@@ -48,7 +48,3 @@ body {
   animation-play-state: paused;
 }
 
-.product-card-hover:hover {
-  transform: translateY(-6px);
-  border-color: #C0392B !important;
-}
