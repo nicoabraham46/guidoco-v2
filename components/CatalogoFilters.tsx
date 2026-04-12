@@ -47,6 +47,7 @@ export default function CatalogoFilters({ category, q, sort, stock, total }: Pro
     { label: "Todos", value: null },
     { label: "Diecast", value: "diecast" },
     { label: "Pokémon", value: "pokemon" },
+    { label: "Especiales", value: "especiales" },
   ];
 
   const pillBase =

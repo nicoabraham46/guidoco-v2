@@ -41,6 +41,7 @@ type Product = {
 const CATEGORY_LABELS: Record<string, string> = {
   diecast: "Diecast",
   pokemon: "Pokémon",
+  especiales: "Especiales",
 };
 
 // ── Página ───────────────────────────────────────────────────────────────────
@@ -52,7 +53,7 @@ export default async function CatalogoPage({
 }) {
   const { category, q, sort, stock } = await searchParams;
 
-  const validCategory = category === "diecast" || category === "pokemon" ? category : null;
+  const validCategory = category === "diecast" || category === "pokemon" || category === "especiales" ? category : null;
   const searchQuery = (q?.trim() ?? "").replace(/[%().,]/g, "");
   const sortKey = sort === "price_asc" || sort === "price_desc" ? sort : "newest";
   const stockFilter = stock === "in" ? "in" : null;

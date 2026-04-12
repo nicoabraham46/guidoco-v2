@@ -313,6 +313,40 @@ export default async function Home() {
           </Link>
 
         </div>
+
+        {/* Especiales — centrada, mitad del ancho */}
+        <div className="mt-4 flex justify-center">
+          <Link
+            href="/catalogo?category=especiales"
+            className="group relative overflow-hidden rounded-xl transition-opacity hover:opacity-90 w-full sm:w-1/2"
+            style={{ backgroundColor: "#1a1a1a", border: "1.5px solid #FFD700", display: "flex", alignItems: "flex-end", justifyContent: "flex-start", minHeight: "120px", padding: "1.5rem 2rem" }}
+          >
+            <div className="flex items-center gap-1.5 text-sm font-semibold text-white transition-colors group-hover:opacity-80">
+              Explorar
+              <svg
+                className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                />
+              </svg>
+            </div>
+            {/* Texto decorativo */}
+            <span
+              className="absolute right-6 top-1/2 -translate-y-1/2 text-[5rem] font-black leading-none select-none"
+              style={{ color: "rgba(255,215,0,0.08)" }}
+            >
+              ★
+            </span>
+          </Link>
+        </div>
+
       </section>
 
       {/* ── 6. Barra de confianza ───────────────────────────────────────────── */}

@@ -6,6 +6,7 @@ const categories = [
   { value: "", label: "Sin categoría", badge: null },
   { value: "diecast", label: "Diecast", badge: { text: "Diecast", bg: "#1a1a1a", color: "#fff" } },
   { value: "pokemon", label: "Pokémon", badge: { text: "Pokémon", bg: "#f5c518", color: "#1a1a1a" } },
+  { value: "especiales", label: "Especiales", badge: { text: "Especiales", bg: "#FFD700", color: "#1a1a1a" } },
 ];
 
 export default function CategorySelect({ defaultValue = "" }: { defaultValue?: string }) {
