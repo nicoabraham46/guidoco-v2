@@ -298,23 +298,7 @@ export default async function ProductPage({
                 </svg>
                 <span className="text-sm text-gray-600">Coordinación por WhatsApp</span>
               </div>
-              <div className="flex items-center gap-3 px-4 py-3">
-                <svg className="h-4 w-4 shrink-0 text-emerald-500" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
-                <span className="text-sm text-gray-600">Producto original garantizado</span>
-              </div>
             </div>
-
-            {/* Descripción corta */}
-            {product.description && (
-              <>
-                <div className="my-5 h-px bg-gray-100" />
-                <p className="text-sm leading-relaxed text-gray-500 line-clamp-4">
-                  {product.description}
-                </p>
-              </>
-            )}
 
           </div>
         </div>
@@ -353,6 +337,44 @@ export default async function ProductPage({
               </div>
             )}
           </div>
+        </section>
+
+        {/* ── Banner Especiales ─────────────────────────────────────────── */}
+        <section className="mt-16">
+          <Link
+            href="/catalogo?category=especiales"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              backgroundColor: "#1a1a1a",
+              borderRadius: 12,
+              padding: "20px 24px",
+              textDecoration: "none",
+              gap: 16,
+              flexWrap: "wrap",
+            }}
+          >
+            <div>
+              <p style={{ color: "#fff", fontSize: 16, fontWeight: 500, margin: 0 }}>
+                ✦ Mirá nuestras Especiales
+              </p>
+              <p style={{ color: "#aaa", fontSize: 13, marginTop: 4 }}>
+                Productos hechos a mano, únicos
+              </p>
+            </div>
+            <span style={{
+              backgroundColor: "#FFD700",
+              color: "#1a1a1a",
+              borderRadius: 8,
+              padding: "10px 20px",
+              fontSize: 14,
+              fontWeight: 600,
+              whiteSpace: "nowrap",
+            }}>
+              Ver Especiales →
+            </span>
+          </Link>
         </section>
 
         {/* ── Productos relacionados ────────────────────────────────────── */}
