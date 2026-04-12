@@ -20,30 +20,22 @@ export default function HomeProductCard({ slug, name, cover, price, category }: 
   return (
     <Link
       href={`/p/${slug}`}
-      className="product-card"
-      style={{
-        backgroundColor: "#243447",
-        borderRadius: 12,
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        textDecoration: "none",
-        border: "1px solid transparent",
-      }}
+      className="group block rounded-xl overflow-hidden"
+      style={{ backgroundColor: "#243447" }}
     >
       {/* Imagen */}
-      <div style={{ position: "relative", height: 192, overflow: "hidden", flexShrink: 0 }}>
+      <div className="relative overflow-hidden">
         {cover ? (
           <Image
             src={cover}
             alt={name}
-            fill
+            width={600}
+            height={600}
+            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
             sizes="(max-width: 768px) 50vw, 25vw"
-            className="card-image"
-            style={{ objectFit: "cover" }}
           />
         ) : (
-          <div style={{ width: "100%", height: "100%", backgroundColor: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div className="w-full h-48 flex items-center justify-center" style={{ backgroundColor: "rgba(255,255,255,0.05)" }}>
             <svg width="40" height="40" style={{ color: "rgba(255,255,255,0.2)" }} fill="none" stroke="currentColor" strokeWidth={1} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
             </svg>
@@ -51,26 +43,8 @@ export default function HomeProductCard({ slug, name, cover, price, category }: 
         )}
 
         {/* Overlay */}
-        <div
-          className="card-overlay"
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.4)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            pointerEvents: "none",
-          }}
-        >
-          <span style={{
-            color: "#fff",
-            fontSize: 13,
-            fontWeight: 600,
-            padding: "8px 16px",
-            border: "1px solid rgba(255,255,255,0.5)",
-            borderRadius: 6,
-          }}>
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+          <span className="text-white text-sm font-medium border border-white/70 px-4 py-2 rounded-lg">
             Ver producto →
           </span>
         </div>
@@ -78,21 +52,8 @@ export default function HomeProductCard({ slug, name, cover, price, category }: 
         {/* Badge de categoría */}
         {category && (
           <span
-            className="card-badge"
-            style={{
-              position: "absolute",
-              top: 8,
-              left: 8,
-              backgroundColor: "rgba(0,0,0,0.55)",
-              backdropFilter: "blur(4px)",
-              color: "#fff",
-              fontSize: 10,
-              fontWeight: 600,
-              padding: "3px 8px",
-              borderRadius: 20,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
+            className="absolute top-2 left-2 text-white text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full"
+            style={{ backgroundColor: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}
           >
             {CATEGORY_LABELS[category] ?? category}
           </span>
@@ -100,11 +61,11 @@ export default function HomeProductCard({ slug, name, cover, price, category }: 
       </div>
 
       {/* Info */}
-      <div style={{ padding: 12 }}>
-        <p style={{ color: "#fff", fontSize: 13, fontWeight: 500, lineHeight: 1.3, marginBottom: 4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+      <div className="p-3 transition-transform duration-300 group-hover:-translate-y-1">
+        <p className="text-white text-[13px] font-medium leading-snug line-clamp-2 mb-1">
           {name}
         </p>
-        <p style={{ color: "#aaa", fontSize: 12 }}>
+        <p className="text-[12px]" style={{ color: "#aaa" }}>
           ${formatARS(price)}
         </p>
       </div>
