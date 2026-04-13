@@ -23,7 +23,7 @@ function sanitizeNumber(raw: string): { number: string; total?: string } {
 
 function buildQuery(name: string, number: string): string {
   const parts: string[] = [];
-  if (name.trim()) parts.push(`name:"${name.trim()}*"`);
+  if (name.trim()) parts.push(`name:"*${name.trim()}*"`);
   if (number.trim()) {
     const { number: num } = sanitizeNumber(number);
     parts.push(`number:${num}`);
@@ -46,9 +46,9 @@ export default function ValorarCartaPage() {
 
     try {
       const q = buildQuery(nameInput, numberInput);
-      const res = await fetch(
-        `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(q)}&pageSize=12`
-      );
+      const url = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(q)}&pageSize=12`;
+      console.log("[valorar-carta] URL:", url);
+      const res = await fetch(url);
       if (!res.ok) throw new Error("API error");
       const json: ApiResponse = await res.json();
       setResults(json.data ?? []);
@@ -100,6 +100,7 @@ export default function ValorarCartaPage() {
                 value={nameInput}
                 onChange={(e) => setNameInput(e.target.value)}
                 placeholder="Ej: Charizard, Pikachu, Mewtwo..."
+                className="search-input"
                 style={{
                   width: "100%",
                   height: 48,
@@ -109,7 +110,8 @@ export default function ValorarCartaPage() {
                   fontSize: 14,
                   outline: "none",
                   boxSizing: "border-box",
-                  backgroundColor: "#fafafa",
+                  backgroundColor: "#fff",
+                  color: "#1a1a1a",
                 }}
               />
             </div>
@@ -122,6 +124,7 @@ export default function ValorarCartaPage() {
                 value={numberInput}
                 onChange={(e) => setNumberInput(e.target.value)}
                 placeholder="Ej: 025/102, 006/102..."
+                className="search-input"
                 style={{
                   width: "100%",
                   height: 48,
@@ -131,7 +134,8 @@ export default function ValorarCartaPage() {
                   fontSize: 14,
                   outline: "none",
                   boxSizing: "border-box",
-                  backgroundColor: "#fafafa",
+                  backgroundColor: "#fff",
+                  color: "#1a1a1a",
                 }}
               />
             </div>

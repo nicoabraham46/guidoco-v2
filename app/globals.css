@@ -48,5 +48,7 @@ body {
   animation-play-state: paused;
 }
 
+.search-input::placeholder { color: #999; }
+
 
 
