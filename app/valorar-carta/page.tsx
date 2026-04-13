@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type PokemonCard = {
   id: string;
@@ -11,38 +11,29 @@ type PokemonCard = {
   images: { small: string };
 };
 
-type ApiResponse = {
-  data: PokemonCard[];
+type PokemonSet = {
+  id: string;
+  name: string;
+  releaseDate: string;
 };
-
-function buildQuery(value: string): { q: string; pageSize: number } {
-  const trimmed = value.trim();
-
-  // Nombre + número juntos: "Gengar 050/088"
-  const bothMatch = trimmed.match(/^(.*?)\s*(\d+\/\d+)\s*$/);
-  if (bothMatch) {
-    const name = bothMatch[1].trim();
-    const num = bothMatch[2].split("/")[0];
-    if (name) {
-      return { q: `name:"*${name}*" number:${num}`, pageSize: 12 };
-    }
-    return { q: `number:${num}`, pageSize: 12 };
-  }
-
-  // Solo número (con o sin /)
-  if (/^[\d]+([/\d]*)$/.test(trimmed)) {
-    const num = trimmed.split("/")[0];
-    return { q: `number:${num}`, pageSize: 12 };
-  }
-
-  // Solo nombre
-  return { q: `name:"*${trimmed}*"`, pageSize: 20 };
-}
 
 export default function ValorarCartaPage() {
   const [input, setInput] = useState("");
+  const [selectedSet, setSelectedSet] = useState("");
+  const [sets, setSets] = useState<PokemonSet[]>([]);
   const [results, setResults] = useState<PokemonCard[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+
+  // Cargar sets al montar
+  useEffect(() => {
+    fetch("https://api.pokemontcg.io/v2/sets?orderBy=releaseDate")
+      .then((r) => r.json())
+      .then((json) => {
+        const sorted = (json.data ?? []) as PokemonSet[];
+        setSets(sorted.reverse()); // más recientes primero
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -52,12 +43,16 @@ export default function ValorarCartaPage() {
     setResults([]);
 
     try {
-      const { q, pageSize } = buildQuery(input);
-      const url = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(q)}&pageSize=${pageSize}`;
+      const parts: string[] = [`name:"*${input.trim()}*"`];
+      if (selectedSet) parts.push(`set.id:${selectedSet}`);
+
+      const q = parts.join(" ");
+      const url = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(q)}&pageSize=20&orderBy=name`;
       console.log("[valorar-carta] URL:", url);
+
       const res = await fetch(url);
       if (!res.ok) throw new Error("API error");
-      const json: ApiResponse = await res.json();
+      const json = await res.json();
       setResults(json.data ?? []);
       setStatus("done");
     } catch {
@@ -97,18 +92,19 @@ export default function ValorarCartaPage() {
             marginBottom: 32,
           }}
         >
-          <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>
-            Nombre o número de carta
-          </label>
-          <div style={{ display: "flex", gap: 10 }}>
+          {/* Nombre */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>
+              Nombre de la carta
+            </label>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ej: Gengar, Charizard, 050/088..."
+              placeholder="Ej: Gengar, Charizard, Pikachu..."
               className="search-input"
               style={{
-                flex: 1,
+                width: "100%",
                 height: 48,
                 border: "1px solid #e0e0e0",
                 borderRadius: 8,
@@ -120,29 +116,60 @@ export default function ValorarCartaPage() {
                 color: "#1a1a1a",
               }}
             />
-            <button
-              type="submit"
-              disabled={status === "loading" || !input.trim()}
+          </div>
+
+          {/* Set */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>
+              Expansión (opcional)
+            </label>
+            <select
+              value={selectedSet}
+              onChange={(e) => setSelectedSet(e.target.value)}
               style={{
+                width: "100%",
                 height: 48,
-                padding: "0 28px",
-                backgroundColor: "#C0392B",
-                color: "#fff",
-                border: "none",
+                border: "1px solid #e0e0e0",
                 borderRadius: 8,
-                fontSize: 15,
-                fontWeight: 600,
+                padding: "0 14px",
+                fontSize: 14,
+                outline: "none",
+                backgroundColor: "#fff",
+                color: "#1a1a1a",
                 cursor: "pointer",
-                flexShrink: 0,
-                opacity: status === "loading" || !input.trim() ? 0.6 : 1,
               }}
             >
-              {status === "loading" ? "Buscando..." : "Buscar"}
-            </button>
+              <option value="">Todos los sets</option>
+              {sets.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
           </div>
-          <p style={{ fontSize: 12, color: "#bbb", marginTop: 8 }}>
-            💡 Tip: podés buscar &quot;Gengar 050/088&quot; para encontrar una carta específica
+
+          <p style={{ fontSize: 12, color: "#bbb", marginBottom: 14 }}>
+            💡 Tip: buscá por nombre y filtrá por expansión para encontrar tu carta exacta
           </p>
+
+          <button
+            type="submit"
+            disabled={status === "loading" || !input.trim()}
+            style={{
+              height: 48,
+              padding: "0 32px",
+              backgroundColor: "#C0392B",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: "pointer",
+              opacity: status === "loading" || !input.trim() ? 0.6 : 1,
+            }}
+          >
+            {status === "loading" ? "Buscando..." : "Buscar"}
+          </button>
         </form>
 
         {/* Estados */}
@@ -154,7 +181,7 @@ export default function ValorarCartaPage() {
 
         {status === "done" && results.length === 0 && (
           <p style={{ textAlign: "center", color: "#888", fontSize: 14 }}>
-            No encontramos cartas con ese nombre o número.
+            No encontramos cartas con ese nombre.
           </p>
         )}
 
@@ -178,7 +205,6 @@ export default function ValorarCartaPage() {
                     alignItems: "flex-start",
                   }}
                 >
-                  {/* Imagen con <img> para evitar restricciones de dominio */}
                   <img
                     src={card.images.small}
                     alt={card.name}
@@ -187,7 +213,6 @@ export default function ValorarCartaPage() {
                     style={{ borderRadius: 6, objectFit: "contain", flexShrink: 0 }}
                   />
 
-                  {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 4 }}>
                       {card.name}
@@ -254,6 +279,7 @@ export default function ValorarCartaPage() {
             })}
           </div>
         )}
+
       </div>
     </main>
   );
