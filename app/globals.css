@@ -50,5 +50,9 @@ body {
 
 .search-input::placeholder { color: #999; }
 
+@media (max-width: 640px) {
+  .contact-grid { grid-template-columns: 1fr !important; }
+}
+
 
 
