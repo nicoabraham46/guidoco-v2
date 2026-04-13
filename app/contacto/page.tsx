@@ -79,8 +79,7 @@ export default function ContactoPage() {
                 Horario de atención
               </p>
               <p style={{ fontSize: 14, color: "#444", lineHeight: 1.7 }}>
-                Lunes a Viernes: 11:00 – 14:00 / 15:00 – 19:00<br />
-                Sábados: 11:00 a 15:00
+                Lunes a Sábado: 08:00 a 22:00
               </p>
             </div>
 
