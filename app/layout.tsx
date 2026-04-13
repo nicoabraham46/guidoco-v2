@@ -76,6 +76,9 @@ export default function RootLayout({
                 <Link href="/como-comprar" className="font-medium text-zinc-400 transition-colors hover:text-white">
                   Cómo comprar
                 </Link>
+                <Link href="/valorar-carta" className="font-medium text-zinc-400 transition-colors hover:text-white">
+                  Valorar carta
+                </Link>
                 <Link href="/contacto" className="font-medium text-zinc-400 transition-colors hover:text-white">
                   Contacto
                 </Link>
