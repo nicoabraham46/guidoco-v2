@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 
 type PokemonCard = {
   id: string;
@@ -9,43 +8,37 @@ type PokemonCard = {
   number: string;
   set: { name: string; printedTotal?: number; total?: number };
   rarity?: string;
-  images: { small: string; large?: string };
+  images: { small: string };
 };
 
 type ApiResponse = {
   data: PokemonCard[];
 };
 
-function sanitizeNumber(raw: string): { number: string; total?: string } {
-  const parts = raw.trim().split("/");
-  return { number: parts[0].trim(), total: parts[1]?.trim() };
-}
-
-function buildQuery(name: string, number: string): string {
-  const parts: string[] = [];
-  if (name.trim()) parts.push(`name:"*${name.trim()}*"`);
-  if (number.trim()) {
-    const { number: num } = sanitizeNumber(number);
-    parts.push(`number:${num}`);
+function buildQuery(value: string): string {
+  const trimmed = value.trim();
+  const isNumber = /^[\d]+[/\d]*$/.test(trimmed);
+  if (isNumber) {
+    const num = trimmed.split("/")[0];
+    return `number:${num}`;
   }
-  return parts.join(" ");
+  return `name:"*${trimmed}*"`;
 }
 
 export default function ValorarCartaPage() {
-  const [nameInput, setNameInput] = useState("");
-  const [numberInput, setNumberInput] = useState("");
+  const [input, setInput] = useState("");
   const [results, setResults] = useState<PokemonCard[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    if (!nameInput.trim() && !numberInput.trim()) return;
+    if (!input.trim()) return;
 
     setStatus("loading");
     setResults([]);
 
     try {
-      const q = buildQuery(nameInput, numberInput);
+      const q = buildQuery(input);
       const url = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(q)}&pageSize=12`;
       console.log("[valorar-carta] URL:", url);
       const res = await fetch(url);
@@ -90,80 +83,52 @@ export default function ValorarCartaPage() {
             marginBottom: 32,
           }}
         >
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }} className="sm:grid-cols-2 grid-cols-1">
-            <div>
-              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>
-                Nombre de la carta
-              </label>
-              <input
-                type="text"
-                value={nameInput}
-                onChange={(e) => setNameInput(e.target.value)}
-                placeholder="Ej: Charizard, Pikachu, Mewtwo..."
-                className="search-input"
-                style={{
-                  width: "100%",
-                  height: 48,
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 8,
-                  padding: "0 14px",
-                  fontSize: 14,
-                  outline: "none",
-                  boxSizing: "border-box",
-                  backgroundColor: "#fff",
-                  color: "#1a1a1a",
-                }}
-              />
-            </div>
-            <div>
-              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>
-                Número de carta
-              </label>
-              <input
-                type="text"
-                value={numberInput}
-                onChange={(e) => setNumberInput(e.target.value)}
-                placeholder="Ej: 025/102, 006/102..."
-                className="search-input"
-                style={{
-                  width: "100%",
-                  height: 48,
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 8,
-                  padding: "0 14px",
-                  fontSize: 14,
-                  outline: "none",
-                  boxSizing: "border-box",
-                  backgroundColor: "#fff",
-                  color: "#1a1a1a",
-                }}
-              />
-            </div>
+          <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>
+            Nombre o número de carta
+          </label>
+          <div style={{ display: "flex", gap: 10 }}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ej: Gengar, Charizard, 050/088..."
+              className="search-input"
+              style={{
+                flex: 1,
+                height: 48,
+                border: "1px solid #e0e0e0",
+                borderRadius: 8,
+                padding: "0 14px",
+                fontSize: 14,
+                outline: "none",
+                boxSizing: "border-box",
+                backgroundColor: "#fff",
+                color: "#1a1a1a",
+              }}
+            />
+            <button
+              type="submit"
+              disabled={status === "loading" || !input.trim()}
+              style={{
+                height: 48,
+                padding: "0 28px",
+                backgroundColor: "#C0392B",
+                color: "#fff",
+                border: "none",
+                borderRadius: 8,
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: "pointer",
+                flexShrink: 0,
+                opacity: status === "loading" || !input.trim() ? 0.6 : 1,
+              }}
+            >
+              {status === "loading" ? "Buscando..." : "Buscar"}
+            </button>
           </div>
-
-          <p style={{ fontSize: 12, color: "#bbb", marginTop: 10 }}>
-            Podés buscar solo por nombre, solo por número, o por ambos.
+          <p style={{ fontSize: 12, color: "#bbb", marginTop: 8 }}>
+            Podés buscar por nombre (Charizard) o por número (050/088).
           </p>
-
-          <button
-            type="submit"
-            disabled={status === "loading" || (!nameInput.trim() && !numberInput.trim())}
-            style={{
-              marginTop: 16,
-              height: 48,
-              padding: "0 32px",
-              backgroundColor: "#C0392B",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: "pointer",
-              opacity: status === "loading" || (!nameInput.trim() && !numberInput.trim()) ? 0.6 : 1,
-            }}
-          >
-            {status === "loading" ? "Buscando..." : "Buscar"}
-          </button>
         </form>
 
         {/* Estados */}
@@ -199,16 +164,14 @@ export default function ValorarCartaPage() {
                     alignItems: "flex-start",
                   }}
                 >
-                  {/* Imagen */}
-                  <div style={{ flexShrink: 0 }}>
-                    <Image
-                      src={card.images.small}
-                      alt={card.name}
-                      width={80}
-                      height={112}
-                      style={{ borderRadius: 6, objectFit: "contain" }}
-                    />
-                  </div>
+                  {/* Imagen con <img> para evitar restricciones de dominio */}
+                  <img
+                    src={card.images.small}
+                    alt={card.name}
+                    width={80}
+                    height={112}
+                    style={{ borderRadius: 6, objectFit: "contain", flexShrink: 0 }}
+                  />
 
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -225,8 +188,7 @@ export default function ValorarCartaPage() {
                       </span>
                       {card.rarity && (
                         <span style={{ fontSize: 13, color: "#555" }}>
-                          <span style={{ color: "#aaa" }}>Rareza: </span>
-                          <span>⬦ {card.rarity}</span>
+                          <span style={{ color: "#aaa" }}>Rareza: </span>⬦ {card.rarity}
                         </span>
                       )}
                     </div>
@@ -239,7 +201,6 @@ export default function ValorarCartaPage() {
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
-                          gap: 6,
                           height: 36,
                           padding: "0 14px",
                           backgroundColor: "#1a1a1a",
@@ -259,7 +220,6 @@ export default function ValorarCartaPage() {
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
-                          gap: 6,
                           height: 36,
                           padding: "0 14px",
                           backgroundColor: "#fff",
