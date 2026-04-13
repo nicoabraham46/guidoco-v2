@@ -15,14 +15,28 @@ type ApiResponse = {
   data: PokemonCard[];
 };
 
-function buildQuery(value: string): string {
+function buildQuery(value: string): { q: string; pageSize: number } {
   const trimmed = value.trim();
-  const isNumber = /^[\d]+[/\d]*$/.test(trimmed);
-  if (isNumber) {
-    const num = trimmed.split("/")[0];
-    return `number:${num}`;
+
+  // Nombre + número juntos: "Gengar 050/088"
+  const bothMatch = trimmed.match(/^(.*?)\s*(\d+\/\d+)\s*$/);
+  if (bothMatch) {
+    const name = bothMatch[1].trim();
+    const num = bothMatch[2].split("/")[0];
+    if (name) {
+      return { q: `name:"*${name}*" number:${num}`, pageSize: 12 };
+    }
+    return { q: `number:${num}`, pageSize: 12 };
   }
-  return `name:"*${trimmed}*"`;
+
+  // Solo número (con o sin /)
+  if (/^[\d]+([/\d]*)$/.test(trimmed)) {
+    const num = trimmed.split("/")[0];
+    return { q: `number:${num}`, pageSize: 12 };
+  }
+
+  // Solo nombre
+  return { q: `name:"*${trimmed}*"`, pageSize: 20 };
 }
 
 export default function ValorarCartaPage() {
@@ -38,8 +52,8 @@ export default function ValorarCartaPage() {
     setResults([]);
 
     try {
-      const q = buildQuery(input);
-      const url = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(q)}&pageSize=12`;
+      const { q, pageSize } = buildQuery(input);
+      const url = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(q)}&pageSize=${pageSize}`;
       console.log("[valorar-carta] URL:", url);
       const res = await fetch(url);
       if (!res.ok) throw new Error("API error");
@@ -127,7 +141,7 @@ export default function ValorarCartaPage() {
             </button>
           </div>
           <p style={{ fontSize: 12, color: "#bbb", marginTop: 8 }}>
-            Podés buscar por nombre (Charizard) o por número (050/088).
+            💡 Tip: podés buscar &quot;Gengar 050/088&quot; para encontrar una carta específica
           </p>
         </form>
 
