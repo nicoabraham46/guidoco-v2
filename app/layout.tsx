@@ -62,13 +62,13 @@ export default function RootLayout({
             <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-3.5">
 
               {/* Logo */}
-              <Link href="/" className="shrink-0">
+              <Link href="/" className="shrink-0 flex items-center">
                 <Image
                   src="/logo.png"
                   alt="Guidoco Collectibles"
-                  width={60}
-                  height={60}
-                  style={{ objectFit: "contain" }}
+                  width={45}
+                  height={45}
+                  style={{ objectFit: "cover", borderRadius: "50%" }}
                 />
               </Link>
 
