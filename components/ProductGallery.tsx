@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { sortImages, sanitizeImageUrl } from "@/lib/images";
 
@@ -21,6 +21,26 @@ export default function ProductGallery({
 
   const [activeUrl, setActiveUrl] = useState<string | null>(urls[0] ?? null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const currentIndex = urls.indexOf(activeUrl ?? "");
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        setActiveUrl(urls[Math.min(currentIndex + 1, urls.length - 1)]);
+      } else {
+        setActiveUrl(urls[Math.max(currentIndex - 1, 0)]);
+      }
+    }
+  };
 
   // ── Cierre con Escape ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -65,7 +85,11 @@ export default function ProductGallery({
       <div className="flex flex-col gap-3">
 
         {/* Imagen principal */}
-        <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
+        <div
+          className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           {activeUrl ? (
             <button
               type="button"
