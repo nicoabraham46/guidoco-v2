@@ -66,8 +66,8 @@ export default function RootLayout({
                 <Image
                   src="/logo.png"
                   alt="Guidoco Collectibles"
-                  width={50}
-                  height={50}
+                  width={70}
+                  height={70}
                   style={{ objectFit: "contain", borderRadius: "50%", background: "transparent" }}
                 />
               </Link>
