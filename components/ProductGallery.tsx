@@ -28,24 +28,6 @@ export default function ProductGallery({
     touchStartX.current = e.touches[0].clientX;
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) {
-      const currentIndex = urls.indexOf(activeUrl ?? "");
-      if (diff > 0 && currentIndex < urls.length - 1) {
-        setActiveUrl(urls[currentIndex + 1]);
-      } else if (diff < 0 && currentIndex > 0) {
-        setActiveUrl(urls[currentIndex - 1]);
-      }
-    }
-    touchStartX.current = null;
-  };
-
   // ── Cierre con Escape ─────────────────────────────────────────────────────
   useEffect(() => {
     if (lightboxIndex === null) return;
@@ -89,18 +71,29 @@ export default function ProductGallery({
       <div className="flex flex-col gap-3">
 
         {/* Imagen principal */}
-        <div
-          className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          style={{ touchAction: "pan-y" }}
-        >
+        <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
           {activeUrl ? (
             <button
               type="button"
               onClick={() => openLightbox(activeUrl)}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={(e) => {
+                const diff = (touchStartX.current ?? 0) - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 40) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const currentIndex = urls.indexOf(activeUrl);
+                  if (diff > 0 && currentIndex < urls.length - 1) {
+                    setActiveUrl(urls[currentIndex + 1]);
+                  } else if (diff < 0 && currentIndex > 0) {
+                    setActiveUrl(urls[currentIndex - 1]);
+                  }
+                  touchStartX.current = null;
+                }
+              }}
               className="group relative block w-full cursor-zoom-in"
               aria-label="Ver imagen ampliada"
+              style={{ touchAction: "pan-y", background: "none", border: "none", padding: 0 }}
             >
               <Image
                 src={activeUrl}
