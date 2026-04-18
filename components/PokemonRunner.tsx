@@ -1,33 +1,25 @@
 "use client"
-import { useEffect, useRef, useState } from 'react'
-
-const pokemons = ['/Pikachu.json', '/Bulbasaur.json']
+import { useEffect, useRef } from 'react'
 
 export function PokemonRunner() {
   const ref = useRef<HTMLDivElement>(null)
-  const [current, setCurrent] = useState(0)
 
   useEffect(() => {
     if (!ref.current) return
-    let anim: any
     import('lottie-web').then((lottie) => {
-      anim = lottie.default.loadAnimation({
+      lottie.default.loadAnimation({
         container: ref.current!,
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        path: pokemons[current],
-      })
-      anim.addEventListener('loopComplete', () => {
-        setCurrent((prev) => (prev + 1) % pokemons.length)
+        path: '/Pikachu.json',
       })
     })
-    return () => anim?.destroy()
-  }, [current])
+  }, [])
 
   return (
     <div className="pokemon-runner">
-      <div ref={ref} style={{ height: 55, width: 55 }} />
+      <div ref={ref} style={{ height: 55, width: 55, border: '2px solid red' }} />
     </div>
   )
 }
