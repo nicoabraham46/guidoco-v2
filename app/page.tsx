@@ -5,7 +5,6 @@ import { supabaseServer } from "@/lib/supabase-server";
 import { formatARS } from "@/lib/format";
 import { sortImages, sanitizeImageUrl } from "@/lib/images";
 import { getUrgencyBadge, isNewProduct } from "@/lib/badges";
-import HomeProductCard from "@/components/HomeProductCard";
 
 export const metadata: Metadata = {
   title: "Guidoco | Coleccionables originales",
@@ -174,13 +173,12 @@ export default async function Home() {
       .order("created_at", { ascending: false })
       .limit(4)
       .then((r) => r.data ?? [], () => [] as Product[]),
-    // Hasta 8 productos en stock para la sección de cards
+    // Todos los productos en stock para el carrusel
     supabaseServer
       .from("products")
       .select("id,name,title,slug,price,stock,category,created_at,product_images(url,sort_order)")
       .gt("stock", 0)
       .order("created_at", { ascending: false })
-      .limit(8)
       .then((r) => r.data ?? [], () => [] as Product[]),
   ]);
 
@@ -225,49 +223,94 @@ export default async function Home() {
         </section>
       )}
 
-      {/* ── 4. Nuestros productos ───────────────────────────────────────────── */}
+      {/* ── 4. Nuestros productos — carrusel infinito ───────────────────────── */}
       {stockProducts.length > 0 && (
-        <section style={{ backgroundColor: "#1C2B3A" }}>
-          <div className="mx-auto max-w-6xl px-6 py-14">
-            <div className="flex items-center gap-3 mb-8">
+        <section style={{ backgroundColor: "#1C2B3A", overflow: "hidden" }}>
+          <div className="mx-auto max-w-6xl px-6 pt-10 pb-4">
+            <div className="flex items-center gap-3 mb-6">
               <div className="h-5 w-1 rounded-full" style={{ backgroundColor: "#C0392B" }} />
               <h2 className="text-xl font-bold text-white">Nuestros productos</h2>
             </div>
+          </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {stockProducts.map((product) => {
+          {/* Carrusel */}
+          <div style={{ overflow: "hidden", height: 280 }}>
+            <div className="products-track">
+              {[...stockProducts, ...stockProducts].map((product, idx) => {
                 const name = product.name ?? product.title ?? "Sin nombre";
                 const sorted = sortImages(product.product_images ?? []);
                 const cover = sanitizeImageUrl(sorted[0]?.url ?? null);
+                const CATEGORY_LABELS: Record<string, string> = { diecast: "Diecast", pokemon: "Pokémon", especiales: "Especiales" };
                 return (
-                  <HomeProductCard
-                    key={product.id}
-                    slug={product.slug}
-                    name={name}
-                    cover={cover}
-                    price={product.price}
-                    category={product.category}
-                  />
+                  <Link
+                    key={`${product.id}-${idx}`}
+                    href={`/p/${product.slug}`}
+                    style={{
+                      width: 200,
+                      flexShrink: 0,
+                      marginRight: 16,
+                      display: "flex",
+                      flexDirection: "column",
+                      borderRadius: 10,
+                      overflow: "hidden",
+                      backgroundColor: "rgba(255,255,255,0.07)",
+                      textDecoration: "none",
+                    }}
+                  >
+                    {/* Imagen */}
+                    <div style={{ height: 150, overflow: "hidden", position: "relative", backgroundColor: "rgba(255,255,255,0.05)" }}>
+                      {cover ? (
+                        <Image
+                          src={cover}
+                          alt={name}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          sizes="200px"
+                        />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <svg style={{ width: 32, height: 32, color: "rgba(255,255,255,0.2)" }} fill="none" stroke="currentColor" strokeWidth={1} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div style={{ padding: "10px 12px", flex: 1 }}>
+                      {product.category && (
+                        <p style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>
+                          {CATEGORY_LABELS[product.category] ?? product.category}
+                        </p>
+                      )}
+                      <p style={{ fontSize: 13, fontWeight: 600, color: "#fff", lineHeight: 1.3, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        {name}
+                      </p>
+                      <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 6 }}>
+                        ${formatARS(product.price)}
+                      </p>
+                    </div>
+                  </Link>
                 );
               })}
             </div>
+          </div>
 
-            <div style={{ marginTop: 32, display: "flex", justifyContent: "center" }}>
-              <Link
-                href="/catalogo"
-                style={{
-                  backgroundColor: "#C0392B",
-                  color: "#fff",
-                  padding: "12px 28px",
-                  borderRadius: 8,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-              >
-                Ver catálogo completo →
-              </Link>
-            </div>
+          <div style={{ display: "flex", justifyContent: "center", paddingBottom: 32, paddingTop: 20 }}>
+            <Link
+              href="/catalogo"
+              style={{
+                backgroundColor: "#C0392B",
+                color: "#fff",
+                padding: "12px 28px",
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Ver catálogo completo →
+            </Link>
           </div>
         </section>
       )}

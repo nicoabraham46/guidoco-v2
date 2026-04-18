@@ -59,5 +59,20 @@ body {
   box-shadow: 0 8px 24px rgba(0,0,0,0.18);
 }
 
+@keyframes scroll-products {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.products-track {
+  display: flex;
+  animation: scroll-products 30s linear infinite;
+  width: max-content;
+}
+
+.products-track:hover {
+  animation-play-state: paused;
+}
+
 
 
