@@ -7,6 +7,7 @@ const durations = [4000, 3000]
 export function PokemonRunner() {
   const ref = useRef<HTMLDivElement>(null)
   const [current, setCurrent] = useState(0)
+  const [visible, setVisible] = useState(true)
 
   useEffect(() => {
     if (!ref.current) return
@@ -23,7 +24,11 @@ export function PokemonRunner() {
     })
 
     const timer = setTimeout(() => {
-      setCurrent((prev) => (prev + 1) % pokemons.length)
+      setVisible(false)
+      setTimeout(() => {
+        setCurrent((prev) => (prev + 1) % pokemons.length)
+        setVisible(true)
+      }, 500)
     }, durations[current])
 
     return () => {
@@ -33,7 +38,14 @@ export function PokemonRunner() {
   }, [current])
 
   return (
-    <div className="pokemon-runner">
+    <div
+      className="pokemon-runner"
+      style={{
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 0.3s ease',
+        animationName: visible ? 'run-across' : 'none'
+      }}
+    >
       <div ref={ref} style={{ height: 55, width: 55 }} />
     </div>
   )
