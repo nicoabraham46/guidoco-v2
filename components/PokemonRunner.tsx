@@ -1,36 +1,28 @@
 "use client"
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const pokemons = [
-  { src: '/Pikachu.lottie', duration: 4000 },
-  { src: '/Bulbasaur.lottie', duration: 3000 },
+  '/Pikachu.lottie',
+  '/Bulbasaur.lottie',
 ]
 
 export function PokemonRunner() {
   const [current, setCurrent] = useState(0)
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrent((prev) => (prev + 1) % pokemons.length)
-    }, pokemons[current].duration)
-    return () => clearTimeout(timer)
-  }, [current])
-
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100px',
-      backgroundColor: '#1a1a1a'
-    }}>
+    <div
+      className="pokemon-runner"
+      onAnimationIteration={() =>
+        setCurrent((prev) => (prev + 1) % pokemons.length)
+      }
+    >
       <DotLottieReact
         key={current}
-        src={pokemons[current].src}
+        src={pokemons[current]}
         loop
         autoplay
-        style={{ height: 90, width: 'auto' }}
+        style={{ height: 50, width: 'auto' }}
       />
     </div>
   )

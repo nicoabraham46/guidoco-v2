@@ -74,5 +74,20 @@ body {
   animation-play-state: paused;
 }
 
+@keyframes run-across {
+  0% { transform: translateX(-100px); opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 100px)); opacity: 0; }
+}
+
+.pokemon-runner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  animation: run-across 8s linear infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
 
 

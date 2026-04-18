@@ -5,7 +5,6 @@ import { supabaseServer } from "@/lib/supabase-server";
 import { formatARS } from "@/lib/format";
 import { sortImages, sanitizeImageUrl } from "@/lib/images";
 import { getUrgencyBadge, isNewProduct } from "@/lib/badges";
-import { PokemonRunner } from "@/components/PokemonRunner";
 
 export const metadata: Metadata = {
   title: "Guidoco | Coleccionables originales",
@@ -190,10 +189,7 @@ export default async function Home() {
     <main style={{ backgroundColor: "#e8ecf0", minHeight: "100vh" }}>
 
 
-      {/* ── 2. Pokémon Runner ──────────────────────────────────────────────── */}
-      <PokemonRunner />
-
-      {/* ── 3. Hero ─────────────────────────────────────────────────────────── */}
+      {/* ── 2. Hero ─────────────────────────────────────────────────────────── */}
       <div style={{ position: "relative", height: "70vh", overflow: "hidden" }}>
         <Image
           src="/hero.jpg"
