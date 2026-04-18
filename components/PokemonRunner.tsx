@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 const pokemons = ['/Pikachu.json', '/Bulbasaur.json']
-const durations = [8000, 8000]
+const durations = [7000, 7000]
 
 export function PokemonRunner() {
   const ref = useRef<HTMLDivElement>(null)
