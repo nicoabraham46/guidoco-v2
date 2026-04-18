@@ -5,16 +5,19 @@ export function PokemonRunner() {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!ref.current) return
+    const container = ref.current
+    if (!container) return
+    let anim: any
     import('lottie-web').then((lottie) => {
-      lottie.default.loadAnimation({
-        container: ref.current!,
+      anim = lottie.default.loadAnimation({
+        container,
         renderer: 'svg',
         loop: true,
         autoplay: true,
         path: '/Pikachu.json',
       })
     })
+    return () => anim?.destroy()
   }, [])
 
   return (
