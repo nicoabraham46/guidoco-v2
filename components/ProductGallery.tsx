@@ -24,10 +24,6 @@ export default function ProductGallery({
 
   const touchStartX = useRef<number | null>(null);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-
   // ── Cierre con Escape ─────────────────────────────────────────────────────
   useEffect(() => {
     if (lightboxIndex === null) return;
@@ -76,7 +72,9 @@ export default function ProductGallery({
             <button
               type="button"
               onClick={() => openLightbox(activeUrl)}
-              onTouchStart={handleTouchStart}
+              onTouchStart={(e) => {
+                touchStartX.current = e.touches[0].clientX;
+              }}
               onTouchEnd={(e) => {
                 const diff = (touchStartX.current ?? 0) - e.changedTouches[0].clientX;
                 if (Math.abs(diff) > 40) {
@@ -93,7 +91,7 @@ export default function ProductGallery({
               }}
               className="group relative block w-full cursor-zoom-in"
               aria-label="Ver imagen ampliada"
-              style={{ touchAction: "pan-y", background: "none", border: "none", padding: 0 }}
+              style={{ touchAction: "none", background: "none", border: "none", padding: 0 }}
             >
               <Image
                 src={activeUrl}
