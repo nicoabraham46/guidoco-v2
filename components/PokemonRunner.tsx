@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 const pokemons = ['/Pikachu.json', '/Bulbasaur.json']
-const durations = [4000, 3000]
+const durations = [8000, 8000]
 
 export function PokemonRunner() {
   const ref = useRef<HTMLDivElement>(null)
@@ -39,11 +39,11 @@ export function PokemonRunner() {
 
   return (
     <div
+      key={current}
       className="pokemon-runner"
       style={{
         opacity: visible ? 1 : 0,
         transition: 'opacity 0.3s ease',
-        animationName: visible ? 'run-across' : 'none'
       }}
     >
       <div ref={ref} style={{ height: 55, width: 55 }} />
