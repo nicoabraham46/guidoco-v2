@@ -1,4 +1,5 @@
 "use client"
+import lottie from 'lottie-web'
 import { useEffect, useRef } from 'react'
 
 export function PokemonRunner() {
@@ -7,17 +8,18 @@ export function PokemonRunner() {
   useEffect(() => {
     const container = ref.current
     if (!container) return
-    let anim: any
-    import('lottie-web').then((lottie) => {
-      anim = lottie.default.loadAnimation({
+    try {
+      const anim = lottie.loadAnimation({
         container,
         renderer: 'svg',
         loop: true,
         autoplay: true,
         path: '/Pikachu.json',
       })
-    })
-    return () => anim?.destroy()
+      return () => anim.destroy()
+    } catch (e) {
+      console.error('lottie error:', e)
+    }
   }, [])
 
   return (
