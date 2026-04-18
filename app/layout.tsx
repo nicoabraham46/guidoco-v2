@@ -5,6 +5,7 @@ import MobileMenu from "@/components/MobileMenu";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import Image from "next/image";
 import { CartProvider } from "@/contexts/CartContext";
 import CartIcon from "@/components/CartIcon";
 import BottomNav from "@/components/BottomNav";
@@ -36,6 +37,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
   },
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -58,13 +62,14 @@ export default function RootLayout({
             <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-3.5">
 
               {/* Logo */}
-              <Link href="/" className="flex flex-col shrink-0 leading-none">
-                <span className="text-base font-extrabold tracking-widest uppercase text-white">
-                  Guidoco
-                </span>
-                <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.3em] text-zinc-600">
-                  Collectibles
-                </span>
+              <Link href="/" className="shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Guidoco Collectibles"
+                  width={60}
+                  height={60}
+                  style={{ objectFit: "contain" }}
+                />
               </Link>
 
               {/* Nav */}
