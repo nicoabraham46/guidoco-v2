@@ -22,24 +22,28 @@ export default function ProductGallery({
   const [activeUrl, setActiveUrl] = useState<string | null>(urls[0] ?? null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const currentIndex = urls.indexOf(activeUrl ?? "");
-  const touchStartX = useRef<number>(0);
-  const touchEndX = useRef<number>(0);
+  const touchStartX = useRef<number | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+  };
+
   const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX.current = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        setActiveUrl(urls[Math.min(currentIndex + 1, urls.length - 1)]);
-      } else {
-        setActiveUrl(urls[Math.max(currentIndex - 1, 0)]);
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      const currentIndex = urls.indexOf(activeUrl ?? "");
+      if (diff > 0 && currentIndex < urls.length - 1) {
+        setActiveUrl(urls[currentIndex + 1]);
+      } else if (diff < 0 && currentIndex > 0) {
+        setActiveUrl(urls[currentIndex - 1]);
       }
     }
+    touchStartX.current = null;
   };
 
   // ── Cierre con Escape ─────────────────────────────────────────────────────
@@ -89,6 +93,7 @@ export default function ProductGallery({
           className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
+          style={{ touchAction: "pan-y" }}
         >
           {activeUrl ? (
             <button
