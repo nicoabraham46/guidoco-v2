@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useRef, useState } from 'react'
 
-const pokemons = ['/Pikachu.lottie', '/Bulbasaur.lottie']
+const pokemons = ['/Pikachu.json', '/Bulbasaur.json']
 
 export function PokemonRunner() {
   const ref = useRef<HTMLDivElement>(null)
@@ -18,18 +18,16 @@ export function PokemonRunner() {
         autoplay: true,
         path: pokemons[current],
       })
+      anim.addEventListener('loopComplete', () => {
+        setCurrent((prev) => (prev + 1) % pokemons.length)
+      })
     })
     return () => anim?.destroy()
   }, [current])
 
   return (
-    <div
-      className="pokemon-runner"
-      onAnimationIteration={() =>
-        setCurrent((prev) => (prev + 1) % pokemons.length)
-      }
-    >
-      <div ref={ref} style={{ height: 50, width: 50 }} />
+    <div className="pokemon-runner">
+      <div ref={ref} style={{ height: 55, width: 55 }} />
     </div>
   )
 }
