@@ -198,9 +198,8 @@ export default async function ProductPage({
             {/* Separador */}
             <div className="my-4 h-px bg-gray-100" />
 
-            {/* Ref + condición */}
+            {/* Condición */}
             <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400">
-              <span>Ref: {product.slug}</span>
               <span className="flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 Condición: Nuevo
@@ -313,7 +312,6 @@ export default async function ProductPage({
           <div className="grid gap-10 lg:grid-cols-2">
             {/* Tabla */}
             <div>
-              <DetailRow label="Referencia" value={product.slug} />
               <DetailRow
                 label="Disponibilidad"
                 value={inStock ? "En stock" : "Sin stock"}
