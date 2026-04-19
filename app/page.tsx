@@ -183,8 +183,8 @@ export default async function Home() {
       .then((r) => r.data ?? [], () => [] as Product[]),
   ]);
 
-  const nuevosIngresos = nuevosResult as Product[];
-  const stockProducts = stockResult as Product[];
+  const nuevosIngresos = (nuevosResult as Product[]).filter((p) => (p.stock ?? 0) > 0);
+  const stockProducts = (stockResult as Product[]).filter((p) => (p.stock ?? 0) > 0);
 
   return (
     <main style={{ backgroundColor: "#e8ecf0", minHeight: "100vh" }}>
