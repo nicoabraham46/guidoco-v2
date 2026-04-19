@@ -17,14 +17,21 @@ export default function AnnouncementTicker() {
   const [usdArs, setUsdArs] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("https://dolarapi.com/v1/dolares/blue")
-      .then((r) => r.json())
-      .then((data) => {
+    const fetchDolar = async () => {
+      try {
+        const res = await fetch("https://dolarapi.com/v1/dolares/blue");
+        const data = await res.json();
         if (data?.venta) setUsdArs(String(data.venta));
-      })
-      .catch(() => {
+      } catch {
         // Silenciar errores de red — el item queda como "cargando..."
-      });
+      }
+    };
+
+    fetchDolar();
+
+    const interval = setInterval(fetchDolar, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const usdItem = `💵 USD/ARS: ${usdArs ? `$${usdArs}` : "cargando..."}`;
