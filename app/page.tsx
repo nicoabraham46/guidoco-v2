@@ -164,12 +164,13 @@ function SectionHeader({
 
 export default async function Home() {
   const [nuevosResult, stockResult] = await Promise.all([
-    // 4 más recientes
+    // 4 más recientes con stock
     supabaseServer
       .from("products")
       .select(
         "id,name,title,slug,price,stock,category,created_at,product_images(url,sort_order)"
       )
+      .gt("stock", 0)
       .order("created_at", { ascending: false })
       .limit(4)
       .then((r) => r.data ?? [], () => [] as Product[]),

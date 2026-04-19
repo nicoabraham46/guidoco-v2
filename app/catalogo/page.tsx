@@ -114,7 +114,14 @@ export default async function CatalogoPage({
   const { data: products, error: dbError } = await dbQuery;
   if (dbError) console.error("[catalogo] Supabase error:", dbError);
 
-  const allProducts = (products ?? []) as Product[];
+  const fetched = (products ?? []) as Product[];
+  // In-stock primero, agotados al final (respetando el orden interno de cada grupo)
+  const allProducts = stockFilter === "in"
+    ? fetched
+    : [
+        ...fetched.filter((p) => (p.stock ?? 0) > 0),
+        ...fetched.filter((p) => (p.stock ?? 0) === 0),
+      ];
 
   return (
     <main
@@ -265,14 +272,8 @@ export default async function CatalogoPage({
               const urgencyBadge = getUrgencyBadge(product.stock);
               const showNew = inStock && !urgencyBadge && isNewProduct(product.created_at);
 
-              return (
-                <Link
-                  key={product.id}
-                  href={`/p/${product.slug}`}
-                  className={`group relative flex flex-col overflow-hidden rounded-xl border bg-white transition-transform duration-200 hover:-translate-y-1 ${
-                    inStock ? "border-gray-200" : "border-gray-100 opacity-60"
-                  }`}
-                >
+              const cardContent = (
+                <>
                   <div className="relative overflow-hidden bg-gray-50">
                     {cover ? (
                       <Image
@@ -280,7 +281,8 @@ export default async function CatalogoPage({
                         alt={displayName}
                         width={600}
                         height={600}
-                        className={`aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] ${!inStock ? "grayscale" : ""}`}
+                        className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                        style={!inStock ? { filter: "grayscale(100%) opacity(0.6)" } : undefined}
                       />
                     ) : (
                       <div className="aspect-square w-full bg-gray-100 flex items-center justify-center">
@@ -291,14 +293,15 @@ export default async function CatalogoPage({
                     )}
 
                     {!inStock && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-                        <span className="rounded-full border border-gray-300 bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                          Sin stock
+                      <>
+                        <div className="absolute inset-0" style={{ backgroundColor: "rgba(100,100,100,0.35)" }} />
+                        <span className="absolute left-2 top-2 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white" style={{ backgroundColor: "#4b5563" }}>
+                          Agotado
                         </span>
-                      </div>
+                      </>
                     )}
 
-                    {urgencyBadge && (
+                    {inStock && urgencyBadge && (
                       <span className="absolute left-2 top-2 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white" style={{ backgroundColor: "#C0392B" }}>
                         {urgencyBadge.label}
                       </span>
@@ -316,13 +319,35 @@ export default async function CatalogoPage({
                         {CATEGORY_LABELS[product.category] ?? product.category}
                       </p>
                     )}
-                    <p className="text-[13px] font-semibold leading-snug text-gray-900 line-clamp-2">
+                    <p className={`text-[13px] font-semibold leading-snug line-clamp-2 ${inStock ? "text-gray-900" : "text-gray-400"}`}>
                       {displayName}
                     </p>
-                    <p className="mt-2 text-[14px] font-medium text-gray-900">
+                    <p className={`mt-2 text-[14px] font-medium ${inStock ? "text-gray-900" : "text-gray-400 line-through"}`}>
                       ${formatARS(product.price)}
                     </p>
                   </div>
+                </>
+              );
+
+              if (!inStock) {
+                return (
+                  <div
+                    key={product.id}
+                    className="relative flex flex-col overflow-hidden rounded-xl border bg-white border-gray-100"
+                    style={{ cursor: "not-allowed" }}
+                  >
+                    {cardContent}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={product.id}
+                  href={`/p/${product.slug}`}
+                  className="group relative flex flex-col overflow-hidden rounded-xl border bg-white border-gray-200 transition-transform duration-200 hover:-translate-y-1"
+                >
+                  {cardContent}
                 </Link>
               );
             })}
