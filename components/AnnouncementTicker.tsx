@@ -19,7 +19,7 @@ export default function AnnouncementTicker() {
   useEffect(() => {
     const fetchDolar = async () => {
       try {
-        const res = await fetch("https://dolarapi.com/v1/dolares/blue");
+        const res = await fetch(`https://dolarapi.com/v1/dolares/blue?t=${Date.now()}`, { cache: "no-store" });
         const data = await res.json();
         if (data?.venta) setUsdArs(String(data.venta));
       } catch {
