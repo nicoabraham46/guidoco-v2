@@ -55,6 +55,25 @@ export default function RootLayout({
         style={{ backgroundColor: "#e8ecf0" }}
       >
         <CartProvider>
+          {/* Banner construcción — ELIMINAR CUANDO SE LANCE */}
+          <div
+            style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 9999,
+              backgroundColor: "#1a1a1a",
+              color: "#FFD700",
+              textAlign: "center",
+              padding: "10px 16px",
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: 0.3,
+              borderBottom: "2px solid #FFD700",
+            }}
+          >
+            🚧 Sitio en construcción — No realices compras, estamos preparando todo para el lanzamiento
+          </div>
+
           <AnnouncementTicker />
 
           {/* ── Header principal ── */}
