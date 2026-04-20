@@ -94,7 +94,7 @@ export default async function ProductPage({
   const { data: product, error } = await supabaseServer
     .from("products")
     .select(
-      "id,name,title,slug,description,price,stock,category,rarity,created_at,product_images(url,sort_order)"
+      "id,name,title,slug,description,price,stock,category,rarity,set_name,created_at,product_images(url,sort_order)"
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -328,7 +328,9 @@ export default async function ProductPage({
               {product.stock != null && (
                 <DetailRow label="Unidades" value={String(product.stock)} />
               )}
-              <DetailRow label="Precio" value={`$${formatARS(product.price)} ARS`} />
+              {product.set_name && (
+                <DetailRow label="Set" value={product.set_name} />
+              )}
               {product.rarity && (() => {
                 const info = getRarityInfo(product.rarity);
                 return info ? (

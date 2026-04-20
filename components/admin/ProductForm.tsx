@@ -13,6 +13,7 @@ type DefaultValues = {
   description?: string | null;
   category?: string | null;
   rarity?: string | null;
+  set_name?: string | null;
 };
 
 type Props = {
@@ -192,6 +193,25 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
             </option>
           ))}
         </select>
+        <p style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>
+          Dejá vacío si no es una carta Pokémon
+        </p>
+      </div>
+
+      {/* Card 5 — Set */}
+      <div style={cardStyle}>
+        <p style={cardTitleStyle}>🃏 Set de la carta</p>
+        <label htmlFor="set_name" style={labelStyle}>Nombre del Set (solo para cartas Pokémon)</label>
+        <input
+          type="text"
+          id="set_name"
+          name="set_name"
+          defaultValue={defaultValues.set_name ?? ""}
+          placeholder='Ej: Ascended Heroes 2026'
+          style={inputStyle}
+          onFocus={focusRed}
+          onBlur={blurGray}
+        />
         <p style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>
           Dejá vacío si no es una carta Pokémon
         </p>

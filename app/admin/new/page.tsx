@@ -14,6 +14,7 @@ export default async function AdminNewPage() {
     const description = formData.get("description") as string;
     const category = formData.get("category") as string | null;
     const rarity = formData.get("rarity") as string | null;
+    const set_name = formData.get("set_name") as string | null;
 
     const { error } = await getSupabaseAdmin().from("products").insert({
       title,
@@ -23,6 +24,7 @@ export default async function AdminNewPage() {
       description: description || null,
       category: category || null,
       rarity: rarity || null,
+      set_name: set_name || null,
     });
 
     if (error) throw new Error(error.message);
