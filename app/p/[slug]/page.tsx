@@ -9,6 +9,7 @@ import { sortImages, sanitizeImageUrl } from "@/lib/images";
 import { getUrgencyBadge, isNewProduct } from "@/lib/badges";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
+import RarityBadge, { getRarityInfo, RaritySymbol } from "@/components/RarityBadge";
 
 // ── SEO ──────────────────────────────────────────────────────────────────────
 
@@ -93,7 +94,7 @@ export default async function ProductPage({
   const { data: product, error } = await supabaseServer
     .from("products")
     .select(
-      "id,name,title,slug,description,price,stock,category,created_at,product_images(url,sort_order)"
+      "id,name,title,slug,description,price,stock,category,rarity,created_at,product_images(url,sort_order)"
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -180,6 +181,13 @@ export default async function ProductPage({
             {product.category && (
               <span className="inline-block rounded-full border border-gray-200 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                 {CATEGORY_LABELS[product.category] ?? product.category}
+              </span>
+            )}
+
+            {/* Badge de rareza */}
+            {product.rarity && (
+              <span className="ml-2 inline-block">
+                <RarityBadge rarityKey={product.rarity} size={14} />
               </span>
             )}
 
@@ -321,6 +329,18 @@ export default async function ProductPage({
                 <DetailRow label="Unidades" value={String(product.stock)} />
               )}
               <DetailRow label="Precio" value={`$${formatARS(product.price)} ARS`} />
+              {product.rarity && (() => {
+                const info = getRarityInfo(product.rarity);
+                return info ? (
+                  <div className="flex items-center justify-between border-b border-gray-100 py-3">
+                    <span className="text-sm text-gray-400">Rareza</span>
+                    <span className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                      <RaritySymbol rarityKey={product.rarity} size={16} />
+                      {info.key} — {info.name}
+                    </span>
+                  </div>
+                ) : null;
+              })()}
             </div>
 
             {/* Descripción completa */}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import CategorySelect from "./CategorySelect";
+import { RARITIES } from "@/components/RarityBadge";
 
 type DefaultValues = {
   id?: string;
@@ -11,6 +12,7 @@ type DefaultValues = {
   stock?: number | null;
   description?: string | null;
   category?: string | null;
+  rarity?: string | null;
 };
 
 type Props = {
@@ -167,6 +169,32 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
         <p style={cardTitleStyle}>🏷️ Categoría</p>
         <label htmlFor="category" style={labelStyle}>Categoría del producto</label>
         <CategorySelect defaultValue={defaultValues.category ?? ""} />
+      </div>
+
+      {/* Card 4 — Rareza (solo Pokémon) */}
+      <div style={cardStyle}>
+        <p style={cardTitleStyle}>⭐ Rareza de carta</p>
+        <label htmlFor="rarity" style={labelStyle}>Rareza (solo para cartas Pokémon)</label>
+        <select
+          id="rarity"
+          name="rarity"
+          defaultValue={defaultValues.rarity ?? ""}
+          style={{
+            ...inputStyle,
+            cursor: "pointer",
+            appearance: "auto" as const,
+          }}
+        >
+          <option value="">Sin rareza</option>
+          {RARITIES.map((r) => (
+            <option key={r.key} value={r.key}>
+              {r.key} — {r.name} ({r.nameEs})
+            </option>
+          ))}
+        </select>
+        <p style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>
+          Dejá vacío si no es una carta Pokémon
+        </p>
       </div>
 
       {/* Botones */}

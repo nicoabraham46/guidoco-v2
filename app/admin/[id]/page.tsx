@@ -13,7 +13,7 @@ export default async function AdminEditPage({
 
   const { data: product, error } = await getSupabaseAdmin()
     .from("products")
-    .select("id, title, name, slug, price, stock, description, category, product_images(id, url, sort_order)")
+    .select("id, title, name, slug, price, stock, description, category, rarity, product_images(id, url, sort_order)")
     .eq("id", id)
     .single();
 
@@ -39,6 +39,7 @@ export default async function AdminEditPage({
     const stock = parseInt(formData.get("stock") as string, 10);
     const description = formData.get("description") as string;
     const category = formData.get("category") as string | null;
+    const rarity = formData.get("rarity") as string | null;
     const productId = formData.get("id") as string;
 
     const { error } = await getSupabaseAdmin()
@@ -50,6 +51,7 @@ export default async function AdminEditPage({
         stock,
         description: description || null,
         category: category || null,
+        rarity: rarity || null,
       })
       .eq("id", productId);
 
@@ -88,6 +90,7 @@ export default async function AdminEditPage({
             stock: product.stock,
             description: product.description,
             category: product.category,
+            rarity: product.rarity,
           }}
         />
 

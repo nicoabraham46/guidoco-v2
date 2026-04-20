@@ -13,6 +13,7 @@ export default async function AdminNewPage() {
     const stock = parseInt(formData.get("stock") as string, 10);
     const description = formData.get("description") as string;
     const category = formData.get("category") as string | null;
+    const rarity = formData.get("rarity") as string | null;
 
     const { error } = await getSupabaseAdmin().from("products").insert({
       title,
@@ -21,6 +22,7 @@ export default async function AdminNewPage() {
       stock,
       description: description || null,
       category: category || null,
+      rarity: rarity || null,
     });
 
     if (error) throw new Error(error.message);
