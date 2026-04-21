@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Metadata } from "next";
 
 const WHATSAPP_URL = "https://wa.me/5491159599081";
-const CONTACT_EMAIL = "nicoabraham001@gmail.com";
+const CONTACT_EMAIL = "guidoco.store@outlook.com";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",

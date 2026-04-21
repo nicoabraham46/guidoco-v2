@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     await resend.emails.send({
       from: "Guidoco Contacto <onboarding@resend.dev>",
-      to: "nicoabraham001@gmail.com",
+      to: process.env.ADMIN_EMAIL || "guidoco.store@outlook.com",
       subject: `Nuevo mensaje de contacto — ${nombre}`,
       html: `
         <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto;">
