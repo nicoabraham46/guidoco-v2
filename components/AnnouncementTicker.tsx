@@ -19,11 +19,13 @@ export default function AnnouncementTicker() {
   useEffect(() => {
     const fetchDolar = async () => {
       try {
+        console.log('Fetching dólar...', new Date().toLocaleTimeString());
         const res = await fetch(`https://dolarapi.com/v1/dolares/blue?t=${Date.now()}`, { cache: "no-store" });
         const data = await res.json();
+        console.log('Dólar data:', data);
         if (data?.venta) setUsdArs(String(data.venta));
-      } catch {
-        // Silenciar errores de red — el item queda como "cargando..."
+      } catch (error) {
+        console.log('Error fetching dólar:', error);
       }
     };
 
