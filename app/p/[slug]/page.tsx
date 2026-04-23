@@ -10,6 +10,8 @@ import { getUrgencyBadge, isNewProduct } from "@/lib/badges";
 import ProductGallery from "@/components/ProductGallery";
 import RarityBadge, { getRarityInfo, RaritySymbol } from "@/components/RarityBadge";
 
+export const revalidate = 60;
+
 // ── SEO ──────────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({

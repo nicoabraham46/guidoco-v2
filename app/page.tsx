@@ -6,6 +6,8 @@ import { formatARS } from "@/lib/format";
 import { sortImages, sanitizeImageUrl } from "@/lib/images";
 import { getUrgencyBadge, isNewProduct } from "@/lib/badges";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Guidoco | Coleccionables originales",
   description:
