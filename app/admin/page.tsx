@@ -3,6 +3,8 @@ import { supabaseServer } from "@/lib/supabase-server";
 import { formatARS } from "@/lib/format";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
 
+export const dynamic = "force-dynamic";
+
 type Product = {
   id: string;
   name: string | null;
