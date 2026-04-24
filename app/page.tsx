@@ -304,10 +304,10 @@ export default async function Home() {
               href="/catalogo"
               style={{
                 backgroundColor: "transparent",
-                color: "#1a1a1a",
+                color: "#ffffff",
                 padding: "11px 28px",
                 borderRadius: 10,
-                border: "1.5px solid #1a1a1a",
+                border: "1.5px solid #ffffff",
                 fontSize: 14,
                 fontWeight: 600,
                 textDecoration: "none",
