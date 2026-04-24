@@ -2,6 +2,8 @@ import Link from "next/link";
 import { listOrders } from "@/lib/orders";
 import { formatARS } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminOrdersPage() {
   const orders = await listOrders({ limit: 50, offset: 0 });
 

@@ -4,6 +4,8 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import ProductImagesManager from "@/components/admin/ProductImagesManager";
 import ProductForm from "@/components/admin/ProductForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminEditPage({
   params,
 }: {

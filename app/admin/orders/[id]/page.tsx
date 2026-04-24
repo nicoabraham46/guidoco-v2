@@ -9,6 +9,8 @@ import {
 } from "@/lib/orders";
 import { formatARS } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminOrderDetailPage({
   params,
 }: {

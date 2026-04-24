@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import ProductForm from "@/components/admin/ProductForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminNewPage() {
   async function createProduct(formData: FormData) {
     "use server";
