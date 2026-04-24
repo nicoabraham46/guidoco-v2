@@ -303,13 +303,16 @@ export default async function Home() {
             <Link
               href="/catalogo"
               style={{
-                backgroundColor: "#C0392B",
-                color: "#fff",
-                padding: "12px 28px",
-                borderRadius: 8,
+                backgroundColor: "transparent",
+                color: "#1a1a1a",
+                padding: "11px 28px",
+                borderRadius: 10,
+                border: "1.5px solid #1a1a1a",
                 fontSize: 14,
                 fontWeight: 600,
                 textDecoration: "none",
+                letterSpacing: 0.3,
+                transition: "all 0.2s",
               }}
             >
               Ver catálogo completo →
