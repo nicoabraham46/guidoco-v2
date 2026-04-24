@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import MercadoPago, { Payment } from "mercadopago";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getOrderById, updatePaymentStatus, updateOrderStatus } from "@/lib/orders";
+import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "@/lib/email";
 
 async function verifyMpSignature(
   request: NextRequest,
@@ -161,6 +162,36 @@ export async function POST(request: NextRequest) {
     // Marcar orden como pagada y confirmada
     await updatePaymentStatus(orderId, "paid", paymentId);
     await updateOrderStatus(orderId, "confirmed");
+
+    // Enviar emails post-pago (no bloquea el webhook si falla)
+    try {
+      await sendOrderConfirmationEmail({
+        to: order.customer_email,
+        orderId: order.id,
+        total: order.total_amount,
+      });
+      console.log("[webhook/mp] Confirmation email sent to:", order.customer_email);
+    } catch (emailErr) {
+      console.error("[webhook/mp] Error sending confirmation email:", emailErr);
+    }
+
+    try {
+      const emailItems = order.order_items.map((item) => ({
+        product_id: item.product_id,
+        product_name: item.product_name_snapshot || "Producto",
+        unit_price: item.unit_price,
+        quantity: item.quantity,
+      }));
+      await sendAdminOrderNotification({
+        orderId: order.id,
+        total: order.total_amount,
+        customerEmail: order.customer_email,
+        items: emailItems,
+      });
+      console.log("[webhook/mp] Admin notification sent for order:", order.id);
+    } catch (emailErr) {
+      console.error("[webhook/mp] Error sending admin notification:", emailErr);
+    }
 
     console.log("[webhook/mp] Order confirmed:", orderId);
     return NextResponse.json({ ok: true, orderId });

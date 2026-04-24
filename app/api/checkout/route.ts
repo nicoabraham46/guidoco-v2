@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { createOrder, type ShippingAddress } from "@/lib/orders";
-import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "@/lib/email";
 
 type CheckoutItem = {
   product_id: string;
@@ -174,23 +173,6 @@ export async function POST(request: NextRequest) {
     console.log("✅ Order created successfully:", {
       orderId: order.id,
       total_amount: order.total_amount,
-    });
-
-    // Enviar email de confirmación (no bloquea ni rompe la compra si falla)
-    console.log("📧 Sending confirmation email to:", order.customer_email);
-    await sendOrderConfirmationEmail({
-      to: order.customer_email,
-      orderId: order.id,
-      total: order.total_amount,
-    });
-    console.log("📧 Email step completed for order:", order.id);
-
-    // Notificar al admin (no bloquea ni rompe la compra si falla)
-    await sendAdminOrderNotification({
-      orderId: order.id,
-      total: order.total_amount,
-      customerEmail: order.customer_email,
-      items: orderItems,
     });
 
     // Retornar orderId y total_amount
