@@ -29,7 +29,18 @@ export default async function AdminNewPage() {
 
     if (error) throw new Error(error.message);
 
-    redirect("/admin");
+    // Obtener el ID del producto recién creado para redirigir a edición (donde puede subir imágenes)
+    const { data: newProduct } = await getSupabaseAdmin()
+      .from("products")
+      .select("id")
+      .eq("slug", slug)
+      .single();
+
+    if (newProduct) {
+      redirect(`/admin/${newProduct.id}`);
+    } else {
+      redirect("/admin");
+    }
   }
 
   return (
@@ -52,6 +63,19 @@ export default async function AdminNewPage() {
         </div>
 
         <ProductForm action={createProduct} submitLabel="Crear producto" />
+
+        <div style={{
+          marginTop: 16,
+          padding: "14px 20px",
+          backgroundColor: "#fffbeb",
+          border: "1px solid #fde68a",
+          borderRadius: 10,
+          fontSize: 13,
+          color: "#92400e",
+          lineHeight: 1.5,
+        }}>
+          💡 Después de crear el producto, vas a poder subir las imágenes en la página de edición.
+        </div>
 
       </div>
     </main>

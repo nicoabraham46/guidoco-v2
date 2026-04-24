@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabaseServer } from "@/lib/supabase-server";
 import { formatARS } from "@/lib/format";
+import DeleteProductButton from "@/components/admin/DeleteProductButton";
 
 type Product = {
   id: string;
@@ -102,12 +103,15 @@ export default async function AdminPage() {
                     </td>
                     <td className="px-4 py-3 text-sm" style={{ color: "#1a1a1a" }}>{p.stock ?? 0}</td>
                     <td className="px-4 py-3 text-sm">
-                      <Link
-                        href={`/admin/${p.id}`}
-                        className="text-blue-600 hover:underline"
-                      >
-                        Editar
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <Link
+                          href={`/admin/${p.id}`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          Editar
+                        </Link>
+                        <DeleteProductButton productId={p.id} productName={displayName} />
+                      </div>
                     </td>
                   </tr>
                 );
