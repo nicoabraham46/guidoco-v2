@@ -116,10 +116,12 @@ export default async function GraciasPage({
             </div>
 
             <h1 className="mt-6 text-3xl font-bold text-gray-900">
-              ¡Gracias por tu compra!
+              {payment === "success" ? "¡Gracias por tu compra!" : "Pedido registrado"}
             </h1>
             <p className="mt-3 text-gray-600">
-              Tu pedido ha sido recibido correctamente.
+              {payment === "success"
+                ? "Tu pago fue procesado correctamente. ¡Gracias por elegirnos!"
+                : "Tu pedido fue registrado. Completá el pago para confirmarlo."}
             </p>
           </div>
 

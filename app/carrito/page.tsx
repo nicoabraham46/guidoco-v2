@@ -141,7 +141,26 @@ export default function CarritoPage() {
 
       if (response.status === 201) {
         clearCart();
-        window.location.href = `/gracias?orderId=${data.orderId}`;
+        // Crear preferencia de pago y redirigir a Mercado Pago
+        try {
+          const mpRes = await fetch("/api/payments/mercadopago", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: data.orderId }),
+          });
+          const mpData = await mpRes.json();
+
+          if (mpRes.ok && mpData.init_point) {
+            // Redirigir a Mercado Pago
+            window.location.href = mpData.init_point;
+          } else {
+            // Si MP falla, ir a la página de gracias con botón de pago
+            window.location.href = `/gracias?orderId=${data.orderId}`;
+          }
+        } catch {
+          // Si hay error de conexión, ir a gracias como fallback
+          window.location.href = `/gracias?orderId=${data.orderId}`;
+        }
       } else {
         setError(data.error || "Error al procesar la compra");
         setLoading(false);
@@ -430,7 +449,7 @@ export default function CarritoPage() {
               className="w-full rounded-lg text-sm font-bold text-white transition-colors hover:bg-[#333] disabled:opacity-50 lg:hidden"
               style={{ backgroundColor: "#1a1a1a", height: "52px" }}
             >
-              {loading ? "Procesando..." : "Confirmar compra"}
+              {loading ? "Redirigiendo a Mercado Pago..." : "Pagar con Mercado Pago"}
             </button>
           </form>
 
@@ -503,7 +522,7 @@ export default function CarritoPage() {
                 className="mt-5 hidden w-full rounded-lg text-sm font-bold text-white transition-colors hover:bg-[#333] disabled:opacity-50 lg:block"
                 style={{ backgroundColor: "#1a1a1a", height: "52px" }}
               >
-                {loading ? "Procesando..." : "Confirmar compra"}
+                {loading ? "Redirigiendo a Mercado Pago..." : "Pagar con Mercado Pago"}
               </button>
 
               <p className="mt-2 text-center text-[12px] text-gray-400">
