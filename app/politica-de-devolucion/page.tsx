@@ -34,8 +34,8 @@ export default function PoliticaDevolucionPage() {
         {/* Bloque principal */}
         <div className="mt-10 space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900/60 px-6 py-5">
           <p className="text-sm leading-7 text-zinc-300">
-            Aceptamos cambios o devoluciones dentro de los{" "}
-            <span className="font-semibold text-white">10 días corridos</span>{" "}
+            Aceptamos devoluciones dentro de los{" "}
+            <span className="font-semibold text-white">5 días corridos</span>{" "}
             desde la recepción del producto, siempre que el artículo se encuentre
             en el mismo estado en que fue entregado.
           </p>
@@ -51,6 +51,7 @@ export default function PoliticaDevolucionPage() {
               "El producto debe estar sin uso, completo y en su empaque original.",
               "Si el producto llegó con un problema o no coincide con la publicación, nos hacemos cargo.",
               "Si la devolución es por decisión del comprador, el costo de envío corre por cuenta del cliente.",
+              "No se aceptan cambios por arrepentimiento. Solo se realizan reembolsos en caso de que el producto llegue con defectos o no coincida con la publicación.",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 text-sm text-zinc-400">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-600" />
@@ -65,9 +66,8 @@ export default function PoliticaDevolucionPage() {
           <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             Opciones disponibles
           </h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-4 grid gap-3">
             {[
-              { icon: "↔", label: "Cambio del producto", desc: "Por otro producto disponible en el catálogo." },
               { icon: "↩", label: "Reembolso por Mercado Pago", desc: "Procesamos el reembolso a través de Mercado Pago dentro de los 7 días hábiles de aprobada la devolución." },
             ].map(({ icon, label, desc }) => (
               <div
@@ -92,6 +92,7 @@ export default function PoliticaDevolucionPage() {
               "Productos dañados por mal uso.",
               "Productos sin empaque original.",
               "Productos intervenidos o alterados luego de la entrega.",
+              "Devoluciones solicitadas después de los 5 días corridos.",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 text-sm text-zinc-400">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-700" />
