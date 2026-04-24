@@ -10,7 +10,6 @@ import { CartProvider } from "@/contexts/CartContext";
 import CartIcon from "@/components/CartIcon";
 import BottomNav from "@/components/BottomNav";
 import { PokemonRunner } from "@/components/PokemonRunner";
-import BannerConstruccion from "@/components/BannerConstruccion";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -257,7 +256,6 @@ export default function RootLayout({
           </footer>
 
           <BottomNav />
-          <BannerConstruccion />
         </CartProvider>
       </body>
     </html>
