@@ -165,10 +165,46 @@ export async function POST(request: NextRequest) {
 
     // Enviar emails post-pago (no bloquea el webhook si falla)
     try {
+      // Buscar imágenes y slugs de los productos para el email
+      const productIds = order.order_items
+        .map((item) => item.product_id)
+        .filter((id): id is string => id !== null);
+
+      let productDetails: Record<string, { slug: string | null; image_url: string | null }> = {};
+
+      if (productIds.length > 0) {
+        const { data: products } = await supabase
+          .from("products")
+          .select("id, slug, product_images(url, sort_order)")
+          .in("id", productIds);
+
+        if (products) {
+          for (const p of products) {
+            const images = (p.product_images ?? []) as { url: string | null; sort_order: number | null }[];
+            const sorted = images.sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999));
+            productDetails[p.id] = {
+              slug: p.slug,
+              image_url: sorted[0]?.url ?? null,
+            };
+          }
+        }
+      }
+
+      const emailItemsWithImages = order.order_items.map((item) => ({
+        product_name: item.product_name_snapshot || "Producto",
+        unit_price: item.unit_price,
+        quantity: item.quantity,
+        product_id: item.product_id,
+        image_url: item.product_id ? productDetails[item.product_id]?.image_url ?? null : null,
+        slug: item.product_id ? productDetails[item.product_id]?.slug ?? null : null,
+      }));
+
       await sendOrderConfirmationEmail({
         to: order.customer_email,
         orderId: order.id,
         total: order.total_amount,
+        items: emailItemsWithImages,
+        customerName: order.customer_name,
       });
       console.log("[webhook/mp] Confirmation email sent to:", order.customer_email);
     } catch (emailErr) {
