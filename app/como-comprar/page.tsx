@@ -1,4 +1,10 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cómo comprar | Guidoco",
+  description: "Guía paso a paso para comprar en Guidoco. Envíos a todo el país, pago seguro con Mercado Pago.",
+};
 
 const STEPS = [
   {
