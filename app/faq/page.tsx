@@ -9,6 +9,10 @@ const FAQS = [
     a: "Sí. Trabajamos únicamente con productos originales.",
   },
   {
+    q: "¿Por qué las fotos de las cartas tienen imperfecciones?",
+    a: "Todas nuestras cartas Pokémon son nuevas y están en perfecto estado, listas para gradear. Las imperfecciones que puedas ver en las fotos se deben al proceso de escaneo y a los folios protectores que usamos para conservarlas. El producto que recibís es impecable.",
+  },
+  {
     q: "¿Hacen envíos a todo el país?",
     a: "Sí, realizamos envíos a todo el país y también coordinamos entregas según el caso.",
   },

@@ -92,6 +92,24 @@ export default function ComoComprarPage() {
           ))}
         </ol>
 
+        {/* Aclaración sobre fotos */}
+        <div style={{
+          marginTop: 32,
+          padding: "20px 24px",
+          backgroundColor: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: 14,
+        }}>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#e4e4e7", marginBottom: 6 }}>
+            📸 Sobre las fotos de nuestras cartas
+          </p>
+          <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7, color: "#71717a" }}>
+            Todas las cartas Pokémon son nuevas y están en perfecto estado, listas para gradear.
+            Las imperfecciones visibles en las fotos se deben al escaneo y los folios protectores.
+            El producto que recibís es impecable.
+          </p>
+        </div>
+
         {/* CTA */}
         <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-zinc-800 pt-10">
           <Link
