@@ -24,7 +24,7 @@ export async function generateMetadata({
 
   const { data: product } = await supabaseServer
     .from("products")
-    .select("name,title,description,price,stock,product_images(url,sort_order)")
+    .select("name,title,description,price,stock,category,rarity,set_name,product_images(url,sort_order)")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -36,11 +36,15 @@ export async function generateMetadata({
   const sortedImages = sortImages(product.product_images ?? []);
   const imageUrl = sanitizeImageUrl(sortedImages[0]?.url ?? null);
 
+  const categoryLabel = product.category === "pokemon" ? "Carta Pokémon TCG" : product.category === "diecast" ? "Diecast coleccionable" : "Coleccionable";
+  const setPart = product.set_name ? ` del set ${product.set_name}` : "";
+  const rarityPart = product.rarity ? ` (${product.rarity})` : "";
+  const pricePart = product.price ? ` · $${formatARS(product.price)} ARS` : "";
+  const stockPart = (product.stock ?? 0) > 0 ? " · En stock" : "";
+
   const description =
     product.description?.trim() ||
-    `${displayName} · $${formatARS(product.price)} ARS · ${
-      (product.stock ?? 0) > 0 ? "En stock" : "Sin stock"
-    } en Guidoco.`;
+    `${categoryLabel}: ${displayName}${setPart}${rarityPart}${pricePart}${stockPart}. Original, nueva. Envíos a todo el país. Guidoco Collectibles.`;
 
   const ogImages = imageUrl
     ? [{ url: imageUrl, width: 1200, height: 900, alt: displayName }]
@@ -152,8 +156,36 @@ export default async function ProductPage({
   );
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: displayName,
+    description: product.description || `${displayName} - Coleccionable original disponible en Guidoco`,
+    image: firstImage ? [firstImage] : [],
+    sku: product.id,
+    brand: {
+      "@type": "Brand",
+      name: product.category === "pokemon" ? "Pokémon TCG" : product.category === "diecast" ? "Diecast" : "Guidoco",
+    },
+    offers: {
+      "@type": "Offer",
+      url: `https://guidoco.com.ar/p/${product.slug}`,
+      priceCurrency: "ARS",
+      price: product.price ?? 0,
+      availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      seller: {
+        "@type": "Organization",
+        name: "Guidoco",
+      },
+    },
+  };
+
   return (
     <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="mx-auto max-w-7xl px-6 py-10">
 
         {/* Breadcrumb */}

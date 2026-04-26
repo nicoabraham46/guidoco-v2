@@ -50,6 +50,37 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Store",
+              name: "Guidoco",
+              description: "Tienda de coleccionables. Diecast escala 1/64 y cartas Pokémon TCG originales.",
+              url: "https://guidoco.com.ar",
+              logo: "https://guidoco.com.ar/logo.png",
+              image: "https://guidoco.com.ar/hero.jpg",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Bernal Centro",
+                addressRegion: "Buenos Aires",
+                addressCountry: "AR",
+              },
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: "+54-11-5959-9081",
+                contactType: "customer service",
+                availableLanguage: "Spanish",
+              },
+              openingHours: "Mo-Sa 08:00-22:00",
+              priceRange: "$$",
+              sameAs: [],
+            }),
+          }}
+        />
+      </head>
       <body
         className={`${poppins.className} antialiased text-zinc-100`}
         style={{ backgroundColor: "#e8ecf0" }}
