@@ -9,7 +9,6 @@ import Image from "next/image";
 import { CartProvider } from "@/contexts/CartContext";
 import CartIcon from "@/components/CartIcon";
 import BottomNav from "@/components/BottomNav";
-import { PokemonRunner } from "@/components/PokemonRunner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -90,7 +89,6 @@ export default function RootLayout({
 
           {/* ── Header principal ── */}
           <header className="sticky top-0 z-40 border-b border-zinc-800/60 bg-zinc-950/95 backdrop-blur-md" style={{ position: "relative" }}>
-            <PokemonRunner />
             <div style={{ position: "relative" }}>
             <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-3.5">
 
