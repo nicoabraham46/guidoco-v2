@@ -15,7 +15,7 @@ export default async function AdminEditPage({
 
   const { data: product, error } = await getSupabaseAdmin()
     .from("products")
-    .select("id, title, name, slug, price, stock, description, category, rarity, set_name, product_images(id, url, sort_order)")
+    .select("id, title, name, slug, price, stock, description, category, rarity, set_name, pokemon_type, product_images(id, url, sort_order)")
     .eq("id", id)
     .single();
 
@@ -43,6 +43,7 @@ export default async function AdminEditPage({
     const category = formData.get("category") as string | null;
     const rarity = formData.get("rarity") as string | null;
     const set_name = formData.get("set_name") as string | null;
+    const pokemon_type = formData.get("pokemon_type") as string | null;
     const productId = formData.get("id") as string;
 
     const { error } = await getSupabaseAdmin()
@@ -56,6 +57,7 @@ export default async function AdminEditPage({
         category: category || null,
         rarity: rarity || null,
         set_name: set_name || null,
+        pokemon_type: pokemon_type || null,
       })
       .eq("id", productId);
 
@@ -96,6 +98,7 @@ export default async function AdminEditPage({
             category: product.category,
             rarity: product.rarity,
             set_name: product.set_name,
+            pokemon_type: product.pokemon_type,
           }}
         />
 

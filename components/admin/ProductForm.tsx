@@ -3,6 +3,7 @@
 import Link from "next/link";
 import CategorySelect from "./CategorySelect";
 import RaritySelect from "./RaritySelect";
+import PokemonTypeSelect from "./PokemonTypeSelect";
 
 type DefaultValues = {
   id?: string;
@@ -14,6 +15,7 @@ type DefaultValues = {
   category?: string | null;
   rarity?: string | null;
   set_name?: string | null;
+  pokemon_type?: string | null;
 };
 
 type Props = {
@@ -196,6 +198,16 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
           onFocus={focusRed}
           onBlur={blurGray}
         />
+        <p style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>
+          Dejá vacío si no es una carta Pokémon
+        </p>
+      </div>
+
+      {/* Card 6 — Tipo de Pokémon */}
+      <div style={cardStyle}>
+        <p style={cardTitleStyle}>⚡ Tipo de Pokémon</p>
+        <label style={labelStyle}>Tipo de energía (solo para cartas Pokémon)</label>
+        <PokemonTypeSelect defaultValue={defaultValues.pokemon_type ?? ""} />
         <p style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>
           Dejá vacío si no es una carta Pokémon
         </p>

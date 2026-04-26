@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { POKEMON_TYPES, PokemonTypeIcon } from "@/components/PokemonTypes";
 
 type Props = {
   category: string | null;
@@ -10,9 +11,10 @@ type Props = {
   sort: string;
   stock: string | null;
   total: number;
+  pokemonType?: string | null;
 };
 
-export default function CatalogoFilters({ category, q, sort, stock, total }: Props) {
+export default function CatalogoFilters({ category, q, sort, stock, total, pokemonType }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -58,7 +60,7 @@ export default function CatalogoFilters({ category, q, sort, stock, total }: Pro
 
   return (
     <div className="border-b border-gray-200 pb-5 mb-8">
-      {/* Fila única en desktop, apilada en mobile */}
+      {/* Fila principal */}
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
 
         {/* Búsqueda */}
@@ -93,7 +95,7 @@ export default function CatalogoFilters({ category, q, sort, stock, total }: Pro
             return (
               <Link
                 key={label}
-                href={buildUrl({ category: active ? null : value })}
+                href={buildUrl({ category: active ? null : value, type: null })}
                 className={`${pillBase} ${active ? pillActive : pillInactive}`}
                 style={active ? { backgroundColor: "#C0392B" } : undefined}
               >
@@ -138,6 +140,45 @@ export default function CatalogoFilters({ category, q, sort, stock, total }: Pro
         </div>
 
       </div>
+
+      {/* Fila de tipos Pokémon — solo visible en categoría pokemon */}
+      {category === "pokemon" && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mr-1">
+            Tipo:
+          </span>
+
+          {/* Botón "Todos los tipos" */}
+          <Link
+            href={buildUrl({ type: null })}
+            className={`${pillBase} ${!pokemonType ? pillActive : pillInactive}`}
+            style={!pokemonType ? { backgroundColor: "#C0392B" } : undefined}
+          >
+            Todos
+          </Link>
+
+          {/* Botón por cada tipo */}
+          {POKEMON_TYPES.map((t) => {
+            const active = pokemonType === t.key;
+            return (
+              <Link
+                key={t.key}
+                href={buildUrl({ type: active ? null : t.key })}
+                title={t.nameEs}
+                className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap"
+                style={
+                  active
+                    ? { backgroundColor: t.color, borderColor: t.color, color: "#fff" }
+                    : { backgroundColor: t.bgColor, borderColor: `${t.color}40`, color: t.color }
+                }
+              >
+                <PokemonTypeIcon typeKey={t.key} size={14} />
+                {t.nameEs}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

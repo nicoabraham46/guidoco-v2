@@ -9,6 +9,8 @@ import { sortImages, sanitizeImageUrl } from "@/lib/images";
 import { getUrgencyBadge, isNewProduct } from "@/lib/badges";
 import CatalogoFilters from "@/components/CatalogoFilters";
 
+const POKEMON_TYPES_KEYS = ["fire", "water", "grass", "electric", "psychic", "fighting", "colorless", "metal", "dark", "dragon", "fairy"];
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -32,6 +34,7 @@ type Product = {
   price: number | null;
   stock: number | null;
   category: string | null;
+  pokemon_type?: string | null;
   created_at: string;
   product_images?: ProductImage[];
 };
@@ -79,9 +82,9 @@ const categoryCards = [
 export default async function CatalogoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; q?: string; sort?: string; stock?: string }>;
+  searchParams: Promise<{ category?: string; q?: string; sort?: string; stock?: string; type?: string }>;
 }) {
-  const { category, q, sort, stock } = await searchParams;
+  const { category, q, sort, stock, type: pokemonType } = await searchParams;
 
   const validCategory = category === "diecast" || category === "pokemon" || category === "especiales" ? category : null;
   const searchQuery = (q?.trim() ?? "").replace(/[%().,]/g, "");
@@ -91,7 +94,7 @@ export default async function CatalogoPage({
   // ── Query con filtros acumulativos ────────────────────────────────────────
   let dbQuery = supabaseServer
     .from("products")
-    .select("id,name,title,slug,price,stock,category,created_at,product_images(url,sort_order)")
+    .select("id,name,title,slug,price,stock,category,pokemon_type,created_at,product_images(url,sort_order)")
     .limit(80);
 
   if (validCategory) {
@@ -102,6 +105,9 @@ export default async function CatalogoPage({
   }
   if (stockFilter === "in") {
     dbQuery = dbQuery.gt("stock", 0);
+  }
+  if (pokemonType && POKEMON_TYPES_KEYS.includes(pokemonType)) {
+    dbQuery = dbQuery.eq("pokemon_type", pokemonType);
   }
   if (sortKey === "price_asc") {
     dbQuery = dbQuery.order("price", { ascending: true });
@@ -242,6 +248,7 @@ export default async function CatalogoPage({
                 sort={sortKey}
                 stock={stockFilter}
                 total={allProducts.length}
+                pokemonType={pokemonType ?? null}
               />
             </Suspense>
           </>
