@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     icon: "/logo.png",
   },
   verification: {
-    google: "Jrji0axHbq1Yn3F",
+    google: "Jrji0axHbq1Yn3P2D6GZiAXkRtOszItDP7JkfF46uOY",
   },
 };
 
