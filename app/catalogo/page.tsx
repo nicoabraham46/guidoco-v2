@@ -242,7 +242,6 @@ export default async function CatalogoPage({
                 category={validCategory}
                 q={searchQuery}
                 sort={sortKey}
-                stock={stockFilter}
                 total={allProducts.length}
                 pokemonType={pokemonType ?? null}
               />
