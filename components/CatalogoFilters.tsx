@@ -62,12 +62,10 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType 
     "border-gray-200 bg-white text-gray-600 hover:border-gray-400 hover:text-gray-900";
 
   return (
-    <div className="border-b border-gray-200 pb-5 mb-8">
-      {/* Fila única alineada */}
-      <div className="flex flex-wrap items-center gap-3">
-
-        {/* Búsqueda */}
-        <div className="relative w-full sm:w-48 lg:w-56">
+    <div className="mb-8">
+      {/* Fila 1: Búsqueda + categorías */}
+      <div className="flex flex-wrap items-center gap-3 mb-3">
+        <div className="relative w-full sm:w-48">
           <svg
             className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
             fill="none"
@@ -88,11 +86,10 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType 
             placeholder="Buscar productos..."
             onChange={handleSearch}
             className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none transition-colors focus:border-gray-400"
-            style={{ height: 38 }}
+            style={{ height: 36 }}
           />
         </div>
 
-        {/* Pills de categoría */}
         <div className="flex items-center gap-2">
           {catPills.map(({ label, value }) => {
             const active = category === value;
@@ -108,17 +105,16 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType 
             );
           })}
         </div>
+      </div>
 
-        {/* Separador flexible que empuja los controles a la derecha */}
-        <div className="flex-1" />
-
-        {/* Tipo Pokémon */}
+      {/* Fila 2: Filtros secundarios alineados a la derecha */}
+      <div className="flex items-center justify-end gap-3">
         {category === "pokemon" && (
           <select
             value={pokemonType || ""}
             onChange={handleType}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none transition-colors focus:border-gray-400"
-            style={{ height: 38 }}
+            className="rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition-colors focus:border-gray-400"
+            style={{ height: 36 }}
           >
             <option value="">Todos los tipos</option>
             <option value="fire">🔴 Fuego</option>
@@ -135,24 +131,21 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType 
           </select>
         )}
 
-        {/* Ordenamiento */}
         <select
           name="sort"
           defaultValue={sort}
           onChange={handleSort}
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none transition-colors focus:border-gray-400"
-          style={{ height: 38 }}
+          className="rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition-colors focus:border-gray-400"
+          style={{ height: 36 }}
         >
           <option value="newest">Más recientes</option>
           <option value="price_asc">Precio: menor a mayor</option>
           <option value="price_desc">Precio: mayor a menor</option>
         </select>
 
-        {/* Contador */}
         <p className="text-sm text-gray-400 whitespace-nowrap">
           {total} {total === 1 ? "producto" : "productos"}
         </p>
-
       </div>
     </div>
   );
