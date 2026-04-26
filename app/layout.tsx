@@ -93,20 +93,20 @@ export default function RootLayout({
             <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-3.5">
 
               {/* Logo */}
-              <Link href="/" className="shrink-0 flex items-center gap-2">
+              <Link href="/" className="shrink-0 flex items-center gap-2" style={{ position: "relative", width: 90, height: "100%", display: "flex", alignItems: "center" }}>
                 <Image
                   src="/logo.png"
                   alt="Guidoco"
-                  width={70}
-                  height={70}
+                  width={90}
+                  height={90}
                   style={{
-                    width: 70,
-                    height: 70,
+                    width: 90,
+                    height: 90,
                     objectFit: "contain",
-                    position: "relative",
+                    position: "absolute",
+                    top: "50%",
+                    transform: "translateY(-50%)",
                     zIndex: 10,
-                    marginTop: 4,
-                    marginBottom: -10,
                   }}
                 />
                 <div className="flex flex-col md:hidden">
