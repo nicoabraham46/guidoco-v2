@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
-import { POKEMON_TYPES, PokemonTypeIcon } from "@/components/PokemonTypes";
 
 type Props = {
   category: string | null;
@@ -14,7 +13,7 @@ type Props = {
   pokemonType?: string | null;
 };
 
-export default function CatalogoFilters({ category, q, sort, stock, total, pokemonType }: Props) {
+export default function CatalogoFilters({ category, q, sort, total, pokemonType }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -42,6 +41,11 @@ export default function CatalogoFilters({ category, q, sort, stock, total, pokem
 
   function handleSort(e: React.ChangeEvent<HTMLSelectElement>) {
     const url = buildUrl({ sort: e.target.value === "newest" ? null : e.target.value });
+    router.replace(url, { scroll: false });
+  }
+
+  function handleType(e: React.ChangeEvent<HTMLSelectElement>) {
+    const url = buildUrl({ type: e.target.value || null });
     router.replace(url, { scroll: false });
   }
 
@@ -105,24 +109,38 @@ export default function CatalogoFilters({ category, q, sort, stock, total, pokem
           })}
         </div>
 
-        {/* Toggle solo en stock */}
-        <Link
-          href={buildUrl({ stock: stock === "in" ? null : "in" })}
-          className={`${pillBase} flex items-center gap-1.5 ${
-            stock === "in" ? pillActive : pillInactive
-          }`}
-          style={stock === "in" ? { backgroundColor: "#C0392B" } : undefined}
-        >
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              stock === "in" ? "bg-white" : "bg-gray-400"
-            }`}
-          />
-          Solo en stock
-        </Link>
-
-        {/* Ordenamiento + contador al final */}
+        {/* Ordenamiento + tipo pokémon + contador al final */}
         <div className="flex items-center gap-3 sm:ml-auto">
+          {category === "pokemon" && (
+            <select
+              value={pokemonType || ""}
+              onChange={handleType}
+              style={{
+                height: 40,
+                border: "1px solid #e0e0e0",
+                borderRadius: 8,
+                padding: "0 12px",
+                fontSize: 13,
+                cursor: "pointer",
+                backgroundColor: "#fff",
+                color: "#1a1a1a",
+              }}
+            >
+              <option value="">Todos los tipos</option>
+              <option value="fire">🔴 Fuego</option>
+              <option value="water">🔵 Agua</option>
+              <option value="grass">🟢 Planta</option>
+              <option value="electric">🟡 Eléctrico</option>
+              <option value="psychic">🟣 Psíquico</option>
+              <option value="fighting">🟠 Lucha</option>
+              <option value="colorless">⚪ Incoloro</option>
+              <option value="metal">⚙️ Metal</option>
+              <option value="dark">⚫ Oscuridad</option>
+              <option value="dragon">🟤 Dragón</option>
+              <option value="fairy">🩷 Hada</option>
+            </select>
+          )}
+
           <select
             name="sort"
             defaultValue={sort}
@@ -140,45 +158,6 @@ export default function CatalogoFilters({ category, q, sort, stock, total, pokem
         </div>
 
       </div>
-
-      {/* Fila de tipos Pokémon — solo visible en categoría pokemon */}
-      {category === "pokemon" && (
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mr-1">
-            Tipo:
-          </span>
-
-          {/* Botón "Todos los tipos" */}
-          <Link
-            href={buildUrl({ type: null })}
-            className={`${pillBase} ${!pokemonType ? pillActive : pillInactive}`}
-            style={!pokemonType ? { backgroundColor: "#C0392B" } : undefined}
-          >
-            Todos
-          </Link>
-
-          {/* Botón por cada tipo */}
-          {POKEMON_TYPES.map((t) => {
-            const active = pokemonType === t.key;
-            return (
-              <Link
-                key={t.key}
-                href={buildUrl({ type: active ? null : t.key })}
-                title={t.nameEs}
-                className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap"
-                style={
-                  active
-                    ? { backgroundColor: t.color, borderColor: t.color, color: "#fff" }
-                    : { backgroundColor: t.bgColor, borderColor: `${t.color}40`, color: t.color }
-                }
-              >
-                <PokemonTypeIcon typeKey={t.key} size={14} />
-                {t.nameEs}
-              </Link>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }

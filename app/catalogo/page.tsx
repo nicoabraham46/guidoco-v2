@@ -241,22 +241,6 @@ export default async function CatalogoPage({
               </p>
             </div>
 
-            {validCategory === "pokemon" && (
-              <p className="mt-3 text-sm text-gray-500 max-w-2xl leading-relaxed">
-                Cartas Pokémon TCG originales de los últimos sets. Illustration Rare, Special Illustration Rare, Ultra Rare y más. Todas nuevas y en perfecto estado, listas para coleccionar o gradear.
-              </p>
-            )}
-            {validCategory === "diecast" && (
-              <p className="mt-3 text-sm text-gray-500 max-w-2xl leading-relaxed">
-                Diecast coleccionables escala 1/64 de las mejores marcas. Hot Wheels, Micro Turbo y más. Modelos importados, originales y en blister.
-              </p>
-            )}
-            {validCategory === "especiales" && (
-              <p className="mt-3 text-sm text-gray-500 max-w-2xl leading-relaxed">
-                Productos especiales y ediciones limitadas. Piezas únicas para coleccionistas que buscan algo diferente.
-              </p>
-            )}
-
             <Suspense>
               <CatalogoFilters
                 category={validCategory}
@@ -375,6 +359,23 @@ export default async function CatalogoPage({
               );
             })}
           </div>
+        )}
+
+        {/* Texto SEO - al final de la página */}
+        {validCategory === "pokemon" && (
+          <p className="mt-16 text-sm text-gray-400 leading-relaxed max-w-2xl">
+            Cartas Pokémon TCG originales de varios sets. Illustration Rare, Special Illustration Rare, Ultra Rare y más. Todas nuevas y en perfecto estado, listas para coleccionar o gradear.
+          </p>
+        )}
+        {validCategory === "diecast" && (
+          <p className="mt-16 text-sm text-gray-400 leading-relaxed max-w-2xl">
+            Diecast coleccionables escala 1/64 de las mejores marcas. Hot Wheels, Micro Turbo y más. Modelos importados, originales y en blister.
+          </p>
+        )}
+        {validCategory === "especiales" && (
+          <p className="mt-16 text-sm text-gray-400 leading-relaxed max-w-2xl">
+            Productos especiales y ediciones limitadas. Piezas únicas para coleccionistas que buscan algo diferente.
+          </p>
         )}
 
       </div>

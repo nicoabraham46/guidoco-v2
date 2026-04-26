@@ -237,6 +237,30 @@ export default async function ProductPage({
               {displayName}
             </h1>
 
+            {/* Subtítulo automático con datos del producto */}
+            {product.category === "pokemon" && (product.set_name || product.rarity) && (
+              <p className="mt-1.5 text-sm text-gray-400">
+                {[
+                  "Carta Pokémon TCG",
+                  product.set_name,
+                  product.rarity ? (() => {
+                    const rarityNames: Record<string, string> = {
+                      C: "Common", U: "Uncommon", R: "Rare", RR: "Double Rare",
+                      UR: "Ultra Rare", IR: "Illustration Rare", SIR: "Special Illustration Rare",
+                      MAR: "Mega Attack Rare", MHR: "Mega Hyper Rare",
+                      SS: "Standard Set", SSF: "Standard Set Foil", PS: "Parallel Set", PROMO: "Promo",
+                    };
+                    return rarityNames[product.rarity] || product.rarity;
+                  })() : null,
+                ].filter(Boolean).join(" · ")}
+              </p>
+            )}
+            {product.category === "diecast" && (
+              <p className="mt-1.5 text-sm text-gray-400">
+                Diecast coleccionable · Original · Importado
+              </p>
+            )}
+
             {/* Separador */}
             <div className="my-4 h-px bg-gray-100" />
 
