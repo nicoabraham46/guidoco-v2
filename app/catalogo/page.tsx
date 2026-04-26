@@ -143,8 +143,8 @@ export default async function CatalogoPage({
           backgroundImage: "url(/catalogo-bg.png)",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          filter: "grayscale(80%)",
-          opacity: 0.12,
+          filter: "grayscale(20%)",
+          opacity: 0.18,
           zIndex: 0,
           pointerEvents: "none",
         }}
