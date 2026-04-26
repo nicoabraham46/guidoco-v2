@@ -93,15 +93,15 @@ export default function RootLayout({
             <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-3.5">
 
               {/* Logo */}
-              <Link href="/" className="shrink-0 flex items-center gap-2" style={{ position: "relative", width: 200, height: "100%", display: "flex", alignItems: "center" }}>
+              <Link href="/" className="shrink-0 flex items-center gap-2" style={{ position: "relative", width: 120, height: "100%", display: "flex", alignItems: "center" }}>
                 <Image
                   src="/logo.png"
                   alt="Guidoco"
-                  width={200}
-                  height={50}
+                  width={120}
+                  height={35}
                   style={{
-                    width: 200,
-                    height: 50,
+                    width: 120,
+                    height: 35,
                     objectFit: "contain",
                     position: "relative",
                     zIndex: 10,
@@ -115,17 +115,17 @@ export default function RootLayout({
 
               {/* Nav */}
               <nav className="hidden items-center gap-6 text-sm md:flex">
-                <NavInicio className="font-medium text-zinc-400 transition-colors hover:text-white" />
-                <Link href="/catalogo" className="font-medium text-zinc-400 transition-colors hover:text-white">
+                <NavInicio className="font-medium text-zinc-400 transition-colors hover:text-white whitespace-nowrap" />
+                <Link href="/catalogo" className="font-medium text-zinc-400 transition-colors hover:text-white whitespace-nowrap">
                   Catálogo
                 </Link>
-                <Link href="/como-comprar" className="font-medium text-zinc-400 transition-colors hover:text-white">
+                <Link href="/como-comprar" className="font-medium text-zinc-400 transition-colors hover:text-white whitespace-nowrap">
                   Cómo comprar
                 </Link>
-                <Link href="/valorar-carta" className="font-medium text-zinc-400 transition-colors hover:text-white">
+                <Link href="/valorar-carta" className="font-medium text-zinc-400 transition-colors hover:text-white whitespace-nowrap">
                   Valorar carta
                 </Link>
-                <Link href="/contacto" className="font-medium text-zinc-400 transition-colors hover:text-white">
+                <Link href="/contacto" className="font-medium text-zinc-400 transition-colors hover:text-white whitespace-nowrap">
                   Contacto
                 </Link>
               </nav>
