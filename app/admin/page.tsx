@@ -16,6 +16,15 @@ type ProductRow = {
 };
 
 export default async function AdminPage() {
+  // Traer total de ventas confirmadas
+  const { data: paidOrders } = await getSupabaseAdmin()
+    .from("orders")
+    .select("total_amount")
+    .eq("payment_status", "paid");
+
+  const totalSales = (paidOrders ?? []).reduce((sum, o) => sum + (o.total_amount ?? 0), 0);
+  const totalPaidOrders = (paidOrders ?? []).length;
+
   const { data, error } = await getSupabaseAdmin()
     .from("products")
     .select("id, name, title, slug, price, stock, category, product_images(url, sort_order)")
@@ -102,7 +111,7 @@ export default async function AdminPage() {
         </div>
       </div>
 
-      <ProductList products={products} />
+      <ProductList products={products} totalSales={totalSales} totalPaidOrders={totalPaidOrders} />
     </main>
   );
 }

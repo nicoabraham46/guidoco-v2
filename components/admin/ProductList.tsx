@@ -28,7 +28,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   especiales: "Especiales",
 };
 
-export default function ProductList({ products }: { products: Product[] }) {
+export default function ProductList({ products, totalSales = 0, totalPaidOrders = 0 }: { products: Product[]; totalSales?: number; totalPaidOrders?: number }) {
   const [search, setSearch] = useState("");
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
   const [sortKey, setSortKey] = useState<SortKey>("name");
@@ -103,6 +103,8 @@ export default function ProductList({ products }: { products: Product[] }) {
           { label: "Sin stock", value: totalOutOfStock, color: "#C0392B" },
           { label: "Unidades", value: totalUnits, color: "#1a1a1a" },
           { label: "Valor inventario", value: `$${formatARS(totalValue)}`, color: "#1a1a1a" },
+          { label: "Ventas", value: totalPaidOrders, color: "#2563eb" },
+          { label: "Facturado", value: `$${formatARS(totalSales)}`, color: "#16a34a" },
         ].map((stat) => (
           <div key={stat.label} style={{
             backgroundColor: "#f9fafb",
