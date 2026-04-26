@@ -235,10 +235,6 @@ export default async function CatalogoPage({
                   {CATEGORY_LABELS[validCategory]}
                 </h1>
               </div>
-              <p className="text-sm text-gray-400">
-                {allProducts.length}{" "}
-                {allProducts.length === 1 ? "producto encontrado" : "productos encontrados"}
-              </p>
             </div>
 
             <Suspense>
