@@ -21,7 +21,7 @@ const poppins = Poppins({
 export const WHATSAPP_NUMBER = "5491159599081";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
+  metadataBase: new URL("https://guidoco.com.ar"),
   title: {
     default: "Guidoco | Coleccionables originales",
     template: "%s | Guidoco",
