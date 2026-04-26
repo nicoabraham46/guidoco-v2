@@ -23,7 +23,7 @@ export default async function AdminOrderDetailPage({
   if (!order) {
     return (
       <main className="mx-auto max-w-4xl p-6">
-        <h1 className="text-2xl font-bold">Pedido no encontrado</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Pedido no encontrado</h1>
         <Link
           href="/admin/orders"
           className="mt-4 inline-block text-blue-600 hover:underline"
@@ -75,24 +75,25 @@ export default async function AdminOrderDetailPage({
         </Link>
       </div>
 
-      <h1 className="text-2xl font-bold">Pedido #{order.id.slice(0, 8)}</h1>
+      <h1 className="text-2xl font-bold text-gray-900">Pedido #{order.id.slice(0, 8)}</h1>
       <p className="mt-1 text-sm text-gray-500">{date}</p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Información del cliente */}
         <div className="rounded-lg border bg-white p-5">
-          <h2 className="font-semibold">Cliente</h2>
-          <div className="mt-3 space-y-2 text-sm">
+          <h2 className="font-semibold text-gray-800">Cliente</h2>
+          <div className="mt-3 space-y-2 text-sm text-gray-700">
             <p>
-              <span className="font-medium">Nombre:</span>{" "}
+              <span className="font-medium text-gray-900">Nombre:</span>{" "}
               {order.customer_name}
             </p>
             <p>
-              <span className="font-medium">Email:</span> {order.customer_email}
+              <span className="font-medium text-gray-900">Email:</span>{" "}
+              {order.customer_email}
             </p>
             {order.customer_phone && (
               <p>
-                <span className="font-medium">Teléfono:</span>{" "}
+                <span className="font-medium text-gray-900">Teléfono:</span>{" "}
                 {order.customer_phone}
               </p>
             )}
@@ -101,9 +102,9 @@ export default async function AdminOrderDetailPage({
 
         {/* Dirección de envío */}
         <div className="rounded-lg border bg-white p-5">
-          <h2 className="font-semibold">Dirección de envío</h2>
+          <h2 className="font-semibold text-gray-800">Dirección de envío</h2>
           {order.shipping_address ? (
-            <div className="mt-3 space-y-1 text-sm">
+            <div className="mt-3 space-y-1 text-sm text-gray-700">
               <p>{order.shipping_address.street}</p>
               <p>
                 {order.shipping_address.city}
@@ -121,21 +122,21 @@ export default async function AdminOrderDetailPage({
 
       {/* Items del pedido */}
       <div className="mt-6 rounded-lg border bg-white p-5">
-        <h2 className="font-semibold">Productos</h2>
+        <h2 className="font-semibold text-gray-800">Productos</h2>
         <div className="mt-3 overflow-hidden rounded-lg border">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-2 text-left text-sm font-semibold">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">
                   Producto
                 </th>
-                <th className="px-4 py-2 text-right text-sm font-semibold">
+                <th className="px-4 py-2 text-right text-sm font-semibold text-gray-600">
                   Precio
                 </th>
-                <th className="px-4 py-2 text-right text-sm font-semibold">
+                <th className="px-4 py-2 text-right text-sm font-semibold text-gray-600">
                   Cantidad
                 </th>
-                <th className="px-4 py-2 text-right text-sm font-semibold">
+                <th className="px-4 py-2 text-right text-sm font-semibold text-gray-600">
                   Subtotal
                 </th>
               </tr>
@@ -143,16 +144,16 @@ export default async function AdminOrderDetailPage({
             <tbody className="divide-y">
               {order.order_items.map((item) => (
                 <tr key={item.id}>
-                  <td className="px-4 py-2 text-sm">
+                  <td className="px-4 py-2 text-sm text-gray-700">
                     {item.product_name_snapshot}
                   </td>
-                  <td className="px-4 py-2 text-right text-sm">
+                  <td className="px-4 py-2 text-right text-sm text-gray-700">
                     $ {formatARS(item.unit_price)}
                   </td>
-                  <td className="px-4 py-2 text-right text-sm">
+                  <td className="px-4 py-2 text-right text-sm text-gray-700">
                     {item.quantity}
                   </td>
-                  <td className="px-4 py-2 text-right text-sm font-medium">
+                  <td className="px-4 py-2 text-right text-sm font-medium text-gray-900">
                     $ {formatARS(item.line_total)}
                   </td>
                 </tr>
@@ -162,11 +163,11 @@ export default async function AdminOrderDetailPage({
               <tr>
                 <td
                   colSpan={3}
-                  className="px-4 py-2 text-right text-sm font-semibold"
+                  className="px-4 py-2 text-right text-sm font-semibold text-gray-900"
                 >
                   Total:
                 </td>
-                <td className="px-4 py-2 text-right text-sm font-bold">
+                <td className="px-4 py-2 text-right text-sm font-bold text-gray-900">
                   $ {formatARS(order.total_amount)}
                 </td>
               </tr>
@@ -178,7 +179,7 @@ export default async function AdminOrderDetailPage({
       {/* Notas */}
       {order.notes && (
         <div className="mt-6 rounded-lg border bg-white p-5">
-          <h2 className="font-semibold">Notas</h2>
+          <h2 className="font-semibold text-gray-800">Notas</h2>
           <p className="mt-3 whitespace-pre-wrap text-sm text-gray-700">
             {order.notes}
           </p>
@@ -189,13 +190,13 @@ export default async function AdminOrderDetailPage({
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Actualizar estado del pedido */}
         <div className="rounded-lg border bg-white p-5">
-          <h2 className="font-semibold">Estado del pedido</h2>
+          <h2 className="font-semibold text-gray-800">Estado del pedido</h2>
           <form action={handleUpdateStatus} className="mt-3 space-y-3">
             <input type="hidden" name="order_id" value={order.id} />
             <select
               name="status"
               defaultValue={order.status}
-              className="w-full rounded-lg border px-3 py-2 text-sm"
+              className="w-full rounded-lg border px-3 py-2 text-sm text-gray-900"
             >
               <option value="pending">Pendiente</option>
               <option value="confirmed">Confirmado</option>
@@ -216,13 +217,13 @@ export default async function AdminOrderDetailPage({
 
         {/* Actualizar estado de pago */}
         <div className="rounded-lg border bg-white p-5">
-          <h2 className="font-semibold">Estado de pago</h2>
+          <h2 className="font-semibold text-gray-800">Estado de pago</h2>
           <form action={handleUpdatePayment} className="mt-3 space-y-3">
             <input type="hidden" name="order_id" value={order.id} />
             <select
               name="payment_status"
               defaultValue={order.payment_status || "pending"}
-              className="w-full rounded-lg border px-3 py-2 text-sm"
+              className="w-full rounded-lg border px-3 py-2 text-sm text-gray-900"
             >
               <option value="pending">Pendiente</option>
               <option value="paid">Pagado</option>
@@ -234,7 +235,7 @@ export default async function AdminOrderDetailPage({
               name="payment_reference"
               placeholder="Referencia de pago (opcional)"
               defaultValue={order.payment_reference || ""}
-              className="w-full rounded-lg border px-3 py-2 text-sm"
+              className="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 placeholder-gray-400"
             />
             <button
               type="submit"
@@ -249,15 +250,15 @@ export default async function AdminOrderDetailPage({
       {/* Información de pago */}
       {order.payment_provider && (
         <div className="mt-6 rounded-lg border bg-white p-5">
-          <h2 className="font-semibold">Información de pago</h2>
-          <div className="mt-3 space-y-2 text-sm">
+          <h2 className="font-semibold text-gray-800">Información de pago</h2>
+          <div className="mt-3 space-y-2 text-sm text-gray-700">
             <p>
-              <span className="font-medium">Proveedor:</span>{" "}
+              <span className="font-medium text-gray-900">Proveedor:</span>{" "}
               {order.payment_provider}
             </p>
             {order.payment_reference && (
               <p>
-                <span className="font-medium">Referencia:</span>{" "}
+                <span className="font-medium text-gray-900">Referencia:</span>{" "}
                 {order.payment_reference}
               </p>
             )}

@@ -11,7 +11,7 @@ export default async function AdminOrdersPage() {
     <main className="mx-auto max-w-6xl p-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Admin - Pedidos</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Admin — Pedidos</h1>
           <Link
             href="/admin"
             className="mt-1 text-sm text-blue-600 hover:underline"
@@ -21,7 +21,7 @@ export default async function AdminOrdersPage() {
         </div>
         <a
           href="/admin/logout"
-          className="rounded-lg border px-4 py-2 text-sm font-semibold hover:bg-gray-50"
+          className="rounded-lg border px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
         >
           Salir
         </a>
@@ -34,25 +34,25 @@ export default async function AdminOrdersPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Fecha
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   ID
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Cliente
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Total
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Estado
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Pago
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Acciones
                 </th>
               </tr>
@@ -70,10 +70,10 @@ export default async function AdminOrdersPage() {
                     <td className="px-4 py-3 text-sm text-gray-500">
                       {order.id.slice(0, 8)}...
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium">
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
                       {order.customer_name}
                     </td>
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm text-gray-700">
                       $ {formatARS(order.total_amount)}
                     </td>
                     <td className="px-4 py-3 text-sm">
