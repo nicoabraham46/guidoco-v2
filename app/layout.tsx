@@ -96,10 +96,18 @@ export default function RootLayout({
               <Link href="/" className="shrink-0 flex items-center gap-2">
                 <Image
                   src="/logo.png"
-                  alt="Guidoco Collectibles"
-                  width={50}
-                  height={50}
-                  style={{ objectFit: "contain", borderRadius: "50%" }}
+                  alt="Guidoco"
+                  width={70}
+                  height={70}
+                  style={{
+                    width: 70,
+                    height: 70,
+                    objectFit: "contain",
+                    position: "relative",
+                    zIndex: 10,
+                    marginTop: 4,
+                    marginBottom: -10,
+                  }}
                 />
                 <div className="flex flex-col md:hidden">
                   <span style={{ color: '#FFD700', fontWeight: 600, fontSize: '14px', lineHeight: 1.2, letterSpacing: '0.05em' }}>GUIDOCO</span>
