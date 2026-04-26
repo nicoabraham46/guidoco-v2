@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import NavInicio from "@/components/NavInicio";
 import AnnouncementTicker from "@/components/AnnouncementTicker";
 import MobileMenu from "@/components/MobileMenu";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,14 +11,11 @@ import CartIcon from "@/components/CartIcon";
 import BottomNav from "@/components/BottomNav";
 import { PokemonRunner } from "@/components/PokemonRunner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-poppins",
 });
 
 export const WHATSAPP_NUMBER = "5491159599081";
@@ -51,7 +48,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased text-zinc-100`}
+        className={`${poppins.className} antialiased text-zinc-100`}
         style={{ backgroundColor: "#e8ecf0" }}
       >
         <CartProvider>

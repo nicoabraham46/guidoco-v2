@@ -139,6 +139,7 @@ export default function ProductList({ products, totalSales = 0, totalPaidOrders 
               padding: "0 12px",
               fontSize: 14,
               outline: "none",
+              color: "#1a1a1a",
             }}
           />
         </div>
