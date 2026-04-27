@@ -18,6 +18,7 @@ export default async function AdminNewPage() {
     const rarity = formData.get("rarity") as string | null;
     const set_name = formData.get("set_name") as string | null;
     const pokemon_type = formData.get("pokemon_type") as string | null;
+    const year = formData.get("year") ? parseInt(formData.get("year") as string, 10) : null;
 
     const { error } = await getSupabaseAdmin().from("products").insert({
       title,
@@ -29,6 +30,7 @@ export default async function AdminNewPage() {
       rarity: rarity || null,
       set_name: set_name || null,
       pokemon_type: pokemon_type || null,
+      year: year || null,
     });
 
     if (error) throw new Error(error.message);

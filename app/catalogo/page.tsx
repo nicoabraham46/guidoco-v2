@@ -35,6 +35,7 @@ type Product = {
   stock: number | null;
   category: string | null;
   pokemon_type?: string | null;
+  year?: number | null;
   created_at: string;
   product_images?: ProductImage[];
 };
@@ -82,9 +83,9 @@ const categoryCards = [
 export default async function CatalogoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; q?: string; sort?: string; stock?: string; type?: string }>;
+  searchParams: Promise<{ category?: string; q?: string; sort?: string; stock?: string; type?: string; year?: string }>;
 }) {
-  const { category, q, sort, stock, type: pokemonType } = await searchParams;
+  const { category, q, sort, stock, type: pokemonType, year: yearParam } = await searchParams;
 
   const validCategory = category === "diecast" || category === "pokemon" || category === "especiales" ? category : null;
   const searchQuery = (q?.trim() ?? "").replace(/[%().,]/g, "");
@@ -94,7 +95,7 @@ export default async function CatalogoPage({
   // ── Query con filtros acumulativos ────────────────────────────────────────
   let dbQuery = supabaseServer
     .from("products")
-    .select("id,name,title,slug,price,stock,category,pokemon_type,created_at,product_images(url,sort_order)")
+    .select("id,name,title,slug,price,stock,category,pokemon_type,year,created_at,product_images(url,sort_order)")
     .limit(80);
 
   if (validCategory) {
@@ -108,6 +109,9 @@ export default async function CatalogoPage({
   }
   if (pokemonType && POKEMON_TYPES_KEYS.includes(pokemonType)) {
     dbQuery = dbQuery.eq("pokemon_type", pokemonType);
+  }
+  if (yearParam) {
+    dbQuery = dbQuery.eq("year", parseInt(yearParam, 10));
   }
   if (sortKey === "price_asc") {
     dbQuery = dbQuery.order("price", { ascending: true });
@@ -244,6 +248,7 @@ export default async function CatalogoPage({
                 sort={sortKey}
                 total={allProducts.length}
                 pokemonType={pokemonType ?? null}
+                year={yearParam || null}
               />
             </Suspense>
           </>

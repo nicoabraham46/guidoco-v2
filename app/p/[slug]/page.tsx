@@ -100,7 +100,7 @@ export default async function ProductPage({
   const { data: product, error } = await supabaseServer
     .from("products")
     .select(
-      "id,name,title,slug,description,price,stock,category,rarity,set_name,created_at,product_images(url,sort_order)"
+      "id,name,title,slug,description,price,stock,category,rarity,set_name,year,created_at,product_images(url,sort_order)"
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -388,6 +388,9 @@ export default async function ProductPage({
               )}
               {product.set_name && (
                 <DetailRow label="Set" value={product.set_name} />
+              )}
+              {product.year && (
+                <DetailRow label="Año" value={String(product.year)} />
               )}
               {product.rarity && (() => {
                 const info = getRarityInfo(product.rarity);

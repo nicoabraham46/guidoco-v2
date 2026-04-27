@@ -10,9 +10,10 @@ type Props = {
   sort: string;
   total: number;
   pokemonType?: string | null;
+  year?: string | null;
 };
 
-export default function CatalogoFilters({ category, q, sort, total, pokemonType }: Props) {
+export default function CatalogoFilters({ category, q, sort, total, pokemonType, year }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -45,6 +46,11 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType 
 
   function handleType(e: React.ChangeEvent<HTMLSelectElement>) {
     const url = buildUrl({ type: e.target.value || null });
+    router.replace(url, { scroll: false });
+  }
+
+  function handleYear(e: React.ChangeEvent<HTMLSelectElement>) {
+    const url = buildUrl({ year: e.target.value || null });
     router.replace(url, { scroll: false });
   }
 
@@ -128,6 +134,25 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType 
             <option value="dark">⚫ Oscuridad</option>
             <option value="dragon">🟤 Dragón</option>
             <option value="fairy">🩷 Hada</option>
+          </select>
+        )}
+
+        {/* Año (solo Pokémon) */}
+        {category === "pokemon" && (
+          <select
+            value={year || ""}
+            onChange={handleYear}
+            className="rounded-lg border border-gray-200 bg-white px-2 text-sm text-gray-700 outline-none focus:border-gray-400"
+            style={{ height: 34 }}
+          >
+            <option value="">Todos los años</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+            <option value="2020">2020</option>
           </select>
         )}
 

@@ -16,6 +16,7 @@ type DefaultValues = {
   rarity?: string | null;
   set_name?: string | null;
   pokemon_type?: string | null;
+  year?: number | null;
 };
 
 type Props = {
@@ -194,6 +195,27 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
           name="set_name"
           defaultValue={defaultValues.set_name ?? ""}
           placeholder='Ej: Ascended Heroes 2026'
+          style={inputStyle}
+          onFocus={focusRed}
+          onBlur={blurGray}
+        />
+        <p style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>
+          Dejá vacío si no es una carta Pokémon
+        </p>
+      </div>
+
+      {/* Card — Año */}
+      <div style={cardStyle}>
+        <p style={cardTitleStyle}>📅 Año de la carta</p>
+        <label htmlFor="year" style={labelStyle}>Año (solo para cartas Pokémon)</label>
+        <input
+          type="number"
+          id="year"
+          name="year"
+          defaultValue={defaultValues.year ?? ""}
+          placeholder="Ej: 2025"
+          min="1996"
+          max="2030"
           style={inputStyle}
           onFocus={focusRed}
           onBlur={blurGray}
