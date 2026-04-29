@@ -10,7 +10,7 @@ const FAQS = [
   },
   {
     q: "¿Por qué las fotos de las cartas tienen imperfecciones?",
-    a: "Todas nuestras cartas Pokémon son nuevas y están en perfecto estado, listas para gradear. Las imperfecciones que puedas ver en las fotos se deben al proceso de escaneo y a los folios protectores que usamos para conservarlas. El producto que recibís es impecable.",
+    a: "Todas las cartas Pokémon son nuevas y están en perfecto estado, listas para gradear. Las imperfecciones visibles en las fotos se deben al escaneo y los folios protectores. Si una carta presenta algún detalle particular, se indica en la descripción del producto. El producto que recibís es impecable.",
   },
   {
     q: "¿Hacen envíos a todo el país?",
