@@ -32,6 +32,10 @@ const FAQS = [
     q: "¿Aceptan cambios o devoluciones?",
     a: "Sí, según las condiciones publicadas en la política de devolución.",
   },
+  {
+    q: "¿Qué significan NM, LP, MP, HP y DMG?",
+    a: "Son las condiciones estándar internacionales de las cartas según TCGPlayer: NM (Near Mint) es casi perfecta, LP (Lightly Played) tiene desgaste mínimo, MP (Moderately Played) tiene desgaste visible, HP (Heavily Played) tiene desgaste importante, y DMG (Damaged) tiene daños significativos. En nuestras publicaciones indicamos la condición en el título del producto.",
+  },
 ];
 
 function AccordionItem({

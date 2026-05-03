@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import CardConditionGuide from "@/components/CardConditionGuide";
 
 export const metadata: Metadata = {
   title: "Cómo comprar | Guidoco",
@@ -106,6 +107,10 @@ export default function ComoComprarPage() {
           <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7, color: "#71717a" }}>
             Todas las cartas Pokémon son nuevas y están en perfecto estado, listas para gradear. Las imperfecciones visibles en las fotos se deben al escaneo y los folios protectores. Si una carta presenta algún detalle particular, se indica en la descripción del producto. El producto que recibís es impecable.
           </p>
+        </div>
+
+        <div className="mt-12 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
+          <CardConditionGuide variant="text" />
         </div>
 
         {/* CTA */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import CardConditionGuide from "@/components/CardConditionGuide";
 
 type PokemonCard = {
   id: string;
@@ -279,6 +280,11 @@ export default function ValorarCartaPage() {
             })}
           </div>
         )}
+
+        {/* Guía de condiciones */}
+        <div style={{ marginTop: 48 }}>
+          <CardConditionGuide variant="scroll" />
+        </div>
 
       </div>
     </main>

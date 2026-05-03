@@ -10,6 +10,7 @@ import { getUrgencyBadge, isNewProduct } from "@/lib/badges";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
 import RarityBadge, { getRarityInfo, RaritySymbol } from "@/components/RarityBadge";
+import CardConditionGuide from "@/components/CardConditionGuide";
 
 export const revalidate = 60;
 
@@ -415,6 +416,13 @@ export default async function ProductPage({
                 <p className="whitespace-pre-wrap text-sm leading-7 text-gray-600">
                   {product.description}
                 </p>
+              </div>
+            )}
+
+            {/* Guía de condiciones - solo para Pokémon */}
+            {product.category === "pokemon" && (
+              <div className="lg:col-span-2" style={{ marginTop: 8 }}>
+                <CardConditionGuide variant="compact" />
               </div>
             )}
           </div>
