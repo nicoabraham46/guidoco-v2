@@ -110,10 +110,6 @@ export default function RootLayout({
                     zIndex: 10,
                   }}
                 />
-                <div className="flex flex-col md:hidden">
-                  <span style={{ color: '#FFD700', fontWeight: 600, fontSize: '14px', lineHeight: 1.2, letterSpacing: '0.05em' }}>GUIDOCO</span>
-                  <span style={{ color: '#FFD700', fontWeight: 400, fontSize: '10px', letterSpacing: '0.1em' }}>COLLECTIBLES</span>
-                </div>
               </Link>
 
               {/* Nav */}
