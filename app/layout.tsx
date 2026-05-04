@@ -40,6 +40,9 @@ export const metadata: Metadata = {
   verification: {
     google: "Jrji0axHbq1Yn3P2D6GZiAXkRtOszItDP7JkfF46uOY",
   },
+  other: {
+    "color-scheme": "only light",
+  },
 };
 
 export default function RootLayout({
@@ -50,6 +53,8 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
+        <meta name="color-scheme" content="only light" />
+        <meta name="supported-color-schemes" content="only light" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@900&display=swap" rel="stylesheet" />
