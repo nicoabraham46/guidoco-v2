@@ -110,6 +110,13 @@ export default function RootLayout({
                     zIndex: 10,
                   }}
                 />
+                {/* Sprite Ludicolo solo en mobile */}
+                <img
+                  src="/ludicolo-sprite.gif"
+                  alt=""
+                  className="block md:hidden"
+                  style={{ width: 36, height: 36, imageRendering: "pixelated" }}
+                />
               </Link>
 
               {/* Nav */}
