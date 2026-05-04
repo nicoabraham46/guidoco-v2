@@ -499,7 +499,7 @@ export default function CarritoPage() {
                 </div>
                 <div className="flex justify-between text-gray-500">
                   <span>Envío</span>
-                  <span className="italic text-gray-400">A coordinar</span>
+                  <span className="italic text-gray-400">A cargo del comprador</span>
                 </div>
               </div>
 

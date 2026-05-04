@@ -41,7 +41,7 @@ const STEPS = [
   {
     n: 7,
     title: "Coordinamos el resto",
-    body: "Nos contactamos para acordar el pago, envío o entrega según tu ubicación.",
+    body: "Nos contactamos para acordar el envío (a cargo del comprador) o entrega en mano sin costo en zona Sur Quilmes, Bernal y alrededores.",
   },
 ];
 

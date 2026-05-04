@@ -17,6 +17,10 @@ const FAQS = [
     a: "Sí, realizamos envíos a todo el país y también coordinamos entregas según el caso.",
   },
   {
+    q: "¿El envío está incluido en el precio?",
+    a: "El precio publicado no incluye el costo de envío. Los envíos a todo el país corren por cuenta del comprador. Si estás en zona Sur, Quilmes, Bernal, Don Bosco, Avellaneda coordinamos la entrega en mano sin costo adicional. Escribinos por WhatsApp al +54 11 5959 9081 para coordinar.",
+  },
+  {
     q: "¿Cómo se coordina el pago?",
     a: "Una vez que confirmás tu compra, el pago se procesa automáticamente a través de Mercado Pago. Podés pagar con tarjeta de crédito, débito o transferencia bancaria. Si tenés algún problema, escribinos por WhatsApp al +54 11 5959 9081.",
   },
