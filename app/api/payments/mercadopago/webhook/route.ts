@@ -49,6 +49,8 @@ async function verifyMpSignature(
 }
 
 export async function POST(request: NextRequest) {
+  console.log("[webhook/mp] Received webhook request", new Date().toISOString());
+
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
   if (!accessToken || accessToken === "TEST-your-access-token-here") {
     return NextResponse.json({ error: "MP not configured" }, { status: 503 });
@@ -62,7 +64,15 @@ export async function POST(request: NextRequest) {
   }
 
   // Verificar firma del webhook antes de procesar
-  const signatureValid = await verifyMpSignature(request, body);
+  let signatureValid: boolean;
+  try {
+    signatureValid = await verifyMpSignature(request, body);
+  } catch (err) {
+    console.error("[webhook/mp] Error verifying signature:", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  console.log("[webhook/mp] Signature verification result:", signatureValid);
+
   if (!signatureValid) {
     console.warn("[webhook/mp] Invalid signature — request rejected");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
