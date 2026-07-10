@@ -9,6 +9,7 @@ type AddToCartButtonProps = {
   name: string;
   price: number;
   imageUrl: string | null;
+  stock: number;
 };
 
 export default function AddToCartButton({
@@ -16,14 +17,23 @@ export default function AddToCartButton({
   name,
   price,
   imageUrl,
+  stock,
 }: AddToCartButtonProps) {
   const { addItem, items } = useCart();
   const [added, setAdded] = useState(false);
+  const [noStock, setNoStock] = useState(false);
 
-  const inCart = items.some((i) => i.product_id === productId);
+  const currentQty = items.find((i) => i.product_id === productId)?.quantity ?? 0;
+  const inCart = currentQty > 0;
+  const maxReached = currentQty >= stock;
 
   function handleAdd() {
-    addItem({ product_id: productId, name, price, image_url: imageUrl });
+    if (currentQty + 1 > stock) {
+      setNoStock(true);
+      setTimeout(() => setNoStock(false), 2500);
+      return;
+    }
+    addItem({ product_id: productId, name, price, image_url: imageUrl, stock });
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   }
@@ -36,7 +46,7 @@ export default function AddToCartButton({
     <div className="space-y-2">
       <button
         onClick={handleAdd}
-        disabled={added}
+        disabled={added || maxReached}
         className={`flex w-full items-center justify-center gap-2 rounded-lg text-[15px] font-bold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${btnHover}`}
         style={{ backgroundColor: btnBg, height: "52px" }}
       >
@@ -47,6 +57,8 @@ export default function AddToCartButton({
             </svg>
             ¡Agregado al carrito!
           </>
+        ) : maxReached ? (
+          "No hay más unidades disponibles"
         ) : (
           <>
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -56,6 +68,12 @@ export default function AddToCartButton({
           </>
         )}
       </button>
+
+      {noStock && (
+        <p className="text-xs font-medium text-amber-600">
+          No hay más unidades disponibles
+        </p>
+      )}
 
       {inCart && (
         <Link

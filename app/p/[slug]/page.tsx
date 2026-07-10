@@ -312,6 +312,7 @@ export default async function ProductPage({
                 name={displayName}
                 price={product.price}
                 imageUrl={firstImage}
+                stock={product.stock ?? 0}
               />
             ) : (
               <button

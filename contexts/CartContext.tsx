@@ -13,6 +13,7 @@ export type CartItem = {
   name: string;
   price: number;
   image_url: string | null;
+  stock: number;
   quantity: number;
 };
 
@@ -21,6 +22,7 @@ type CartContextValue = {
   addItem: (item: Omit<CartItem, "quantity">) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  syncStock: (productId: string, stock: number) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -54,9 +56,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((prev) => {
       const existing = prev.find((i) => i.product_id === newItem.product_id);
       if (existing) {
+        if (existing.quantity >= newItem.stock) {
+          return prev;
+        }
         return prev.map((i) =>
           i.product_id === newItem.product_id
-            ? { ...i, quantity: i.quantity + 1 }
+            ? { ...i, stock: newItem.stock, quantity: i.quantity + 1 }
             : i
         );
       }
@@ -74,10 +79,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } else {
       setItems((prev) =>
         prev.map((i) =>
-          i.product_id === productId ? { ...i, quantity } : i
+          i.product_id === productId
+            ? { ...i, quantity: Math.min(quantity, i.stock) }
+            : i
         )
       );
     }
+  }, []);
+
+  const syncStock = useCallback((productId: string, stock: number) => {
+    setItems((prev) =>
+      prev.map((i) =>
+        i.product_id === productId
+          ? { ...i, stock, quantity: Math.min(i.quantity, stock) }
+          : i
+      )
+    );
   }, []);
 
   const clearCart = useCallback(() => {
@@ -94,6 +111,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         addItem,
         removeItem,
         updateQuantity,
+        syncStock,
         clearCart,
         totalItems,
         totalPrice,

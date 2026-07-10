@@ -29,13 +29,16 @@ const labelClass = "block text-[13px] font-medium text-gray-600";
 
 function QuantityControl({
   quantity,
+  max,
   onChange,
   onRemove,
 }: {
   quantity: number;
+  max: number;
   onChange: (q: number) => void;
   onRemove: () => void;
 }) {
+  const atMax = quantity >= max;
   return (
     <div className="flex items-center gap-1">
       <button
@@ -49,9 +52,11 @@ function QuantityControl({
         {quantity}
       </span>
       <button
-        onClick={() => onChange(quantity + 1)}
-        className="flex h-7 w-7 items-center justify-center rounded border border-gray-200 text-sm text-gray-500 transition-colors hover:border-gray-400 hover:text-gray-800"
+        onClick={() => !atMax && onChange(quantity + 1)}
+        disabled={atMax}
+        className="flex h-7 w-7 items-center justify-center rounded border border-gray-200 text-sm text-gray-500 transition-colors hover:border-gray-400 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-500"
         aria-label="Aumentar cantidad"
+        title={atMax ? "No hay más unidades disponibles" : undefined}
       >
         +
       </button>
@@ -73,7 +78,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 // ── Página ────────────────────────────────────────────────────────────────────
 
 export default function CarritoPage() {
-  const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCart();
+  const { items, removeItem, updateQuantity, syncStock, clearCart, totalPrice } = useCart();
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +97,40 @@ export default function CarritoPage() {
   const [selectedShipping, setSelectedShipping] = useState<any>(null);
   const [loadingShipping, setLoadingShipping] = useState(false);
   const [shippingError, setShippingError] = useState("");
+
+  const [liveStock, setLiveStock] = useState<Record<string, number>>({});
+  const [stockAdjusted, setStockAdjusted] = useState(false);
+
+  // Re-consultar el stock actual: puede haber cambiado desde que se agregó al carrito
+  useEffect(() => {
+    if (items.length === 0) return;
+    const productIds = items.map((i) => i.product_id);
+    fetch("/api/products/stock", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productIds }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.stock) return;
+        setLiveStock(data.stock);
+        let adjusted = false;
+        for (const item of items) {
+          const current = data.stock[item.product_id] ?? 0;
+          if (item.quantity > current) {
+            adjusted = true;
+          }
+          if (current !== item.stock) {
+            syncStock(item.product_id, current);
+          }
+        }
+        if (adjusted) setStockAdjusted(true);
+      })
+      .catch(() => {
+        // Si falla, seguimos con el stock que ya tenía cada item en el carrito
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.length]);
 
   useEffect(() => {
     try {
@@ -257,10 +296,17 @@ export default function CarritoPage() {
             <h1 className="text-xl font-semibold text-gray-900">Carrito</h1>
           </div>
 
+          {stockAdjusted && (
+            <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+              Ajustamos la cantidad de algún producto porque su stock disponible cambió.
+            </p>
+          )}
+
           {/* Items */}
           <div className="divide-y divide-gray-100">
             {items.map((item) => {
               const imageUrl = sanitizeImageUrl(item.image_url);
+              const maxQty = liveStock[item.product_id] ?? item.stock;
               return (
                 <div
                   key={item.product_id}
@@ -294,6 +340,7 @@ export default function CarritoPage() {
                   {/* Cantidad */}
                   <QuantityControl
                     quantity={item.quantity}
+                    max={maxQty}
                     onChange={(q) => updateQuantity(item.product_id, q)}
                     onRemove={() => removeItem(item.product_id)}
                   />
