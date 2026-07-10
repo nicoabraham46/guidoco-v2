@@ -41,7 +41,7 @@ const STEPS = [
   {
     n: 7,
     title: "Coordinamos el resto",
-    body: "Nos contactamos para acordar el envío (a cargo del comprador) o entrega en mano sin costo en zona Sur Quilmes, Bernal y alrededores.",
+    body: "El costo de envío se calcula automáticamente en el checkout según tu código postal. Entrega en mano gratis en zona Quilmes y alrededores.",
   },
 ];
 
