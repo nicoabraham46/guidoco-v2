@@ -58,6 +58,8 @@ export type CreateOrderInput = {
   shipping_address?: ShippingAddress;
   notes?: string;
   payment_provider?: string;
+  shipping_cost?: number;
+  shipping_method?: string;
   items: {
     product_id: string;
     product_name: string;
@@ -79,11 +81,17 @@ export type OrderWithItems = Order & {
  * Calcula automáticamente el total_amount sumando line_totals
  */
 export async function createOrder(input: CreateOrderInput): Promise<OrderWithItems> {
-  // Calcular total_amount
-  const total_amount = input.items.reduce(
+  // Calcular total_amount (items + envío)
+  const items_total = input.items.reduce(
     (sum, item) => sum + item.unit_price * item.quantity,
     0
   );
+  const shipping_cost = input.shipping_cost || 0;
+  const total_amount = items_total + shipping_cost;
+
+  const metadata = input.shipping_method
+    ? { shipping_cost, shipping_method: input.shipping_method }
+    : null;
 
   // Crear order (usar supabaseAdmin para bypasear RLS)
   const supabase = getSupabaseAdmin();
@@ -96,6 +104,7 @@ export async function createOrder(input: CreateOrderInput): Promise<OrderWithIte
       shipping_address: input.shipping_address || null,
       notes: input.notes || null,
       payment_provider: input.payment_provider || null,
+      metadata,
       total_amount,
       status: "pending",
       payment_status: "pending",

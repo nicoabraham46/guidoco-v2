@@ -87,6 +87,12 @@ export default function CarritoPage() {
     notes: "",
   });
 
+  const [postalCode, setPostalCode] = useState("");
+  const [shippingRates, setShippingRates] = useState<any[]>([]);
+  const [selectedShipping, setSelectedShipping] = useState<any>(null);
+  const [loadingShipping, setLoadingShipping] = useState(false);
+  const [shippingError, setShippingError] = useState("");
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem(CUSTOMER_STORAGE_KEY);
@@ -104,6 +110,35 @@ export default function CarritoPage() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
+  async function fetchShippingRates(cp: string) {
+    if (cp.length < 4) {
+      setShippingRates([]);
+      setSelectedShipping(null);
+      return;
+    }
+    setLoadingShipping(true);
+    setShippingError("");
+    try {
+      const res = await fetch("/api/shipping/rates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postalCode: cp }),
+      });
+      const data = await res.json();
+      if (res.ok && data.rates) {
+        setShippingRates(data.rates);
+        setSelectedShipping(data.rates.length === 1 ? data.rates[0] : null);
+      } else {
+        setShippingError("No pudimos cotizar el envío. Coordinamos por WhatsApp.");
+        setShippingRates([]);
+      }
+    } catch {
+      setShippingError("Error al consultar envío. Coordinamos por WhatsApp.");
+      setShippingRates([]);
+    }
+    setLoadingShipping(false);
+  }
+
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setError(null);
@@ -111,15 +146,20 @@ export default function CarritoPage() {
     if (!formData.name.trim()) { setError("El nombre es requerido"); return; }
     if (!formData.email.trim()) { setError("El email es requerido"); return; }
     if (!validateEmail(formData.email)) { setError("Email inválido"); return; }
+    if (postalCode.length === 4 && shippingRates.length > 0 && !selectedShipping) {
+      setError("Seleccioná un método de envío");
+      return;
+    }
 
     setLoading(true);
     try {
       localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(formData));
 
-      const shippingAddress = formData.street || formData.city
+      const shippingAddress = formData.street || formData.city || postalCode
         ? {
             ...(formData.street && { street: formData.street }),
             ...(formData.city && { city: formData.city }),
+            ...(postalCode && { zip: postalCode }),
             country: "Argentina",
           }
         : undefined;
@@ -133,6 +173,8 @@ export default function CarritoPage() {
           customer_phone: formData.phone || undefined,
           shipping_address: shippingAddress,
           notes: formData.notes || undefined,
+          shipping_cost: selectedShipping?.price || 0,
+          shipping_method: selectedShipping?.name || undefined,
           items: items.map((item) => ({ product_id: item.product_id, quantity: item.quantity })),
         }),
       });
@@ -373,7 +415,9 @@ export default function CarritoPage() {
               <div className="mb-4">
                 <p className="text-[14px] font-medium text-gray-700">
                   Dirección de envío{" "}
-                  <span className="text-[13px] font-normal text-gray-400">(opcional)</span>
+                  <span className="text-[13px] font-normal text-gray-400">
+                    (calle y ciudad opcionales, código postal requerido para cotizar envío)
+                  </span>
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -404,6 +448,33 @@ export default function CarritoPage() {
                 </div>
 
                 <div>
+                  <label htmlFor="postalCode" className={labelClass}>
+                    Código postal <span style={{ color: "#C0392B" }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="postalCode"
+                    name="postalCode"
+                    value={postalCode}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                      setPostalCode(v);
+                      if (v.length === 4) fetchShippingRates(v);
+                      else {
+                        setShippingRates([]);
+                        setSelectedShipping(null);
+                        setShippingError("");
+                      }
+                    }}
+                    placeholder="Ej: 1876"
+                    maxLength={4}
+                    required
+                    className={inputClass}
+                    style={{ height: "44px" }}
+                  />
+                </div>
+
+                <div>
                   <label className={labelClass}>País</label>
                   <input
                     type="text"
@@ -414,6 +485,52 @@ export default function CarritoPage() {
                   />
                 </div>
               </div>
+
+              {/* Opciones de envío */}
+              {postalCode.length === 4 && (
+                <div className="mt-4">
+                  <label className={labelClass}>Método de envío *</label>
+                  {loadingShipping && (
+                    <p className="mt-1 text-sm text-gray-400">Cotizando envío...</p>
+                  )}
+                  {shippingError && (
+                    <p className="mt-1 text-sm text-amber-600">{shippingError}</p>
+                  )}
+                  {!loadingShipping && shippingRates.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                      {shippingRates.map((rate: any) => (
+                        <label
+                          key={rate.id}
+                          className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors"
+                          style={{
+                            borderColor: selectedShipping?.id === rate.id ? "#C0392B" : "#e5e7eb",
+                            backgroundColor: selectedShipping?.id === rate.id ? "#fef2f2" : "#fff",
+                          }}
+                        >
+                          <input
+                            type="radio"
+                            name="shippingMethod"
+                            value={rate.id}
+                            checked={selectedShipping?.id === rate.id}
+                            onChange={() => setSelectedShipping(rate)}
+                            className="accent-red-600"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-gray-900">{rate.name}</p>
+                            <p className="text-xs text-gray-500">{rate.description}</p>
+                          </div>
+                          <span
+                            className="text-sm font-bold"
+                            style={{ color: rate.price === 0 ? "#16a34a" : "#1a1a1a" }}
+                          >
+                            {rate.price === 0 ? "Gratis" : `$${formatARS(rate.price)}`}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </section>
 
             {/* Notas */}
@@ -445,7 +562,7 @@ export default function CarritoPage() {
             {/* Botón mobile */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (postalCode.length === 4 && shippingRates.length > 0 && !selectedShipping)}
               className="w-full rounded-lg text-sm font-bold text-white transition-colors hover:bg-[#333] disabled:opacity-50 lg:hidden"
               style={{ backgroundColor: "#1a1a1a", height: "52px" }}
             >
@@ -499,13 +616,23 @@ export default function CarritoPage() {
                 </div>
                 <div className="flex justify-between text-gray-500">
                   <span>Envío</span>
-                  <span className="italic text-gray-400">A cargo del comprador</span>
+                  {selectedShipping ? (
+                    <span className="font-medium text-gray-900">
+                      {selectedShipping.price === 0 ? "Gratis" : `$${formatARS(selectedShipping.price)}`}
+                    </span>
+                  ) : (
+                    <span className="italic text-gray-400">
+                      {postalCode.length === 4 ? "Seleccioná un método" : "Ingresá tu código postal"}
+                    </span>
+                  )}
                 </div>
               </div>
 
               <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
                 <span className="text-[15px] font-medium text-gray-900">Total</span>
-                <span className="text-[18px] font-medium text-gray-900">${formatARS(totalPrice)}</span>
+                <span className="text-[18px] font-medium text-gray-900">
+                  ${formatARS(totalPrice + (selectedShipping?.price || 0))}
+                </span>
               </div>
 
               {/* Error desktop */}
@@ -518,7 +645,7 @@ export default function CarritoPage() {
               {/* Botón desktop */}
               <button
                 onClick={handleSubmit}
-                disabled={loading}
+                disabled={loading || (postalCode.length === 4 && shippingRates.length > 0 && !selectedShipping)}
                 className="mt-5 hidden w-full rounded-lg text-sm font-bold text-white transition-colors hover:bg-[#333] disabled:opacity-50 lg:block"
                 style={{ backgroundColor: "#1a1a1a", height: "52px" }}
               >

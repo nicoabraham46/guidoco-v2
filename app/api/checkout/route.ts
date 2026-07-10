@@ -13,6 +13,8 @@ type CheckoutRequest = {
   customer_phone?: string;
   shipping_address?: ShippingAddress;
   notes?: string;
+  shipping_cost?: number;
+  shipping_method?: string;
   items: CheckoutItem[];
 };
 
@@ -44,6 +46,17 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Validar shipping_cost: no confiar ciegamente en el número del cliente
+    // (idealmente se re-cotizaría server-side contra MiCorreo antes de aceptarlo)
+    const shippingCost =
+      typeof body.shipping_cost === "number" &&
+      Number.isFinite(body.shipping_cost) &&
+      body.shipping_cost >= 0
+        ? Math.min(body.shipping_cost, 50000)
+        : 0;
+    const shippingMethod =
+      typeof body.shipping_method === "string" ? body.shipping_method.slice(0, 100) : undefined;
 
     // Validar que cada item tenga product_id y quantity válidos
     for (const item of body.items) {
@@ -167,6 +180,8 @@ export async function POST(request: NextRequest) {
       customer_phone: body.customer_phone,
       shipping_address: body.shipping_address,
       notes: body.notes,
+      shipping_cost: shippingCost,
+      shipping_method: shippingMethod,
       items: orderItems,
     });
 

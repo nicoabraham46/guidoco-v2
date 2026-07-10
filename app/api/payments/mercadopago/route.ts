@@ -56,6 +56,20 @@ export async function POST(request: NextRequest) {
             },
           ];
 
+    // Si la orden tiene costo de envío, agregarlo como item aparte
+    const shippingCost = Number(
+      (order.metadata as { shipping_cost?: number } | null)?.shipping_cost || 0
+    );
+    if (order.order_items.length > 0 && shippingCost > 0) {
+      items.push({
+        id: "shipping",
+        title: "Costo de envío",
+        quantity: 1,
+        unit_price: shippingCost,
+        currency_id: "ARS" as const,
+      });
+    }
+
     const result = await preference.create({
       body: {
         items,
