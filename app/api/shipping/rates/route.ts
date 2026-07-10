@@ -66,12 +66,12 @@ export async function POST(request: NextRequest) {
     const rates: any[] = [];
 
     // Entrega en mano gratis para zona Bernal
-    const localCodes = ["1876", "1874", "1878", "1872", "1870"];
+    const localCodes = ["1870", "1871", "1872", "1873", "1874", "1875", "1876", "1877", "1878", "1879"];
     if (localCodes.includes(postalCode)) {
       rates.push({
         id: "local_free",
         name: "Entrega en mano",
-        description: "Coordinamos por WhatsApp · Zona Bernal",
+        description: "Coordinamos entrega por WhatsApp · Zona Quilmes",
         price: 0,
         deliveryTime: "A coordinar",
         type: "L",
