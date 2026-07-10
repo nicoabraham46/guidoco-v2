@@ -63,68 +63,66 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Código postal inválido" }, { status: 400 });
     }
 
-    const customerId = process.env.MICORREO_CUSTOMER_ID;
-    if (!customerId) {
-      return NextResponse.json({ error: "Shipping not configured" }, { status: 500 });
-    }
+    const rates: any[] = [];
 
-    // Check if it's local (same postal code = free hand delivery)
-    const isLocal = postalCode === ORIGIN_POSTAL_CODE;
-
-    let rates: any[] = [];
-
-    try {
-      const token = await getToken();
-
-      const ratesRes = await fetch(`${MICORREO_BASE_URL}/rates`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerId,
-          postalCodeOrigin: ORIGIN_POSTAL_CODE,
-          postalCodeDestination: postalCode,
-          dimensions: DEFAULT_DIMENSIONS,
-        }),
-      });
-
-      if (ratesRes.ok) {
-        const ratesData = await ratesRes.json();
-        rates = (ratesData.rates || []).map((r: any) => ({
-          id: `${r.productType}_${r.deliveredType}`,
-          name: r.deliveredType === "D" ? "Envío a domicilio" : "Retiro en sucursal",
-          description: `${r.productName} (${r.deliveryTimeMin}-${r.deliveryTimeMax} días hábiles)`,
-          price: Math.round(r.price),
-          deliveryTime: `${r.deliveryTimeMin}-${r.deliveryTimeMax} días hábiles`,
-          type: r.deliveredType, // D = domicilio, S = sucursal
-        }));
-      } else {
-        console.error("[shipping] Rates error:", ratesRes.status, await ratesRes.text());
-      }
-    } catch (err) {
-      console.error("[shipping] API error:", err);
-    }
-
-    // Always add free local delivery option if same zone
-    if (isLocal) {
-      rates.unshift({
+    // Entrega en mano gratis para zona Bernal (1876 y alrededores)
+    const localCodes = ["1876", "1874", "1878", "1872", "1870"];
+    if (localCodes.includes(postalCode)) {
+      rates.push({
         id: "local_free",
         name: "Entrega en mano",
-        description: "Coordinamos por WhatsApp (zona Bernal)",
+        description: "Coordinamos por WhatsApp · Zona Bernal Centro",
         price: 0,
         deliveryTime: "A coordinar",
         type: "L",
       });
     }
 
-    // If no rates from API, add WhatsApp coordination as fallback
-    if (rates.length === 0) {
+    // Intentar cotizar con MiCorreo API (si está habilitada)
+    const customerId = process.env.MICORREO_CUSTOMER_ID;
+    const email = process.env.MICORREO_EMAIL;
+    const password = process.env.MICORREO_PASSWORD;
+
+    if (customerId && email && password) {
+      try {
+        const token = await getToken();
+        const ratesRes = await fetch(`${MICORREO_BASE_URL}/rates`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerId,
+            postalCodeOrigin: ORIGIN_POSTAL_CODE,
+            postalCodeDestination: postalCode,
+            dimensions: DEFAULT_DIMENSIONS,
+          }),
+        });
+
+        if (ratesRes.ok) {
+          const ratesData = await ratesRes.json();
+          const apiRates = (ratesData.rates || []).map((r: any) => ({
+            id: `${r.productType}_${r.deliveredType}`,
+            name: r.deliveredType === "D" ? "Envío a domicilio" : "Retiro en sucursal",
+            description: `${r.productName} (${r.deliveryTimeMin}-${r.deliveryTimeMax} días hábiles)`,
+            price: Math.round(r.price),
+            deliveryTime: `${r.deliveryTimeMin}-${r.deliveryTimeMax} días hábiles`,
+            type: r.deliveredType,
+          }));
+          rates.push(...apiRates);
+        }
+      } catch (err) {
+        console.log("[shipping] MiCorreo API not available, using fallback");
+      }
+    }
+
+    // Si no hay opciones de envío de la API, agregar opción de coordinar por WhatsApp
+    if (!rates.some((r) => r.type === "D" || r.type === "S")) {
       rates.push({
-        id: "whatsapp",
-        name: "Envío a coordinar",
-        description: "Te contactamos por WhatsApp para cotizar el envío",
+        id: "whatsapp_shipping",
+        name: "Envío por Correo Argentino",
+        description: "Coordinamos el envío y el costo por WhatsApp",
         price: 0,
         deliveryTime: "A coordinar",
         type: "W",
