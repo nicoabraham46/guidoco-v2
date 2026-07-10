@@ -65,66 +65,30 @@ export async function POST(request: NextRequest) {
 
     const rates: any[] = [];
 
-    // Entrega en mano gratis para zona Bernal (1876 y alrededores)
+    // Entrega en mano gratis para zona Bernal
     const localCodes = ["1876", "1874", "1878", "1872", "1870"];
     if (localCodes.includes(postalCode)) {
       rates.push({
         id: "local_free",
         name: "Entrega en mano",
-        description: "Coordinamos por WhatsApp · Zona Bernal Centro",
+        description: "Coordinamos por WhatsApp · Zona Bernal",
         price: 0,
         deliveryTime: "A coordinar",
         type: "L",
       });
     }
 
-    // Intentar cotizar con MiCorreo API (si está habilitada)
-    const customerId = process.env.MICORREO_CUSTOMER_ID;
-    const email = process.env.MICORREO_EMAIL;
-    const password = process.env.MICORREO_PASSWORD;
+    // TODO: Descomentar cuando MiCorreo habilite la API
+    // if (customerId && email && password) { ... }
 
-    if (customerId && email && password) {
-      try {
-        const token = await getToken();
-        const ratesRes = await fetch(`${MICORREO_BASE_URL}/rates`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customerId,
-            postalCodeOrigin: ORIGIN_POSTAL_CODE,
-            postalCodeDestination: postalCode,
-            dimensions: DEFAULT_DIMENSIONS,
-          }),
-        });
-
-        if (ratesRes.ok) {
-          const ratesData = await ratesRes.json();
-          const apiRates = (ratesData.rates || []).map((r: any) => ({
-            id: `${r.productType}_${r.deliveredType}`,
-            name: r.deliveredType === "D" ? "Envío a domicilio" : "Retiro en sucursal",
-            description: `${r.productName} (${r.deliveryTimeMin}-${r.deliveryTimeMax} días hábiles)`,
-            price: Math.round(r.price),
-            deliveryTime: `${r.deliveryTimeMin}-${r.deliveryTimeMax} días hábiles`,
-            type: r.deliveredType,
-          }));
-          rates.push(...apiRates);
-        }
-      } catch (err) {
-        console.log("[shipping] MiCorreo API not available, using fallback");
-      }
-    }
-
-    // Si no hay opciones de envío de la API, agregar opción de coordinar por WhatsApp
-    if (!rates.some((r) => r.type === "D" || r.type === "S")) {
+    // Para CPs que no son locales, opción de coordinar envío por WhatsApp
+    if (!localCodes.includes(postalCode)) {
       rates.push({
         id: "whatsapp_shipping",
         name: "Envío por Correo Argentino",
-        description: "Coordinamos el envío y el costo por WhatsApp",
-        price: 0,
-        deliveryTime: "A coordinar",
+        description: "Coordinamos el costo del envío por WhatsApp antes de despachar",
+        price: -1, // -1 indica "a coordinar", no gratis
+        deliveryTime: "3-5 días hábiles",
         type: "W",
       });
     }

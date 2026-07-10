@@ -173,7 +173,7 @@ export default function CarritoPage() {
           customer_phone: formData.phone || undefined,
           shipping_address: shippingAddress,
           notes: formData.notes || undefined,
-          shipping_cost: selectedShipping?.price || 0,
+          shipping_cost: selectedShipping?.price > 0 ? selectedShipping.price : 0,
           shipping_method: selectedShipping?.name || undefined,
           items: items.map((item) => ({ product_id: item.product_id, quantity: item.quantity })),
         }),
@@ -523,7 +523,7 @@ export default function CarritoPage() {
                             className="text-sm font-bold"
                             style={{ color: rate.price === 0 ? "#16a34a" : "#1a1a1a" }}
                           >
-                            {rate.price === 0 ? "Gratis" : `$${formatARS(rate.price)}`}
+                            {rate.price === 0 ? "Gratis" : rate.price < 0 ? "A coordinar" : `$${formatARS(rate.price)}`}
                           </span>
                         </label>
                       ))}
@@ -618,7 +618,11 @@ export default function CarritoPage() {
                   <span>Envío</span>
                   {selectedShipping ? (
                     <span className="font-medium text-gray-900">
-                      {selectedShipping.price === 0 ? "Gratis" : `$${formatARS(selectedShipping.price)}`}
+                      {selectedShipping.price === 0
+                        ? "Gratis"
+                        : selectedShipping.price < 0
+                        ? "A coordinar"
+                        : `$${formatARS(selectedShipping.price)}`}
                     </span>
                   ) : (
                     <span className="italic text-gray-400">
@@ -631,7 +635,7 @@ export default function CarritoPage() {
               <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
                 <span className="text-[15px] font-medium text-gray-900">Total</span>
                 <span className="text-[18px] font-medium text-gray-900">
-                  ${formatARS(totalPrice + (selectedShipping?.price || 0))}
+                  ${formatARS(totalPrice + (selectedShipping?.price > 0 ? selectedShipping.price : 0))}
                 </span>
               </div>
 
