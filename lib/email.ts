@@ -25,6 +25,7 @@ type SendOrderConfirmationEmailParams = {
   total: number;
   items?: OrderItem[];
   customerName?: string;
+  orderNumber?: number | null;
 };
 
 export async function sendAdminOrderNotification({
@@ -143,10 +144,12 @@ export async function sendOrderConfirmationEmail({
   total,
   items = [],
   customerName,
+  orderNumber,
 }: SendOrderConfirmationEmailParams): Promise<void> {
   console.log("[email] Sending order confirmation →", { to, orderId });
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://guidoco-v2.vercel.app";
+  const displayOrderNum = orderNumber ? String(orderNumber).padStart(5, "0") : orderId.slice(0, 8);
 
   const itemsHtml = items.map((item) => {
     const productUrl = item.slug ? `${baseUrl}/p/${item.slug}` : baseUrl;
@@ -187,7 +190,7 @@ export async function sendOrderConfirmationEmail({
     const { data, error } = await resend.emails.send({
       from: "Guidoco <onboarding@resend.dev>",
       to,
-      subject: "¡Gracias por tu compra! - Confirmación de pedido",
+      subject: `¡Gracias por tu compra! - Pedido #${displayOrderNum}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -204,9 +207,9 @@ export async function sendOrderConfirmationEmail({
 
                     <!-- Logo -->
                     <tr>
-                      <td align="center" style="padding: 0 0 24px;">
+                      <td align="center" style="padding: 24px 0;">
                         <a href="${baseUrl}" style="text-decoration: none;">
-                          <img src="${baseUrl}/logo.png" alt="Guidoco" width="60" height="60" style="border-radius: 12px; display: block;" />
+                          <img src="${baseUrl}/logo.png" alt="Guidoco Collectibles" width="200" height="58" style="display: block; width: 200px; height: auto; object-fit: contain;" />
                         </a>
                       </td>
                     </tr>
@@ -247,7 +250,7 @@ export async function sendOrderConfirmationEmail({
                                     <span style="color: #6b7280; font-size: 13px;">N° de pedido</span>
                                   </td>
                                   <td align="right" style="padding: 14px 16px; border-bottom: 1px solid #e5e7eb;">
-                                    <span style="color: #111827; font-size: 13px; font-family: monospace; font-weight: 600;">#${orderId.slice(0, 8)}</span>
+                                    <span style="color: #111827; font-size: 13px; font-family: monospace; font-weight: 600;">#${displayOrderNum}</span>
                                   </td>
                                 </tr>
                                 <tr>
@@ -302,7 +305,7 @@ export async function sendOrderConfirmationEmail({
                                   <td style="padding: 20px;">
                                     <p style="margin: 0 0 8px; color: #92400e; font-size: 14px; font-weight: 600;">📦 Próximos pasos</p>
                                     <p style="margin: 0; color: #78350f; font-size: 13px; line-height: 1.6;">
-                                      Nos pondremos en contacto por WhatsApp o email para coordinar el envío. Si tenés alguna consulta, no dudes en escribirnos.
+                                      Estamos preparando tu pedido. Te vamos a contactar por WhatsApp o email para coordinar los detalles de la entrega. ¡Gracias por elegirnos!
                                     </p>
                                   </td>
                                 </tr>
@@ -354,6 +357,145 @@ export async function sendOrderConfirmationEmail({
     console.log("[email] Sent successfully →", { to, orderId, emailId: data?.id });
   } catch (err) {
     console.error("[email] Unexpected error sending confirmation:", {
+      to, orderId, error: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+type SendShippingNotificationParams = {
+  to: string;
+  orderId: string;
+  orderNumber?: number | null;
+  customerName?: string;
+  trackingCode: string;
+  shippingMethod?: string | null;
+};
+
+export async function sendShippingNotificationEmail({
+  to,
+  orderId,
+  orderNumber,
+  customerName,
+  trackingCode,
+  shippingMethod,
+}: SendShippingNotificationParams): Promise<void> {
+  console.log("[email] Sending shipping notification →", { to, orderId, trackingCode });
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://guidoco.com.ar";
+  const greeting = customerName ? `¡Hola ${customerName}!` : "¡Hola!";
+  const displayOrderNum = orderNumber ? String(orderNumber).padStart(5, '0') : orderId.slice(0, 8);
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "Guidoco <onboarding@resend.dev>",
+      to,
+      subject: `Tu pedido #${displayOrderNum} está en camino 🚚`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #e8ecf0;">
+            <table role="presentation" style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td align="center" style="padding: 32px 16px;">
+                  <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse;">
+                    <tr>
+                      <td align="center" style="padding: 24px 0;">
+                        <a href="${baseUrl}" style="text-decoration: none;">
+                          <img src="${baseUrl}/logo.png" alt="Guidoco Collectibles" width="200" height="58" style="display: block; width: 200px; height: auto; object-fit: contain;" />
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                          <tr>
+                            <td style="background-color: #1a1a1a; padding: 32px; text-align: center;">
+                              <div style="font-size: 36px; margin-bottom: 12px;">🚚</div>
+                              <h1 style="margin: 0; color: #ffffff; font-size: 22px; font-weight: 700;">
+                                ¡Tu pedido está en camino!
+                              </h1>
+                              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.7); font-size: 14px;">
+                                Pedido #${displayOrderNum}
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 32px;">
+                              <p style="margin: 0 0 20px; color: #111827; font-size: 16px; line-height: 1.6;">
+                                ${greeting} Tu pedido fue despachado y está en camino.
+                              </p>
+                              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f9fafb; border-radius: 10px; overflow: hidden; margin-bottom: 20px;">
+                                <tr>
+                                  <td style="padding: 14px 16px; border-bottom: 1px solid #e5e7eb;">
+                                    <span style="color: #6b7280; font-size: 13px;">Código de seguimiento</span>
+                                  </td>
+                                  <td align="right" style="padding: 14px 16px; border-bottom: 1px solid #e5e7eb;">
+                                    <span style="color: #111827; font-size: 14px; font-family: monospace; font-weight: 700;">${trackingCode}</span>
+                                  </td>
+                                </tr>
+                                ${shippingMethod ? `
+                                <tr>
+                                  <td style="padding: 14px 16px;">
+                                    <span style="color: #6b7280; font-size: 13px;">Método de envío</span>
+                                  </td>
+                                  <td align="right" style="padding: 14px 16px;">
+                                    <span style="color: #111827; font-size: 13px;">${shippingMethod}</span>
+                                  </td>
+                                </tr>
+                                ` : ""}
+                              </table>
+                              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #eff6ff; border-radius: 10px; border: 1px solid #bfdbfe; overflow: hidden;">
+                                <tr>
+                                  <td style="padding: 20px;">
+                                    <p style="margin: 0 0 8px; color: #1e40af; font-size: 14px; font-weight: 600;">📍 Seguí tu envío</p>
+                                    <p style="margin: 0; color: #1e3a5f; font-size: 13px; line-height: 1.6;">
+                                      Podés rastrear tu paquete en <a href="https://www.correoargentino.com.ar/formularios/ondnc" style="color: #2563eb; text-decoration: underline;">Correo Argentino</a> ingresando tu código de seguimiento.
+                                    </p>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td align="center" style="padding: 0 32px 32px;">
+                              <a href="https://wa.me/5491159599081" style="display: inline-block; background-color: #25D366; color: #ffffff; font-size: 14px; font-weight: 600; padding: 14px 32px; border-radius: 10px; text-decoration: none;">
+                                💬 Contactanos por WhatsApp
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 24px 16px; text-align: center;">
+                        <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px;">
+                          <a href="${baseUrl}" style="color: #C0392B; text-decoration: none; font-weight: 600;">Guidoco</a> · Bernal Centro, Buenos Aires
+                        </p>
+                        <p style="margin: 0; color: #9ca3af; font-size: 11px;">
+                          © ${new Date().getFullYear()} Guidoco Collectibles. Todos los derechos reservados.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error("[email] Shipping notification error:", { to, orderId, error: error.message });
+      return;
+    }
+    console.log("[email] Shipping notification sent →", { to, orderId, emailId: data?.id });
+  } catch (err) {
+    console.error("[email] Unexpected error sending shipping notification:", {
       to, orderId, error: err instanceof Error ? err.message : String(err),
     });
   }

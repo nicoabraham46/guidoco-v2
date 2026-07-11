@@ -215,6 +215,7 @@ export async function POST(request: NextRequest) {
         total: order.total_amount,
         items: emailItemsWithImages,
         customerName: order.customer_name,
+        orderNumber: order.order_number || null,
       });
       console.log("[webhook/mp] Confirmation email sent to:", order.customer_email);
     } catch (emailErr) {

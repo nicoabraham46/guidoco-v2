@@ -17,6 +17,7 @@ export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
 
 export type Order = {
   id: string;
+  order_number?: number | null;
   created_at: string;
   status: OrderStatus;
   currency: string;
@@ -30,6 +31,7 @@ export type Order = {
   payment_status: PaymentStatus | null;
   payment_reference: string | null;
   metadata: Record<string, unknown> | null;
+  tracking_code?: string | null;
 };
 
 export type OrderItem = {
@@ -241,6 +243,28 @@ export async function updateOrderStatus(
 
   if (error || !data) {
     throw new Error(error?.message || "Error al actualizar el pedido");
+  }
+
+  return data as Order;
+}
+
+/**
+ * Actualizar el código de seguimiento de un pedido
+ */
+export async function updateOrderTracking(
+  orderId: string,
+  trackingCode: string
+): Promise<Order> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ tracking_code: trackingCode })
+    .eq("id", orderId)
+    .select()
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message || "Error al actualizar el código de seguimiento");
   }
 
   return data as Order;

@@ -3,11 +3,13 @@ import { redirect } from "next/navigation";
 import {
   getOrderById,
   updateOrderStatus,
+  updateOrderTracking,
   updatePaymentStatus,
   type OrderStatus,
   type PaymentStatus,
 } from "@/lib/orders";
 import { formatARS } from "@/lib/format";
+import { sendShippingNotificationEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -39,8 +41,33 @@ export default async function AdminOrderDetailPage({
 
     const orderId = formData.get("order_id") as string;
     const newStatus = formData.get("status") as OrderStatus;
+    const trackingCode = (formData.get("tracking_code") as string || "").trim();
 
+    if (trackingCode) {
+      await updateOrderTracking(orderId, trackingCode);
+    }
     await updateOrderStatus(orderId, newStatus);
+
+    if (newStatus === "shipped" && trackingCode) {
+      const current = await getOrderById(orderId);
+      if (current) {
+        const shippingMethod =
+          (current.metadata as { shipping_method?: string } | null)?.shipping_method ?? null;
+        try {
+          await sendShippingNotificationEmail({
+            to: current.customer_email,
+            orderId: current.id,
+            orderNumber: current.order_number || null,
+            customerName: current.customer_name,
+            trackingCode,
+            shippingMethod,
+          });
+        } catch (err) {
+          console.error("[admin/orders] Error sending shipping notification:", err);
+        }
+      }
+    }
+
     redirect(`/admin/orders/${orderId}`);
   }
 
@@ -206,6 +233,16 @@ export default async function AdminOrderDetailPage({
               <option value="cancelled">Cancelado</option>
               <option value="refunded">Reembolsado</option>
             </select>
+            <input
+              type="text"
+              name="tracking_code"
+              placeholder="Código de seguimiento"
+              defaultValue={order.tracking_code || ""}
+              className="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 placeholder-gray-400"
+            />
+            <p className="text-xs text-gray-400">
+              Si cargás un código y elegís "Enviado", se manda automáticamente el email de seguimiento al cliente.
+            </p>
             <button
               type="submit"
               className="w-full rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
