@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminSessionToken } from "@/lib/admin-auth";
+import { verifyAdminSessionToken } from "@/lib/admin-auth";
 
 // In-memory store — vive por Edge worker instance (válido para single-instance / dev)
 const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
@@ -54,15 +54,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Verificar cookie de sesión
+  // Verificar cookie de sesión (firma válida y no vencida)
   const adminSession = request.cookies.get("admin_session");
-  if (!adminSession) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
-  }
-
-  // Comparar contra el token HMAC esperado
-  const expectedToken = await getAdminSessionToken();
-  if (adminSession.value !== expectedToken) {
+  if (!adminSession || !(await verifyAdminSessionToken(adminSession.value))) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 

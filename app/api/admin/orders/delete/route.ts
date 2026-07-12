@@ -1,19 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { getAdminSessionToken } from "@/lib/admin-auth";
-
-async function isAdmin(): Promise<boolean> {
-  try {
-    const cookieStore = await cookies();
-    const sessionValue = cookieStore.get("admin_session")?.value;
-    if (!sessionValue) return false;
-    const expectedToken = await getAdminSessionToken();
-    return sessionValue === expectedToken;
-  } catch {
-    return false;
-  }
-}
+import { isAdmin } from "@/lib/admin-guard";
 
 export async function POST(request: NextRequest) {
   if (!(await isAdmin())) {

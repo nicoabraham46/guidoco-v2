@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminSessionToken } from "@/lib/admin-auth";
+import { createAdminSessionToken, timingSafeEqual } from "@/lib/admin-auth";
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -7,14 +7,14 @@ export async function POST(request: NextRequest) {
 
   const adminKey = process.env.ADMIN_KEY;
 
-  if (!adminKey || password !== adminKey) {
+  if (!adminKey || !password || !timingSafeEqual(password, adminKey)) {
     return NextResponse.json(
       { error: "Clave incorrecta" },
       { status: 401 }
     );
   }
 
-  const sessionToken = await getAdminSessionToken();
+  const sessionToken = await createAdminSessionToken();
   const response = NextResponse.json({ success: true });
 
   response.cookies.set("admin_session", sessionToken, {
