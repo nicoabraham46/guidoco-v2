@@ -192,7 +192,7 @@ export default function OrderList({ orders }: { orders: Order[] }) {
                 const pc = PAYMENT_COLORS[o.payment_status || "pending"] || { bg: "#f3f4f6", text: "#374151" };
                 return (
                   <tr key={o.id} style={{ borderTop: "1px solid #f0f0f0" }}>
-                    <td style={{ padding: "10px 12px", fontFamily: "monospace", fontWeight: 600, fontSize: 13 }}>
+                    <td style={{ padding: "10px 12px", fontFamily: "monospace", fontWeight: 600, fontSize: 13, color: "#1a1a1a" }}>
                       #{o.order_number ? String(o.order_number).padStart(5, "0") : o.id.slice(0, 8)}
                     </td>
                     <td style={{ padding: "10px 12px", fontSize: 13, color: "#555" }}>
@@ -202,7 +202,7 @@ export default function OrderList({ orders }: { orders: Order[] }) {
                       <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#1a1a1a" }}>{o.customer_name}</p>
                       <p style={{ margin: 0, fontSize: 11, color: "#888" }}>{o.customer_email}</p>
                     </td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 600 }}>${formatARS(o.total_amount)}</td>
+                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 600, color: "#1a1a1a" }}>${formatARS(o.total_amount)}</td>
                     <td style={{ padding: "10px 12px", textAlign: "center" }}>
                       <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 600, backgroundColor: sc.bg, color: sc.text }}>
                         {STATUS_LABELS[o.status] || o.status}
@@ -214,9 +214,35 @@ export default function OrderList({ orders }: { orders: Order[] }) {
                       </span>
                     </td>
                     <td style={{ padding: "10px 12px", textAlign: "right" }}>
-                      <Link href={`/admin/orders/${o.id}`} style={{ fontSize: 13, color: "#2563eb", textDecoration: "none", fontWeight: 500 }}>
-                        Ver
-                      </Link>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 12 }}>
+                        <Link href={`/admin/orders/${o.id}`} style={{ fontSize: 13, color: "#2563eb", textDecoration: "none", fontWeight: 500 }}>
+                          Ver
+                        </Link>
+                        <button
+                          onClick={async () => {
+                            const orderNum = o.order_number ? `#${String(o.order_number).padStart(5, "0")}` : `#${o.id.slice(0, 8)}`;
+                            if (!confirm(`¿Eliminar el pedido ${orderNum} de ${o.customer_name}?`)) return;
+                            try {
+                              const res = await fetch("/api/admin/orders/delete", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ orderId: o.id }),
+                              });
+                              if (res.ok) {
+                                window.location.reload();
+                              } else {
+                                const data = await res.json();
+                                alert(data.error || "Error al eliminar");
+                              }
+                            } catch {
+                              alert("Error de conexión");
+                            }
+                          }}
+                          style={{ fontSize: 13, color: "#ef4444", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
