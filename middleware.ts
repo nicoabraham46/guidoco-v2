@@ -1,31 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSessionToken } from "@/lib/admin-auth";
-
-// In-memory store — vive por Edge worker instance (válido para single-instance / dev)
-const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const RATE_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "/api/checkout": { max: 5, windowMs: 60_000 },
   "/admin/login":  { max: 3, windowMs: 60_000 },
 };
 
-function isRateLimited(ip: string, path: string): boolean {
+/**
+ * Chequea el rate limit contra la tabla compartida en Supabase (rate_limits),
+ * en vez de memoria local — así el límite es real entre todas las instancias
+ * de Vercel. Si la consulta a Supabase falla, se deja pasar el request
+ * (fail-open) para no bloquear accidentalmente por un problema de conexión.
+ */
+async function isRateLimited(ip: string, path: string): Promise<boolean> {
   const limit = RATE_LIMITS[path];
   if (!limit) return false;
 
   const key = `${ip}:${path}`;
-  const now = Date.now();
-  const entry = rateLimitStore.get(key);
 
-  if (!entry || now - entry.windowStart >= limit.windowMs) {
-    rateLimitStore.set(key, { count: 1, windowStart: now });
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.rpc("check_rate_limit", {
+      p_key: key,
+      p_max: limit.max,
+      p_window_ms: limit.windowMs,
+    });
+
+    if (error) {
+      console.error("[middleware] Error checking rate limit:", error.message);
+      return false;
+    }
+
+    return data === true;
+  } catch (err) {
+    console.error("[middleware] Rate limit check failed:", err);
     return false;
   }
-
-  if (entry.count >= limit.max) return true;
-
-  entry.count++;
-  return false;
 }
 
 export async function middleware(request: NextRequest) {
@@ -36,7 +47,7 @@ export async function middleware(request: NextRequest) {
   if (limitedPath) {
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-    if (isRateLimited(ip, limitedPath)) {
+    if (await isRateLimited(ip, limitedPath)) {
       return NextResponse.json(
         { error: "Demasiadas solicitudes, intentá más tarde" },
         { status: 429 }
