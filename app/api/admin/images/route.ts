@@ -6,6 +6,44 @@ import { isAdmin } from "@/lib/admin-guard";
 // action=upload  → multipart: file, productId
 // action=delete  → JSON: { imageId, url }
 // action=cover   → JSON: { productId, imageId }
+async function detectImageType(file: File): Promise<string | null> {
+  const buffer = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (
+    buffer.length >= 8 &&
+    buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47 &&
+    buffer[4] === 0x0d && buffer[5] === 0x0a && buffer[6] === 0x1a && buffer[7] === 0x0a
+  ) {
+    return "image/png";
+  }
+
+  // JPEG: FF D8 FF
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return "image/jpeg";
+  }
+
+  // GIF: "GIF87a" o "GIF89a"
+  if (
+    buffer.length >= 6 &&
+    buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x38 &&
+    (buffer[4] === 0x37 || buffer[4] === 0x39) && buffer[5] === 0x61
+  ) {
+    return "image/gif";
+  }
+
+  // WEBP: "RIFF" + 4 bytes de tamaño + "WEBP"
+  if (
+    buffer.length >= 12 &&
+    buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46 &&
+    buffer[8] === 0x57 && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50
+  ) {
+    return "image/webp";
+  }
+
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   if (!await isAdmin()) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -23,12 +61,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Faltan campos: file, productId" }, { status: 400 });
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Tipo de archivo no permitido" }, { status: 400 });
+    const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8 MB
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `El archivo supera el tamaño máximo permitido (${MAX_FILE_SIZE / (1024 * 1024)}MB)` },
+        { status: 400 }
+      );
     }
 
-    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+    const detectedType = await detectImageType(file);
+    if (!detectedType) {
+      return NextResponse.json(
+        { error: "El archivo no es una imagen válida (JPEG, PNG, WEBP o GIF)" },
+        { status: 400 }
+      );
+    }
+
+    const extByType: Record<string, string> = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+      "image/gif": "gif",
+    };
+    const ext = extByType[detectedType];
     const safeName = `${Date.now()}.${ext}`;
     const storagePath = `${productId}/${safeName}`;
 
@@ -36,7 +91,7 @@ export async function POST(req: NextRequest) {
 
     const { error: uploadError } = await supabase.storage
       .from("product-images")
-      .upload(storagePath, file, { contentType: file.type, upsert: false });
+      .upload(storagePath, file, { contentType: detectedType, upsert: false });
 
     if (uploadError) {
       console.error("❌ storage upload:", uploadError.message);
