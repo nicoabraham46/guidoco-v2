@@ -32,6 +32,18 @@ const nextConfig: NextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
           },
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com",
+              "img-src 'self' data: https://qhvipvmvnezglqemidqa.supabase.co https://placehold.co https://images.pokemontcg.io",
+              "connect-src 'self' https://dolarapi.com https://qhvipvmvnezglqemidqa.supabase.co",
+              "frame-ancestors 'self'",
+            ].join("; "),
+          },
         ],
       },
     ];
