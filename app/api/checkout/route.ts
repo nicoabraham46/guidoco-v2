@@ -134,20 +134,19 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Validar stock si existe
-      if (product.stock !== null && product.stock !== undefined) {
-        if (product.stock <= 0) {
-          return NextResponse.json(
-            { error: `Producto sin stock: ${product.name || product.title}` },
-            { status: 400 }
-          );
-        }
-        if (item.quantity > product.stock) {
-          return NextResponse.json(
-            { error: `Stock insuficiente para: ${product.name || product.title}. Disponible: ${product.stock}` },
-            { status: 400 }
-          );
-        }
+      // Validar stock (null o undefined se trata como 0 — sin stock)
+      const currentStock = product.stock ?? 0;
+      if (currentStock <= 0) {
+        return NextResponse.json(
+          { error: `Producto sin stock: ${product.name || product.title}` },
+          { status: 400 }
+        );
+      }
+      if (item.quantity > currentStock) {
+        return NextResponse.json(
+          { error: `Stock insuficiente para: ${product.name || product.title}. Disponible: ${currentStock}` },
+          { status: 400 }
+        );
       }
 
       // Construir item con datos reales de DB

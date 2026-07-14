@@ -12,7 +12,11 @@ export default async function AdminNewPage() {
     const title = formData.get("title") as string;
     const slug = formData.get("slug") as string;
     const price = parseFloat(formData.get("price") as string);
-    const stock = parseInt(formData.get("stock") as string, 10);
+    const stockRaw = formData.get("stock") as string;
+    const stock = parseInt(stockRaw, 10);
+    if (!Number.isFinite(stock) || stock < 0) {
+      throw new Error("Stock inválido: debe ser un número entero mayor o igual a 0");
+    }
     const description = formData.get("description") as string;
     const category = formData.get("category") as string | null;
     const rarity = formData.get("rarity") as string | null;
