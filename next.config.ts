@@ -40,7 +40,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https://qhvipvmvnezglqemidqa.supabase.co https://placehold.co https://images.pokemontcg.io",
-              "connect-src 'self' https://dolarapi.com https://qhvipvmvnezglqemidqa.supabase.co",
+              "connect-src 'self' https://dolarapi.com https://qhvipvmvnezglqemidqa.supabase.co https://api.pokemontcg.io",
               "frame-ancestors 'self'",
             ].join("; "),
           },
