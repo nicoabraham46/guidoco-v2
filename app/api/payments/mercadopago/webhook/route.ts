@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import MercadoPago, { Payment } from "mercadopago";
+import { MercadoPagoConfig, Payment } from "mercadopago";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getOrderById, updatePaymentStatus, updateOrderStatus } from "@/lib/orders";
 import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "@/lib/email";
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // Obtener detalle del pago desde la API de MP
-    const client = new MercadoPago({ accessToken });
+    const client = new MercadoPagoConfig({ accessToken });
     const paymentClient = new Payment(client);
     const payment = await paymentClient.get({ id: paymentId });
 

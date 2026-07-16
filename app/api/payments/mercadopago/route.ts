@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import MercadoPago, { Preference } from "mercadopago";
+import { MercadoPagoConfig, Preference } from "mercadopago";
 import { getOrderById } from "@/lib/orders";
 
 export async function POST(request: NextRequest) {
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  const client = new MercadoPago({ accessToken });
+  const client = new MercadoPagoConfig({ accessToken });
   const preference = new Preference(client);
 
   try {
