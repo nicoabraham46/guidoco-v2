@@ -109,6 +109,22 @@ export default function ComoComprarPage() {
           </p>
         </div>
 
+        {/* Aclaración sobre el nombre en Mercado Pago */}
+        <div style={{
+          marginTop: 16,
+          padding: "20px 24px",
+          backgroundColor: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: 14,
+        }}>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#e4e4e7", marginBottom: 6 }}>
+            💳 Sobre el pago con Mercado Pago
+          </p>
+          <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7, color: "#71717a" }}>
+            Al pagar vas a ver el nombre "Luciana" en el checkout y en el email de confirmación de Mercado Pago. Es la cuenta autorizada de Guidoco para recibir los pagos — todo en orden, podés continuar tranquilo/a.
+          </p>
+        </div>
+
         <div className="mt-12 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
           <CardConditionGuide variant="text" />
         </div>

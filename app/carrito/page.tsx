@@ -379,6 +379,9 @@ export default function CarritoPage() {
               Finalizar compra →
             </button>
             <p className="mt-2 text-center text-xs text-gray-400">🔒 Compra segura · Mercado Pago</p>
+            <p className="mt-1 text-center text-xs text-gray-400">
+              Vas a ver el nombre "Luciana" al pagar — es la cuenta autorizada de Guidoco para recibir pagos.
+            </p>
           </div>
 
         </div>
