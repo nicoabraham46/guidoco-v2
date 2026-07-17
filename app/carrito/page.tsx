@@ -371,17 +371,29 @@ export default function CarritoPage() {
               <span className="text-sm text-gray-500">Total</span>
               <span className="text-[22px] font-medium text-gray-900">${formatARS(totalPrice)}</span>
             </div>
+            <div style={{
+              marginTop: 16,
+              padding: "10px 14px",
+              backgroundColor: "rgba(192, 57, 43, 0.06)",
+              border: "1px solid rgba(192, 57, 43, 0.25)",
+              borderRadius: 10,
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 8,
+            }}>
+              <span style={{ fontSize: 16, lineHeight: 1.3 }}>💳</span>
+              <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.5, color: "#8a3428" }}>
+                Vas a ver el nombre <strong>"Luciana"</strong> al pagar con Mercado Pago — es la cuenta autorizada de Guidoco para recibir pagos.
+              </p>
+            </div>
             <button
               onClick={() => setCheckoutOpen(true)}
-              className="mt-5 w-full rounded-lg text-[15px] font-bold text-white transition-colors hover:bg-[#333]"
+              className="mt-4 w-full rounded-lg text-[15px] font-bold text-white transition-colors hover:bg-[#333]"
               style={{ backgroundColor: "#1a1a1a", height: "52px" }}
             >
               Finalizar compra →
             </button>
             <p className="mt-2 text-center text-xs text-gray-400">🔒 Compra segura · Mercado Pago</p>
-            <p className="mt-1 text-center text-xs text-gray-400">
-              Vas a ver el nombre "Luciana" al pagar — es la cuenta autorizada de Guidoco para recibir pagos.
-            </p>
           </div>
 
         </div>
