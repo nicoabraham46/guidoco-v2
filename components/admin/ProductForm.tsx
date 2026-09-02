@@ -17,6 +17,10 @@ type DefaultValues = {
   set_name?: string | null;
   pokemon_type?: string | null;
   year?: number | null;
+  weight_grams?: number | null;
+  height_cm?: number | null;
+  width_cm?: number | null;
+  length_cm?: number | null;
 };
 
 type Props = {
@@ -166,6 +170,76 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
             />
           </div>
         </div>
+      </div>
+
+      {/* Card — Peso y dimensiones (envío) */}
+      <div style={cardStyle}>
+        <p style={cardTitleStyle}>📦 Peso y dimensiones (para cotizar envío)</p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          <div>
+            <label htmlFor="weight_grams" style={labelStyle}>Peso (gramos) *</label>
+            <input
+              type="number"
+              id="weight_grams"
+              name="weight_grams"
+              required
+              min="1"
+              defaultValue={defaultValues.weight_grams ?? 200}
+              style={inputStyle}
+              onFocus={focusRed}
+              onBlur={blurGray}
+            />
+          </div>
+          <div>
+            <label htmlFor="height_cm" style={labelStyle}>Alto (cm) *</label>
+            <input
+              type="number"
+              id="height_cm"
+              name="height_cm"
+              required
+              min="1"
+              defaultValue={defaultValues.height_cm ?? 5}
+              style={inputStyle}
+              onFocus={focusRed}
+              onBlur={blurGray}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div>
+            <label htmlFor="width_cm" style={labelStyle}>Ancho (cm) *</label>
+            <input
+              type="number"
+              id="width_cm"
+              name="width_cm"
+              required
+              min="1"
+              defaultValue={defaultValues.width_cm ?? 15}
+              style={inputStyle}
+              onFocus={focusRed}
+              onBlur={blurGray}
+            />
+          </div>
+          <div>
+            <label htmlFor="length_cm" style={labelStyle}>Largo (cm) *</label>
+            <input
+              type="number"
+              id="length_cm"
+              name="length_cm"
+              required
+              min="1"
+              defaultValue={defaultValues.length_cm ?? 20}
+              style={inputStyle}
+              onFocus={focusRed}
+              onBlur={blurGray}
+            />
+          </div>
+        </div>
+        <p style={{ fontSize: 11, color: "#aaa", marginTop: 8 }}>
+          Por defecto viene precargado con el tamaño típico de una carta. Para autos u otros productos, corregí estos valores.
+        </p>
       </div>
 
       {/* Card 3 — Categoría */}

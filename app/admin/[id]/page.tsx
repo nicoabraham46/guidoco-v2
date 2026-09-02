@@ -15,7 +15,7 @@ export default async function AdminEditPage({
 
   const { data: product, error } = await getSupabaseAdmin()
     .from("products")
-    .select("id, title, name, slug, price, stock, description, category, rarity, set_name, pokemon_type, year, product_images(id, url, sort_order)")
+    .select("id, title, name, slug, price, stock, weight_grams, height_cm, width_cm, length_cm, description, category, rarity, set_name, pokemon_type, year, product_images(id, url, sort_order)")
     .eq("id", id)
     .single();
 
@@ -43,6 +43,18 @@ export default async function AdminEditPage({
     if (!Number.isFinite(stock) || stock < 0) {
       throw new Error("Stock inválido: debe ser un número entero mayor o igual a 0");
     }
+    const weight_grams = parseInt(formData.get("weight_grams") as string, 10);
+    const height_cm = parseInt(formData.get("height_cm") as string, 10);
+    const width_cm = parseInt(formData.get("width_cm") as string, 10);
+    const length_cm = parseInt(formData.get("length_cm") as string, 10);
+    if (
+      !Number.isFinite(weight_grams) || weight_grams < 1 ||
+      !Number.isFinite(height_cm) || height_cm < 1 ||
+      !Number.isFinite(width_cm) || width_cm < 1 ||
+      !Number.isFinite(length_cm) || length_cm < 1
+    ) {
+      throw new Error("Peso y dimensiones deben ser números enteros mayores a 0");
+    }
     const description = formData.get("description") as string;
     const category = formData.get("category") as string | null;
     const rarity = formData.get("rarity") as string | null;
@@ -58,6 +70,10 @@ export default async function AdminEditPage({
         slug,
         price,
         stock,
+        weight_grams,
+        height_cm,
+        width_cm,
+        length_cm,
         description: description || null,
         category: category || null,
         rarity: rarity || null,
@@ -100,6 +116,10 @@ export default async function AdminEditPage({
             slug: product.slug ?? "",
             price: product.price,
             stock: product.stock,
+            weight_grams: product.weight_grams,
+            height_cm: product.height_cm,
+            width_cm: product.width_cm,
+            length_cm: product.length_cm,
             description: product.description,
             category: product.category,
             rarity: product.rarity,
