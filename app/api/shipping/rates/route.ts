@@ -18,8 +18,8 @@ async function getToken(): Promise<string> {
     return cachedToken.token;
   }
 
-  const email = process.env.MICORREO_EMAIL;
-  const password = process.env.MICORREO_PASSWORD;
+  const email = process.env.MICORREO_EMAIL?.trim();
+  const password = process.env.MICORREO_PASSWORD?.trim();
 
   if (!email || !password) {
     throw new Error("MiCorreo credentials not configured");
