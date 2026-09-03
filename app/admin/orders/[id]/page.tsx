@@ -102,7 +102,15 @@ export default async function AdminOrderDetailPage({
         </Link>
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900">Pedido #{order.id.slice(0, 8)}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Pedido #{order.id.slice(0, 8)}</h1>
+        <Link
+          href={`/admin/orders/${order.id}/enviar`}
+          className="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+        >
+          📦 Generar envío
+        </Link>
+      </div>
       <p className="mt-1 text-sm text-gray-500">{date}</p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">

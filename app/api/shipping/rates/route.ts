@@ -1,126 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { getMiCorreoToken, computeOrderPackageDimensions, PACKAGING_OVERHEAD_GRAMS, DEFAULT_PACKAGING_OVERHEAD_GRAMS } from "@/lib/micorreo";
 
 const MICORREO_BASE_URL = "https://api.correoargentino.com.ar/micorreo/v1";
 const ORIGIN_POSTAL_CODE = "1876"; // Bernal Este
-
-const PACKAGING_OVERHEAD_GRAMS: Record<string, number> = {
-  pokemon: 15,
-  diecast: 170,
-  especiales: 15,
-};
-const DEFAULT_PACKAGING_OVERHEAD_GRAMS = 15;
-
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
-async function getToken(): Promise<string> {
-  if (cachedToken && cachedToken.expiresAt > Date.now() + 5 * 60 * 1000) {
-    return cachedToken.token;
-  }
-
-  const email = process.env.MICORREO_EMAIL?.trim();
-  const password = process.env.MICORREO_PASSWORD?.trim();
-
-  if (!email || !password) {
-    throw new Error("MiCorreo credentials not configured");
-  }
-
-  const credentials = Buffer.from(`${email}:${password}`).toString("base64");
-
-  const res = await fetch(`${MICORREO_BASE_URL}/token`, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("[shipping] Token error:", res.status, text);
-    throw new Error(`Failed to get MiCorreo token: ${res.status}`);
-  }
-
-  const data = await res.json();
-  const token = data.token;
-
-  cachedToken = {
-    token,
-    expiresAt: Date.now() + 50 * 60 * 1000,
-  };
-
-  return token;
-}
 
 type CartItem = {
   product_id: string;
   quantity: number;
 };
 
-type ProductPackageInfo = {
-  id: string;
-  weight_grams: number | null;
-  height_cm: number | null;
-  width_cm: number | null;
-  length_cm: number | null;
-  category: string | null;
-};
-
 async function computePackageDimensions(items: CartItem[]) {
-  const supabase = getSupabaseAdmin();
-  const productIds = items.map((i) => i.product_id);
-
-  const { data: products, error } = await supabase
-    .from("products")
-    .select("id, weight_grams, height_cm, width_cm, length_cm, category")
-    .in("id", productIds);
-
-  if (error || !products) {
-    throw new Error("No se pudo obtener info de productos para calcular el envío");
-  }
-
-  const productMap = new Map<string, ProductPackageInfo>(
-    (products as ProductPackageInfo[]).map((p) => [p.id, p])
-  );
-
-  let totalWeight = 0;
-  let maxHeight = 1;
-  let maxWidth = 1;
-  let maxLength = 1;
-  let maxOverhead = DEFAULT_PACKAGING_OVERHEAD_GRAMS;
-
-  for (const item of items) {
-    const product = productMap.get(item.product_id);
-    if (!product) continue;
-
-    const weight = product.weight_grams ?? 200;
-    const height = product.height_cm ?? 5;
-    const width = product.width_cm ?? 15;
-    const length = product.length_cm ?? 20;
-    const overhead = product.category
-      ? PACKAGING_OVERHEAD_GRAMS[product.category] ?? DEFAULT_PACKAGING_OVERHEAD_GRAMS
-      : DEFAULT_PACKAGING_OVERHEAD_GRAMS;
-
-    totalWeight += weight * item.quantity;
-    maxHeight = Math.max(maxHeight, height);
-    maxWidth = Math.max(maxWidth, width);
-    maxLength = Math.max(maxLength, length);
-    maxOverhead = Math.max(maxOverhead, overhead);
-  }
-
-  totalWeight += maxOverhead;
-
-  totalWeight = Math.min(Math.max(totalWeight, 1), 25000);
-  maxHeight = Math.min(maxHeight, 150);
-  maxWidth = Math.min(maxWidth, 150);
-  maxLength = Math.min(maxLength, 150);
-
-  return {
-    weight: Math.round(totalWeight),
-    height: Math.round(maxHeight),
-    width: Math.round(maxWidth),
-    length: Math.round(maxLength),
-  };
+  const { hadMissingProduct: _hadMissingProduct, ...dimensions } = await computeOrderPackageDimensions(items);
+  return dimensions;
 }
 
 export async function POST(request: NextRequest) {
@@ -157,7 +48,7 @@ export async function POST(request: NextRequest) {
     ) {
       try {
         const dimensions = await computePackageDimensions(items);
-        const token = await getToken();
+        const token = await getMiCorreoToken();
 
         const res = await fetch(`${MICORREO_BASE_URL}/rates`, {
           method: "POST",
