@@ -161,7 +161,10 @@ export default function CarritoPage() {
       const res = await fetch("/api/shipping/rates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postalCode: cp }),
+        body: JSON.stringify({
+          postalCode: cp,
+          items: items.map((item) => ({ product_id: item.product_id, quantity: item.quantity })),
+        }),
       });
       const data = await res.json();
       if (res.ok && data.rates) {
