@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
 
         if (res.ok) {
           const data = await res.json();
+          console.log("[shipping] Respuesta cruda de MiCorreo /rates:", JSON.stringify(data));
           if (Array.isArray(data.rates) && data.rates.length > 0) {
             for (const r of data.rates) {
               rates.push({
