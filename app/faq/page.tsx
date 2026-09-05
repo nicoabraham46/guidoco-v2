@@ -18,7 +18,7 @@ const FAQS = [
   },
   {
     q: "¿El envío está incluido en el precio?",
-    a: "El precio publicado no incluye el costo de envío. Los envíos a todo el país corren por cuenta del comprador. Si estás en zona Sur, Quilmes, Bernal, Don Bosco, Avellaneda coordinamos la entrega en mano sin costo adicional. Escribinos por WhatsApp al +54 11 5959 9081 para coordinar.",
+    a: "El costo de envío se calcula automáticamente al finalizar la compra, según tu código postal. Si estás en zona Sur, Quilmes, Bernal, Don Bosco, Avellaneda, coordinamos la entrega en mano sin costo adicional.",
   },
   {
     q: "¿Cómo se coordina el pago?",
@@ -26,7 +26,7 @@ const FAQS = [
   },
   {
     q: "¿Qué pasa después de comprar?",
-    a: "Al completar tu compra recibís un email automático de confirmación con el detalle de tu pedido. Nosotros recibimos tu orden y nos ponemos en contacto para coordinar el envío. Podés seguir el estado de tu pedido escribiéndonos por WhatsApp al +54 11 5959 9081.",
+    a: "Al completar tu compra recibís un email automático de confirmación con el detalle de tu pedido. Cuando lo despachemos, te avisamos por email con el código de seguimiento. Si tenés alguna consulta, escribinos por WhatsApp al +54 11 5959 9081.",
   },
   {
     q: "¿Puedo consultar antes de comprar?",
