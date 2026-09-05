@@ -146,35 +146,42 @@ export default function ContactoPage() {
               <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
                 <div>
-                  <label style={labelStyle}>Nombre *</label>
+                  <label htmlFor="contacto-nombre" style={labelStyle}>Nombre *</label>
                   <input
+                    id="contacto-nombre"
                     type="text" name="nombre" required value={form.nombre}
+                    autoComplete="name"
                     onChange={handleChange} onFocus={focusRed} onBlur={blurGray}
                     style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Email *</label>
+                  <label htmlFor="contacto-email" style={labelStyle}>Email *</label>
                   <input
+                    id="contacto-email"
                     type="email" name="email" required value={form.email}
+                    autoComplete="email"
                     onChange={handleChange} onFocus={focusRed} onBlur={blurGray}
                     style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Teléfono</label>
+                  <label htmlFor="contacto-telefono" style={labelStyle}>Teléfono</label>
                   <input
+                    id="contacto-telefono"
                     type="tel" name="telefono" value={form.telefono}
+                    autoComplete="tel"
                     onChange={handleChange} onFocus={focusRed} onBlur={blurGray}
                     style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Mensaje *</label>
+                  <label htmlFor="contacto-mensaje" style={labelStyle}>Mensaje *</label>
                   <textarea
+                    id="contacto-mensaje"
                     name="mensaje" required value={form.mensaje}
                     onChange={handleChange} onFocus={focusRed} onBlur={blurGray}
                     rows={5}
