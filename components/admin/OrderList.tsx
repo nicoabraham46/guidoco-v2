@@ -196,7 +196,7 @@ export default function OrderList({ orders }: { orders: Order[] }) {
                       #{o.order_number ? String(o.order_number).padStart(5, "0") : o.id.slice(0, 8)}
                     </td>
                     <td style={{ padding: "10px 12px", fontSize: 13, color: "#555" }}>
-                      {new Date(o.created_at).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                      {new Date(o.created_at).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "America/Argentina/Buenos_Aires" })}
                     </td>
                     <td style={{ padding: "10px 12px" }}>
                       <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#1a1a1a" }}>{o.customer_name}</p>
