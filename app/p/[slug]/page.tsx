@@ -359,12 +359,6 @@ export default async function ProductPage({
                 </svg>
                 <span className="text-sm text-gray-600">Despacho en 24–48hs</span>
               </div>
-              <div className="flex items-center gap-3 px-4 py-3">
-                <svg className="h-4 w-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5 9 9m0 0 5.25-4.5M9 9v12m9-8.25L18.75 9m0 0L13.5 4.5m5.25 4.5H9" />
-                </svg>
-                <span className="text-sm text-gray-600">Envío calculado al instante</span>
-              </div>
             </div>
 
           </div>
