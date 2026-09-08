@@ -155,15 +155,15 @@ export default async function GenerarEnvioPage({
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-gray-600">Nombre completo</label>
-              <input name="recipientName" defaultValue={order.customer_name} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="recipientName" defaultValue={order.customer_name} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Teléfono</label>
-              <input name="recipientPhone" defaultValue={order.customer_phone || ""} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="recipientPhone" defaultValue={order.customer_phone || ""} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-medium text-gray-600">Email</label>
-              <input name="recipientEmail" type="email" defaultValue={order.customer_email} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="recipientEmail" type="email" defaultValue={order.customer_email} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
           </div>
         </section>
@@ -183,7 +183,7 @@ export default async function GenerarEnvioPage({
           </div>
           <div className="mt-3">
             <label className="block text-xs font-medium text-gray-600">Código de sucursal (solo si es retiro en sucursal)</label>
-            <input name="agency" placeholder="Ej: B0107" className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+            <input name="agency" placeholder="Ej: B0107" className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             <p className="mt-1 text-xs text-gray-400">Buscalo en el portal de MiCorreo si no lo tenés a mano.</p>
           </div>
         </section>
@@ -193,27 +193,27 @@ export default async function GenerarEnvioPage({
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-gray-600">Calle</label>
-              <input name="streetName" defaultValue={streetName} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="streetName" defaultValue={streetName} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Número</label>
-              <input name="streetNumber" defaultValue={streetNumber} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="streetNumber" defaultValue={streetNumber} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Piso</label>
-              <input name="floor" placeholder="Ej: 3" maxLength={3} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="floor" placeholder="Ej: 3" maxLength={3} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Departamento</label>
-              <input name="apartment" placeholder="Ej: A" maxLength={3} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="apartment" placeholder="Ej: A" maxLength={3} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Ciudad</label>
-              <input name="city" defaultValue={order.shipping_address?.city || ""} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="city" defaultValue={order.shipping_address?.city || ""} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Provincia</label>
-              <select name="provinceCode" defaultValue="" className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
+              <select name="provinceCode" defaultValue="" className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900">
                 <option value="">Seleccionar...</option>
                 {PROVINCE_CODES.map((p) => (
                   <option key={p.code} value={p.code}>{p.name}</option>
@@ -222,7 +222,7 @@ export default async function GenerarEnvioPage({
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Código postal</label>
-              <input name="postalCode" defaultValue={order.shipping_address?.zip || ""} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="postalCode" defaultValue={order.shipping_address?.zip || ""} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
           </div>
         </section>
@@ -232,24 +232,24 @@ export default async function GenerarEnvioPage({
           <div className="mt-3 grid gap-3 sm:grid-cols-4">
             <div>
               <label className="block text-xs font-medium text-gray-600">Peso (g)</label>
-              <input name="weight" type="number" defaultValue={dimensions.weight} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="weight" type="number" defaultValue={dimensions.weight} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Alto (cm)</label>
-              <input name="height" type="number" defaultValue={dimensions.height} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="height" type="number" defaultValue={dimensions.height} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Ancho (cm)</label>
-              <input name="width" type="number" defaultValue={dimensions.width} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="width" type="number" defaultValue={dimensions.width} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Largo (cm)</label>
-              <input name="length" type="number" defaultValue={dimensions.length} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              <input name="length" type="number" defaultValue={dimensions.length} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             </div>
           </div>
           <div className="mt-3">
             <label className="block text-xs font-medium text-gray-600">Valor declarado ($)</label>
-            <input name="declaredValue" type="number" step="0.01" defaultValue={itemsTotal} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+            <input name="declaredValue" type="number" step="0.01" defaultValue={itemsTotal} required className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
           </div>
         </section>
 
