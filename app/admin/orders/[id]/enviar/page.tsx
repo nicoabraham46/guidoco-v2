@@ -51,6 +51,8 @@ export default async function GenerarEnvioPage({
     const recipientEmail = formData.get("recipientEmail") as string;
     const streetNameInput = (formData.get("streetName") as string) || "";
     const streetNumberInput = (formData.get("streetNumber") as string) || "";
+    const floorInput = (formData.get("floor") as string) || "";
+    const apartmentInput = (formData.get("apartment") as string) || "";
     const city = (formData.get("city") as string) || "";
     const provinceCode = (formData.get("provinceCode") as string) || "";
     const postalCode = (formData.get("postalCode") as string) || "";
@@ -100,8 +102,8 @@ export default async function GenerarEnvioPage({
       body.shipping.address = {
         streetName: streetNameInput,
         streetNumber: streetNumberInput,
-        floor: "",
-        apartment: "",
+        floor: floorInput,
+        apartment: apartmentInput,
         city,
         provinceCode,
         postalCode,
@@ -196,6 +198,14 @@ export default async function GenerarEnvioPage({
             <div>
               <label className="block text-xs font-medium text-gray-600">Número</label>
               <input name="streetNumber" defaultValue={streetNumber} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600">Piso</label>
+              <input name="floor" placeholder="Ej: 3" maxLength={3} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600">Departamento</label>
+              <input name="apartment" placeholder="Ej: A" maxLength={3} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600">Ciudad</label>
