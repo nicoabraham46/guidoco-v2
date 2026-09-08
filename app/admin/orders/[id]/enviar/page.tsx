@@ -136,7 +136,7 @@ export default async function GenerarEnvioPage({
         ← Volver al pedido
       </Link>
 
-      <h1 className="mt-3 text-2xl font-bold text-gray-900">Generar envío — Pedido #{order.id.slice(0, 8)}</h1>
+      <h1 className="mt-3 text-2xl font-bold text-gray-900">Generar envío — Pedido #{order.order_number ? String(order.order_number).padStart(5, "0") : order.id.slice(0, 8)}</h1>
       <p className="mt-1 text-sm text-gray-500">
         Revisá y completá los datos antes de confirmar. Esto crea el envío real en Correo Argentino.
       </p>

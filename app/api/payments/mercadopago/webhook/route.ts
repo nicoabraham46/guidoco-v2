@@ -231,9 +231,12 @@ export async function POST(request: NextRequest) {
       }));
       await sendAdminOrderNotification({
         orderId: order.id,
+        orderNumber: order.order_number,
         total: order.total_amount,
         customerEmail: order.customer_email,
         items: emailItems,
+        shippingMethod: (order.metadata as { shipping_method?: string } | null)?.shipping_method ?? null,
+        shippingCost: (order.metadata as { shipping_cost?: number } | null)?.shipping_cost,
       });
       console.log("[webhook/mp] Admin notification sent for order:", order.id);
     } catch (emailErr) {

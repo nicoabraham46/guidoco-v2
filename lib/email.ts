@@ -14,9 +14,12 @@ type OrderItem = {
 
 type SendAdminOrderNotificationParams = {
   orderId: string;
+  orderNumber?: number | null;
   total: number;
   customerEmail: string;
   items: OrderItem[];
+  shippingMethod?: string | null;
+  shippingCost?: number;
 };
 
 type SendOrderConfirmationEmailParams = {
@@ -30,15 +33,27 @@ type SendOrderConfirmationEmailParams = {
 
 export async function sendAdminOrderNotification({
   orderId,
+  orderNumber,
   total,
   customerEmail,
   items,
+  shippingMethod,
+  shippingCost,
 }: SendAdminOrderNotificationParams): Promise<void> {
   const adminEmail = process.env.ADMIN_EMAIL;
   if (!adminEmail) {
     console.error("[email][admin] ADMIN_EMAIL env var not set — skipping notification");
     return;
   }
+
+  const displayOrderNumber = orderNumber ? `#${String(orderNumber).padStart(5, "0")}` : `#${orderId.slice(0, 8)}`;
+
+  const shippingRow = shippingMethod
+    ? `<tr>
+        <td style="padding: 6px 0; color: #6b7280; font-size: 14px;">Envío:</td>
+        <td style="padding: 6px 0; color: #111827; font-size: 14px;">${shippingMethod}${shippingCost ? ` · $${formatARS(shippingCost)}` : ""}</td>
+      </tr>`
+    : "";
 
   console.log("[email][admin] Sending order notification →", { orderId, customerEmail });
   try {
@@ -56,7 +71,7 @@ export async function sendAdminOrderNotification({
     const { data, error } = await resend.emails.send({
       from: "Guidoco <onboarding@resend.dev>",
       to: adminEmail,
-      subject: `Nuevo pedido #${orderId.slice(0, 8)} — $${formatARS(total)}`,
+      subject: `Nuevo pedido ${displayOrderNumber} — $${formatARS(total)}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -78,8 +93,8 @@ export async function sendAdminOrderNotification({
                       <td style="padding: 32px;">
                         <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
                           <tr>
-                            <td style="padding: 6px 0; color: #6b7280; font-size: 14px; width: 140px;">ID del pedido:</td>
-                            <td style="padding: 6px 0; color: #111827; font-size: 14px; font-family: monospace;">${orderId}</td>
+                            <td style="padding: 6px 0; color: #6b7280; font-size: 14px; width: 140px;">N° de pedido:</td>
+                            <td style="padding: 6px 0; color: #111827; font-size: 14px; font-weight: 700;">${displayOrderNumber}</td>
                           </tr>
                           <tr>
                             <td style="padding: 6px 0; color: #6b7280; font-size: 14px;">Cliente:</td>
@@ -89,6 +104,7 @@ export async function sendAdminOrderNotification({
                             <td style="padding: 6px 0; color: #6b7280; font-size: 14px;">Total:</td>
                             <td style="padding: 6px 0; color: #111827; font-size: 18px; font-weight: 700;">$${formatARS(total)}</td>
                           </tr>
+                          ${shippingRow}
                         </table>
 
                         <h2 style="margin: 0 0 12px; color: #111827; font-size: 15px; font-weight: 600;">Productos</h2>
