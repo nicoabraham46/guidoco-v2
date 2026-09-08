@@ -27,7 +27,7 @@ export default function ValorarCartaPage() {
 
   // Cargar sets al montar
   useEffect(() => {
-    fetch("https://api.pokemontcg.io/v2/sets?orderBy=releaseDate")
+    fetch("/api/pokemon-search?type=sets")
       .then((r) => r.json())
       .then((json) => {
         const sorted = (json.data ?? []) as PokemonSet[];
@@ -48,8 +48,7 @@ export default function ValorarCartaPage() {
       if (selectedSet) parts.push(`set.id:${selectedSet}`);
 
       const q = parts.join(" ");
-      const url = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(q)}&pageSize=20&orderBy=name`;
-      console.log("[valorar-carta] URL:", url);
+      const url = `/api/pokemon-search?type=cards&q=${encodeURIComponent(q)}`;
 
       const res = await fetch(url);
       if (!res.ok) throw new Error("API error");
