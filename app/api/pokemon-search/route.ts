@@ -8,7 +8,9 @@ export async function GET(request: NextRequest) {
 
   try {
     if (type === "sets") {
-      const res = await fetch(`${POKEMONTCG_BASE_URL}/sets?orderBy=releaseDate`);
+      const res = await fetch(`${POKEMONTCG_BASE_URL}/sets?orderBy=releaseDate`, {
+        next: { revalidate: 86400 }, // cachear 24hs — los sets casi no cambian
+      });
       if (!res.ok) {
         return NextResponse.json({ error: "Error al obtener sets" }, { status: 502 });
       }
