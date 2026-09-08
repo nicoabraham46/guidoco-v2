@@ -217,6 +217,8 @@ export default function CarritoPage() {
           notes: formData.notes || undefined,
           shipping_cost: selectedShipping?.price > 0 ? selectedShipping.price : 0,
           shipping_method: selectedShipping?.name || undefined,
+          shipping_delivery_type: selectedShipping?.type || undefined,
+          shipping_product_type: selectedShipping?.productType || undefined,
           items: items.map((item) => ({ product_id: item.product_id, quantity: item.quantity })),
         }),
       });

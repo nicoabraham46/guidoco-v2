@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
           if (Array.isArray(data.rates) && data.rates.length > 0) {
             for (const r of data.rates) {
               rates.push({
-                id: `correo_${r.deliveredType}`,
+                id: `correo_${r.deliveredType}_${r.productType}`,
                 name:
                   r.deliveredType === "D"
                     ? "Correo Argentino - A domicilio"
@@ -78,6 +78,7 @@ export async function POST(request: NextRequest) {
                 price: r.price,
                 deliveryTime: `${r.deliveryTimeMin}-${r.deliveryTimeMax} días hábiles`,
                 type: r.deliveredType,
+                productType: r.productType,
               });
             }
           }

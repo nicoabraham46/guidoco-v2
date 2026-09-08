@@ -15,6 +15,8 @@ type CheckoutRequest = {
   notes?: string;
   shipping_cost?: number;
   shipping_method?: string;
+  shipping_delivery_type?: string;
+  shipping_product_type?: string;
   items: CheckoutItem[];
 };
 
@@ -57,6 +59,10 @@ export async function POST(request: NextRequest) {
         : 0;
     const shippingMethod =
       typeof body.shipping_method === "string" ? body.shipping_method.slice(0, 100) : undefined;
+    const shippingDeliveryType =
+      typeof body.shipping_delivery_type === "string" ? body.shipping_delivery_type.slice(0, 10) : undefined;
+    const shippingProductType =
+      typeof body.shipping_product_type === "string" ? body.shipping_product_type.slice(0, 10) : undefined;
 
     // Validar que cada item tenga product_id y quantity válidos
     for (const item of body.items) {
@@ -181,6 +187,8 @@ export async function POST(request: NextRequest) {
       notes: body.notes,
       shipping_cost: shippingCost,
       shipping_method: shippingMethod,
+      shipping_delivery_type: shippingDeliveryType,
+      shipping_product_type: shippingProductType,
       items: orderItems,
     });
 

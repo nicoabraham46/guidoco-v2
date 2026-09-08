@@ -62,6 +62,8 @@ export type CreateOrderInput = {
   payment_provider?: string;
   shipping_cost?: number;
   shipping_method?: string;
+  shipping_delivery_type?: string;
+  shipping_product_type?: string;
   items: {
     product_id: string;
     product_name: string;
@@ -92,7 +94,12 @@ export async function createOrder(input: CreateOrderInput): Promise<OrderWithIte
   const total_amount = items_total + shipping_cost;
 
   const metadata = input.shipping_method
-    ? { shipping_cost, shipping_method: input.shipping_method }
+    ? {
+        shipping_cost,
+        shipping_method: input.shipping_method,
+        shipping_delivery_type: input.shipping_delivery_type,
+        shipping_product_type: input.shipping_product_type,
+      }
     : null;
 
   // Crear order (usar supabaseAdmin para bypasear RLS)

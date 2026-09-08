@@ -33,6 +33,8 @@ export default async function GenerarEnvioPage({
   const shippingMethodName =
     (order.metadata as { shipping_method?: string } | null)?.shipping_method ?? "";
   const isSucursal = shippingMethodName.toLowerCase().includes("sucursal");
+  const detectedProductType =
+    (order.metadata as { shipping_product_type?: string } | null)?.shipping_product_type ?? "";
 
   const itemsTotal = order.order_items.reduce((sum, item) => sum + item.line_total, 0);
 
@@ -61,6 +63,7 @@ export default async function GenerarEnvioPage({
     const width = parseInt(formData.get("width") as string, 10);
     const length = parseInt(formData.get("length") as string, 10);
     const declaredValue = parseFloat(formData.get("declaredValue") as string);
+    const productType = (formData.get("productType") as string) || "CP";
 
     const customerId = process.env.MICORREO_CUSTOMER_ID?.trim();
     if (!customerId) {
@@ -89,7 +92,7 @@ export default async function GenerarEnvioPage({
       shipping: {
         deliveryType,
         agency: deliveryType === "S" ? agency : null,
-        productType: "CP",
+        productType,
         weight,
         declaredValue,
         height,
@@ -185,6 +188,18 @@ export default async function GenerarEnvioPage({
             <label className="block text-xs font-medium text-gray-600">Código de sucursal (solo si es retiro en sucursal)</label>
             <input name="agency" placeholder="Ej: B0107" className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
             <p className="mt-1 text-xs text-gray-400">Buscalo en el portal de MiCorreo si no lo tenés a mano.</p>
+          </div>
+          <div className="mt-3">
+            <label className="block text-xs font-medium text-gray-600">Tipo de servicio</label>
+            {!detectedProductType && (
+              <p className="mb-1 text-xs font-medium text-amber-600">
+                No se detectó en el pedido — confirmá cuál pagó el cliente antes de continuar.
+              </p>
+            )}
+            <select name="productType" defaultValue={detectedProductType || "CP"} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900">
+              <option value="CP">Clásico (2 a 5 días hábiles)</option>
+              <option value="EP">Expreso (1 a 3 días hábiles)</option>
+            </select>
           </div>
         </section>
 
