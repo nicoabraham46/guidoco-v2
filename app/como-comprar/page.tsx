@@ -133,7 +133,7 @@ export default function ComoComprarPage() {
             Sobre las fotos de nuestras cartas
           </p>
           <p className="text-sm leading-relaxed text-gray-600">
-            Todas las cartas Pokémon son nuevas y están en perfecto estado, listas para gradear. Las imperfecciones visibles en las fotos se deben al escaneo y los folios protectores. Si una carta presenta algún detalle particular, se indica en la descripción del producto. El producto que recibís es impecable.
+            La mayoría de las cartas son nuevas y están en perfecto estado, listas para gradear. Las imperfecciones visibles en las fotos de las cartas nuevas se deben al escaneo y los folios protectores. Si una carta es usada o presenta algún detalle particular, se indica en la descripción del producto.
           </p>
         </div>
 
