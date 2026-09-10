@@ -39,6 +39,10 @@ export default async function AdminOrderDetailPage({
   async function handleUpdateStatus(formData: FormData) {
     "use server";
 
+    if (!order) {
+      throw new Error("Pedido no encontrado");
+    }
+
     const orderId = formData.get("order_id") as string;
     const newStatus = formData.get("status") as OrderStatus;
     const trackingCode = (formData.get("tracking_code") as string || "").trim();
@@ -49,22 +53,20 @@ export default async function AdminOrderDetailPage({
     await updateOrderStatus(orderId, newStatus);
 
     if (newStatus === "shipped" && trackingCode) {
-      const current = await getOrderById(orderId);
-      if (current) {
-        const shippingMethod =
-          (current.metadata as { shipping_method?: string } | null)?.shipping_method ?? null;
-        try {
-          await sendShippingNotificationEmail({
-            to: current.customer_email,
-            orderId: current.id,
-            orderNumber: current.order_number || null,
-            customerName: current.customer_name,
-            trackingCode,
-            shippingMethod,
-          });
-        } catch (err) {
-          console.error("[admin/orders] Error sending shipping notification:", err);
-        }
+      const shippingMethod =
+        (order.metadata as { shipping_method?: string } | null)?.shipping_method ?? null;
+      try {
+        await sendShippingNotificationEmail({
+          to: order.customer_email,
+          orderId: order.id,
+          orderNumber: order.order_number || null,
+          customerName: order.customer_name,
+          trackingCode,
+          shippingMethod,
+        });
+        console.log("[admin/orders] Shipping notification triggered for order:", order.id);
+      } catch (err) {
+        console.error("[admin/orders] Error sending shipping notification:", err);
       }
     }
 
