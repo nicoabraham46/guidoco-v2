@@ -36,11 +36,11 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https://qhvipvmvnezglqemidqa.supabase.co https://placehold.co https://images.pokemontcg.io",
-              "connect-src 'self' https://dolarapi.com https://qhvipvmvnezglqemidqa.supabase.co https://api.pokemontcg.io",
+              "connect-src 'self' https://dolarapi.com https://qhvipvmvnezglqemidqa.supabase.co https://api.pokemontcg.io https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com",
               "frame-ancestors 'self'",
             ].join("; "),
           },
