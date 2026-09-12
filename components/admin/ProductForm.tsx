@@ -199,7 +199,7 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
               name="height_cm"
               required
               min="1"
-              defaultValue={defaultValues.height_cm ?? 5}
+              defaultValue={defaultValues.height_cm ?? 3}
               style={inputStyle}
               onFocus={focusRed}
               onBlur={blurGray}
@@ -216,7 +216,7 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
               name="width_cm"
               required
               min="1"
-              defaultValue={defaultValues.width_cm ?? 15}
+              defaultValue={defaultValues.width_cm ?? 14}
               style={inputStyle}
               onFocus={focusRed}
               onBlur={blurGray}
@@ -230,7 +230,7 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
               name="length_cm"
               required
               min="1"
-              defaultValue={defaultValues.length_cm ?? 20}
+              defaultValue={defaultValues.length_cm ?? 17}
               style={inputStyle}
               onFocus={focusRed}
               onBlur={blurGray}
