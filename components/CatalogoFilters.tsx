@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import PokemonTypeDropdown from "@/components/PokemonTypeDropdown";
 
 type Props = {
   category: string | null;
@@ -44,8 +45,8 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType,
     router.replace(url, { scroll: false });
   }
 
-  function handleType(e: React.ChangeEvent<HTMLSelectElement>) {
-    const url = buildUrl({ type: e.target.value || null });
+  function handleType(value: string) {
+    const url = buildUrl({ type: value || null });
     router.replace(url, { scroll: false });
   }
 
@@ -116,25 +117,14 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType,
 
         {/* Tipo Pokémon */}
         {category === "pokemon" && (
-          <select
-            value={pokemonType || ""}
-            onChange={handleType}
-            className="rounded-lg border border-gray-200 bg-white px-2 text-sm text-gray-700 outline-none focus:border-gray-400"
-            style={{ height: 34 }}
-          >
-            <option value="">Todos los tipos</option>
-            <option value="fire">🔴 Fuego</option>
-            <option value="water">🔵 Agua</option>
-            <option value="grass">🟢 Planta</option>
-            <option value="electric">🟡 Eléctrico</option>
-            <option value="psychic">🟣 Psíquico</option>
-            <option value="fighting">🟠 Lucha</option>
-            <option value="colorless">⚪ Incoloro</option>
-            <option value="metal">⚙️ Metal</option>
-            <option value="dark">⚫ Oscuridad</option>
-            <option value="dragon">🟤 Dragón</option>
-            <option value="fairy">🩷 Hada</option>
-          </select>
+          <div className="w-full sm:w-48">
+            <PokemonTypeDropdown
+              value={pokemonType || ""}
+              onChange={handleType}
+              placeholder="Todos los tipos"
+              height={34}
+            />
+          </div>
         )}
 
         {/* Año (solo Pokémon) */}

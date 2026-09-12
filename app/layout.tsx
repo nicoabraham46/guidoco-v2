@@ -299,6 +299,29 @@ export default function RootLayout({
                 </div>
               </div>
 
+              {/* Créditos de íconos */}
+              <p className="mt-3 text-[11px] text-zinc-700">
+                Ícono de garra (tipo Dragón) por{" "}
+                <a
+                  href="https://opengameart.org/content/95-game-icons"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-zinc-400"
+                >
+                  sbed
+                </a>
+                , CC BY 3.0, vía{" "}
+                <a
+                  href="https://game-icons.net"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-zinc-400"
+                >
+                  game-icons.net
+                </a>
+                .
+              </p>
+
             </div>
           </footer>
 

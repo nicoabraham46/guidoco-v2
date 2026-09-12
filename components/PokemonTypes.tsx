@@ -1,4 +1,5 @@
-import type { JSX } from "react";
+import type { ComponentType, JSX } from "react";
+import { Flame, Droplet, Leaf, Zap, Eye, Shield, Moon, Asterisk, Sparkles } from "lucide-react";
 
 export const POKEMON_TYPES = [
   { key: "fire", name: "Fire", nameEs: "Fuego", color: "#E74C3C", bgColor: "#FDEDEC" },
@@ -19,62 +20,81 @@ export function getPokemonType(key: string | null | undefined) {
   return POKEMON_TYPES.find((t) => t.key === key) ?? null;
 }
 
+// Ícono propio de guante de boxeo para el tipo Lucha (sin depender de ninguna librería).
+function FightingIcon({ size, color }: { size: number; color: string }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill={color} aria-hidden="true">
+      <circle cx="6" cy="9" r="3" />
+      <path d="M8 3a6 6 0 0 0-6 6v3a8 8 0 0 0 8 8h1a8 8 0 0 0 8-8V9a2 2 0 0 0-2-2h-1a4 4 0 0 0-4-4H8z" />
+      <rect x="6" y="18" width="10" height="4" rx="1" />
+    </svg>
+  );
+}
+
+// Ícono de garra para el tipo Dragón, aplicado como máscara CSS para poder pintarlo del color del tipo.
+// Claw icon by sbed (opengameart.org/content/95-game-icons), CC BY 3.0, via game-icons.net.
+function DragonIcon({ size, color }: { size: number; color: string }) {
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        width: size,
+        height: size,
+        backgroundColor: color,
+        WebkitMaskImage: "url(/icons/claw.svg)",
+        maskImage: "url(/icons/claw.svg)",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+      }}
+    />
+  );
+}
+
+const LUCIDE_ICONS: Record<string, ComponentType<{ size?: number; color?: string }>> = {
+  fire: Flame,
+  water: Droplet,
+  grass: Leaf,
+  electric: Zap,
+  psychic: Eye,
+  metal: Shield,
+  dark: Moon,
+  colorless: Asterisk,
+  fairy: Sparkles,
+};
+
 export function PokemonTypeIcon({ typeKey, size = 20 }: { typeKey: string; size?: number }) {
   const type = getPokemonType(typeKey);
   if (!type) return null;
 
   const iconSize = size * 0.55;
 
-  const icons: Record<string, JSX.Element> = {
-    fire: (
-      <path d="M12 2c0 4-3 6-3 9a3 3 0 006 0c0-1-.5-2-1-3 1 2 2 3 2 5a5 5 0 01-10 0c0-4 3-7 4-9 0-1 1-2 2-2z" fill="#fff" />
-    ),
-    water: (
-      <path d="M12 3C9 8 6 11 6 14a6 6 0 0012 0c0-3-3-6-6-11z" fill="#fff" />
-    ),
-    grass: (
-      <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66C7.72 17.14 9 13 17 12V15l5-5-5-5v3z" fill="#fff" />
-    ),
-    electric: (
-      <path d="M13 2L3 14h7l-2 8 10-12h-7l2-8z" fill="#fff" />
-    ),
-    psychic: (
-      <circle cx="12" cy="12" r="5" fill="none" stroke="#fff" strokeWidth="2" />
-    ),
-    fighting: (
-      <path d="M7 20h4V4H7v16zm6 0h4V8h-4v12z" fill="#fff" />
-    ),
-    colorless: (
-      <circle cx="12" cy="12" r="4" fill="none" stroke="#fff" strokeWidth="2" />
-    ),
-    metal: (
-      <path d="M12 2L2 12l10 10 10-10L12 2zm0 4l6 6-6 6-6-6 6-6z" fill="#fff" />
-    ),
-    dark: (
-      <path d="M12 2A10 10 0 002 12a10 10 0 0010 10 10 10 0 000-20zm0 18a8 8 0 01-3-15.4A10 10 0 0012 20z" fill="#fff" />
-    ),
-    dragon: (
-      <path d="M12 2L8 8l-6 2 4 4-2 6 6-2 6 2-2-6 4-4-6-2-4-6z" fill="#fff" />
-    ),
-    fairy: (
-      <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="#fff" />
-    ),
-  };
+  let icon: JSX.Element;
+  if (typeKey === "fighting") {
+    icon = <FightingIcon size={iconSize} color={type.color} />;
+  } else if (typeKey === "dragon") {
+    icon = <DragonIcon size={iconSize} color={type.color} />;
+  } else {
+    const LucideIcon = LUCIDE_ICONS[typeKey] ?? Asterisk;
+    icon = <LucideIcon size={iconSize} color={type.color} />;
+  }
 
   return (
     <div style={{
       width: size,
       height: size,
       borderRadius: "50%",
-      backgroundColor: type.color,
+      backgroundColor: type.bgColor,
+      border: `1px solid ${type.color}30`,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       flexShrink: 0,
     }}>
-      <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
-        {icons[typeKey] ?? <circle cx="12" cy="12" r="4" fill="#fff" />}
-      </svg>
+      {icon}
     </div>
   );
 }
