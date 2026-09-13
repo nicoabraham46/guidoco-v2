@@ -43,3 +43,6 @@ settings.local.json
 
 .vercel
 .env*
+
+# Sentry Config File
+.env.sentry-build-plugin
