@@ -15,7 +15,6 @@ type PokemonCard = {
 type PokemonSet = {
   id: string;
   name: string;
-  releaseDate: string;
 };
 
 export default function ValorarCartaPage() {
@@ -30,8 +29,7 @@ export default function ValorarCartaPage() {
     fetch("/api/pokemon-search?type=sets")
       .then((r) => r.json())
       .then((json) => {
-        const sorted = (json.data ?? []) as PokemonSet[];
-        setSets(sorted.reverse()); // más recientes primero
+        setSets((json.data ?? []) as PokemonSet[]); // ya vienen ordenados por nombre
       })
       .catch(() => {});
   }, []);
@@ -44,11 +42,18 @@ export default function ValorarCartaPage() {
     setResults([]);
 
     try {
-      const parts: string[] = [`name:"*${input.trim()}*"`];
-      if (selectedSet) parts.push(`set.id:${selectedSet}`);
+      // Si el usuario escribió "Charizard 4/102" o "Charizard 4", separamos
+      // el nombre del número de carta.
+      const trimmed = input.trim();
+      const match = trimmed.match(/^(.*?)\s+(\d+(?:\/\d+)?)$/);
+      const name = match ? match[1].trim() : trimmed;
+      const number = match ? match[2] : "";
 
-      const q = parts.join(" ");
-      const url = `/api/pokemon-search?type=cards&q=${encodeURIComponent(q)}`;
+      const params = new URLSearchParams({ type: "cards", q: name });
+      if (number) params.set("number", number);
+      if (selectedSet) params.set("setId", selectedSet);
+
+      const url = `/api/pokemon-search?${params.toString()}`;
 
       const res = await fetch(url);
       if (!res.ok) throw new Error("API error");

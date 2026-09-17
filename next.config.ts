@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
         hostname: "images.pokemontcg.io",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "assets.tcgdex.net",
+        pathname: "/**",
+      },
     ],
   },
   async headers() {
@@ -40,7 +45,7 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: https://qhvipvmvnezglqemidqa.supabase.co https://placehold.co https://images.pokemontcg.io",
+              "img-src 'self' data: https://qhvipvmvnezglqemidqa.supabase.co https://placehold.co https://images.pokemontcg.io https://assets.tcgdex.net",
               "connect-src 'self' https://dolarapi.com https://qhvipvmvnezglqemidqa.supabase.co https://api.pokemontcg.io https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com",
               "frame-ancestors 'self'",
             ].join("; "),
