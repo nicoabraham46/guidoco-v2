@@ -8,16 +8,26 @@ export async function GET(request: NextRequest) {
 
   try {
     if (type === "sets") {
-      const res = await fetch(`${POKEMONTCG_BASE_URL}/sets?orderBy=releaseDate`, {
-        next: { revalidate: 86400 }, // cachear 24hs — los sets casi no cambian
-      });
-      if (!res.ok) {
+      const MAX_ATTEMPTS = 3;
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        const res = await fetch(`${POKEMONTCG_BASE_URL}/sets?orderBy=releaseDate`, {
+          next: { revalidate: 86400 }, // cachear 24hs — los sets casi no cambian
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return NextResponse.json(data);
+        }
         const body = await res.text();
-        console.error("[pokemon-search] Error al obtener sets:", res.status, body);
-        return NextResponse.json({ error: "Error al obtener sets" }, { status: 502 });
+        console.error(
+          `[pokemon-search] Error al obtener sets (intento ${attempt}/${MAX_ATTEMPTS}):`,
+          res.status,
+          body
+        );
+        if (attempt < MAX_ATTEMPTS) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
       }
-      const data = await res.json();
-      return NextResponse.json(data);
+      return NextResponse.json({ error: "Error al obtener sets" }, { status: 502 });
     }
 
     if (type === "cards") {
