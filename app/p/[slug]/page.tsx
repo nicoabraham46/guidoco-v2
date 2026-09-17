@@ -376,12 +376,13 @@ export default async function ProductPage({
             <div>
               <DetailRow
                 label="Disponibilidad"
-                value={inStock ? "En stock" : "Sin stock"}
+                value={
+                  inStock
+                    ? `En stock (${product.stock} disponibles)`
+                    : "Sin stock"
+                }
                 highlight={inStock}
               />
-              {product.stock != null && (
-                <DetailRow label="Unidades" value={String(product.stock)} />
-              )}
               {product.set_name && (
                 <DetailRow label="Set" value={product.set_name} />
               )}
