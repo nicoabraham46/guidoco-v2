@@ -65,10 +65,10 @@ export default function ValorarCartaPage() {
     }
   }
 
-  const tcgUrl = (name: string) =>
-    `https://www.tcgplayer.com/search/pokemon/product?q=${encodeURIComponent(name)}`;
-  const cmUrl = (name: string) =>
-    `https://www.cardmarket.com/es/Pokemon/Products/Search?searchString=${encodeURIComponent(name)}`;
+  const tcgUrl = (name: string, number?: string) =>
+    `https://www.tcgplayer.com/search/pokemon/product?q=${encodeURIComponent(number ? `${name} ${number}` : name)}`;
+  const cmUrl = (name: string, number?: string) =>
+    `https://www.cardmarket.com/es/Pokemon/Products/Search?searchString=${encodeURIComponent(number ? `${name} ${number}` : name)}`;
 
   return (
     <main style={{ backgroundColor: "#e8ecf0", minHeight: "100vh", padding: "40px 24px 80px" }}>
@@ -239,7 +239,7 @@ export default function ValorarCartaPage() {
 
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                       <a
-                        href={tcgUrl(card.name)}
+                        href={tcgUrl(card.name, card.number)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -258,7 +258,7 @@ export default function ValorarCartaPage() {
                         TCGPlayer →
                       </a>
                       <a
-                        href={cmUrl(card.name)}
+                        href={cmUrl(card.name, card.number)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
