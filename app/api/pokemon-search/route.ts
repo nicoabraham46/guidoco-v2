@@ -12,6 +12,8 @@ export async function GET(request: NextRequest) {
         next: { revalidate: 86400 }, // cachear 24hs — los sets casi no cambian
       });
       if (!res.ok) {
+        const body = await res.text();
+        console.error("[pokemon-search] Error al obtener sets:", res.status, body);
         return NextResponse.json({ error: "Error al obtener sets" }, { status: 502 });
       }
       const data = await res.json();
@@ -26,6 +28,8 @@ export async function GET(request: NextRequest) {
       const url = `${POKEMONTCG_BASE_URL}/cards?q=${encodeURIComponent(q)}&pageSize=20&orderBy=name`;
       const res = await fetch(url);
       if (!res.ok) {
+        const body = await res.text();
+        console.error("[pokemon-search] Error al buscar cartas:", res.status, body);
         return NextResponse.json({ error: "Error al buscar cartas" }, { status: 502 });
       }
       const data = await res.json();
