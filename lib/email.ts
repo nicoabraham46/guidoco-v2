@@ -69,7 +69,7 @@ export async function sendAdminOrderNotification({
       .join("");
 
     const { data, error } = await resend.emails.send({
-      from: "Guidoco <onboarding@resend.dev>",
+      from: "Guidoco <pedidos@mail.guidoco.com.ar>",
       to: adminEmail,
       subject: `Nuevo pedido ${displayOrderNumber} — $${formatARS(total)}`,
       html: `
@@ -204,7 +204,7 @@ export async function sendOrderConfirmationEmail({
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "Guidoco <onboarding@resend.dev>",
+      from: "Guidoco <pedidos@mail.guidoco.com.ar>",
       to,
       subject: `¡Gracias por tu compra! - Pedido #${displayOrderNum}`,
       html: `
@@ -403,7 +403,7 @@ export async function sendShippingNotificationEmail({
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "Guidoco <onboarding@resend.dev>",
+      from: "Guidoco <pedidos@mail.guidoco.com.ar>",
       to,
       subject: `Tu pedido #${displayOrderNum} está en camino 🚚`,
       html: `
