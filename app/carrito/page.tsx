@@ -18,6 +18,8 @@ type CustomerData = {
 
 const CUSTOMER_STORAGE_KEY = "customer_data";
 
+const FREE_SHIPPING_THRESHOLD = 40000;
+
 // ── Estilos reutilizables ─────────────────────────────────────────────────────
 
 const inputClass =
@@ -168,8 +170,11 @@ export default function CarritoPage() {
       });
       const data = await res.json();
       if (res.ok && data.rates) {
-        setShippingRates(data.rates);
-        setSelectedShipping(data.rates.length === 1 ? data.rates[0] : null);
+        const rates = data.rates.map((r: any) =>
+          r.price > 0 && totalPrice >= FREE_SHIPPING_THRESHOLD ? { ...r, price: 0 } : r
+        );
+        setShippingRates(rates);
+        setSelectedShipping(rates.length === 1 ? rates[0] : null);
       } else {
         setShippingError("No pudimos cotizar el envío. Coordinamos por WhatsApp.");
         setShippingRates([]);
@@ -389,6 +394,23 @@ export default function CarritoPage() {
               <span style={{ fontSize: 16, lineHeight: 1.3 }}>💳</span>
               <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.5, color: "#8a3428" }}>
                 Vas a ver el nombre <strong>"Luciana"</strong> al pagar con Mercado Pago — es la cuenta autorizada de Guidoco para recibir pagos.
+              </p>
+            </div>
+            <div style={{
+              marginTop: 12,
+              padding: "10px 14px",
+              backgroundColor: "rgba(22, 163, 74, 0.08)",
+              border: "1px solid rgba(22, 163, 74, 0.3)",
+              borderRadius: 10,
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 8,
+            }}>
+              <span style={{ fontSize: 16, lineHeight: 1.3 }}>🚚</span>
+              <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.5, color: "#166534" }}>
+                {totalPrice < FREE_SHIPPING_THRESHOLD
+                  ? `Te faltan $${formatARS(FREE_SHIPPING_THRESHOLD - totalPrice)} para envío gratis`
+                  : "🎉 ¡Tu compra tiene envío gratis!"}
               </p>
             </div>
             <button
