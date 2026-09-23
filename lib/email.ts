@@ -348,6 +348,9 @@ export async function sendOrderConfirmationEmail({
                         <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px;">
                           <a href="${baseUrl}" style="color: #C0392B; text-decoration: none; font-weight: 600;">Guidoco</a> · Bernal Centro, Buenos Aires
                         </p>
+                        <p style="margin: 0 0 8px; color: #9ca3af; font-size: 11px;">
+                          Este correo fue enviado desde pedidos@mail.guidoco.com.ar — agregalo a tus contactos para no perderte futuras novedades de tu pedido.
+                        </p>
                         <p style="margin: 0; color: #9ca3af; font-size: 11px;">
                           © ${new Date().getFullYear()} Guidoco Collectibles. Todos los derechos reservados.
                         </p>
