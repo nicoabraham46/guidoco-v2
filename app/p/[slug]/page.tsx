@@ -11,6 +11,7 @@ import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
 import RarityBadge, { getRarityInfo, RaritySymbol } from "@/components/RarityBadge";
 import CardConditionGuide from "@/components/CardConditionGuide";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export const revalidate = 60;
 
@@ -183,6 +184,7 @@ export default async function ProductPage({
 
   return (
     <main className="min-h-screen bg-white">
+      <ScrollToTop />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
