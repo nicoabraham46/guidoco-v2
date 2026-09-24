@@ -188,6 +188,10 @@ export default async function Home() {
   const nuevosIngresos = (nuevosResult as Product[]).filter((p) => (p.stock ?? 0) > 0);
   const stockProducts = (stockResult as Product[]).filter((p) => (p.stock ?? 0) > 0);
 
+  const PIXELS_PER_SECOND = 54;
+  const CARD_WIDTH_WITH_MARGIN = 216; // 200px de ancho + 16px de marginRight
+  const trackDuration = (stockProducts.length * CARD_WIDTH_WITH_MARGIN) / PIXELS_PER_SECOND;
+
   return (
     <main style={{ backgroundColor: "#e8ecf0", minHeight: "100vh" }}>
 
@@ -238,7 +242,7 @@ export default async function Home() {
 
           {/* Carrusel */}
           <div style={{ overflow: "hidden", height: 280 }}>
-            <div className="products-track">
+            <div className="products-track" style={{ animationDuration: `${trackDuration}s` }}>
               {[...stockProducts, ...stockProducts].map((product, idx) => {
                 const name = product.name ?? product.title ?? "Sin nombre";
                 const sorted = sortImages(product.product_images ?? []);

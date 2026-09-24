@@ -67,7 +67,9 @@ body {
 
 .products-track {
   display: flex;
-  animation: scroll-products 60s linear infinite;
+  animation-name: scroll-products;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
   width: max-content;
 }
 
