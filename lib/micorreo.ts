@@ -112,6 +112,15 @@ export function splitStreet(fullStreet: string | undefined): { streetName: strin
   return { streetName: fullStreet.trim(), streetNumber: "" };
 }
 
+export type AgencyOption = {
+  code: string;
+  name: string;
+  streetName: string;
+  streetNumber: string;
+  locality: string;
+  postalCode: string;
+};
+
 export const PROVINCE_CODES: { code: string; name: string }[] = [
   { code: "A", name: "Salta" },
   { code: "B", name: "Buenos Aires" },
@@ -138,3 +147,13 @@ export const PROVINCE_CODES: { code: string; name: string }[] = [
   { code: "Y", name: "Jujuy" },
   { code: "Z", name: "Santa Cruz" },
 ];
+
+// Deriva el código de provincia (ej. "S") a partir del nombre completo guardado
+// en shipping_address.state (ej. "Santa Fe"), ignorando mayúsculas y acentos.
+export function findProvinceCodeByName(name?: string | null): string {
+  if (!name) return "";
+  const normalize = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const target = normalize(name);
+  const found = PROVINCE_CODES.find((p) => normalize(p.name) === target);
+  return found?.code ?? "";
+}

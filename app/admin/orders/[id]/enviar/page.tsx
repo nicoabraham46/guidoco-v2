@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getOrderById } from "@/lib/orders";
-import { getMiCorreoToken, computeOrderPackageDimensions, splitStreet, PROVINCE_CODES } from "@/lib/micorreo";
+import { getMiCorreoToken, computeOrderPackageDimensions, splitStreet, findProvinceCodeByName, PROVINCE_CODES } from "@/lib/micorreo";
+import SucursalPicker from "@/components/admin/SucursalPicker";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export default async function GenerarEnvioPage({
   );
 
   const { streetName, streetNumber } = splitStreet(order.shipping_address?.street);
+  const derivedProvinceCode = findProvinceCodeByName(order.shipping_address?.state);
 
   const shippingMethodName =
     (order.metadata as { shipping_method?: string } | null)?.shipping_method ?? "";
@@ -185,9 +187,11 @@ export default async function GenerarEnvioPage({
             </label>
           </div>
           <div className="mt-3">
-            <label className="block text-xs font-medium text-gray-600">Código de sucursal (solo si es retiro en sucursal)</label>
-            <input name="agency" placeholder="Ej: B0107" className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-gray-900" />
-            <p className="mt-1 text-xs text-gray-400">Buscalo en el portal de MiCorreo si no lo tenés a mano.</p>
+            <label className="block text-xs font-medium text-gray-600">Sucursal de retiro (solo si es retiro en sucursal)</label>
+            <SucursalPicker
+              defaultPostalCode={order.shipping_address?.zip || ""}
+              defaultProvinceCode={derivedProvinceCode}
+            />
           </div>
           <div className="mt-3">
             <label className="block text-xs font-medium text-gray-600">Tipo de servicio</label>
