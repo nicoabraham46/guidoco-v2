@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 import CategorySelect from "./CategorySelect";
 import RaritySelect from "./RaritySelect";
 import PokemonTypeSelect from "./PokemonTypeSelect";
@@ -72,6 +73,17 @@ function blurGray(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
 }
 
 export default function ProductForm({ action, defaultValues = {}, submitLabel }: Props) {
+  const isNewProduct = !defaultValues.id;
+  const weightInputRef = useRef<HTMLInputElement>(null);
+  const weightTouchedRef = useRef(false);
+
+  // Autocompleta el peso según la categoría elegida, solo en productos nuevos
+  // y solo si el admin todavía no escribió un peso a mano.
+  function handleCategoryChange(newCategory: string) {
+    if (!isNewProduct || weightTouchedRef.current || !weightInputRef.current) return;
+    weightInputRef.current.value = newCategory === "pokemon" ? "2" : "200";
+  }
+
   return (
     <form action={action}>
       {defaultValues.id && (
@@ -185,7 +197,9 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
               name="weight_grams"
               required
               min="1"
+              ref={weightInputRef}
               defaultValue={defaultValues.weight_grams ?? 200}
+              onChange={() => { weightTouchedRef.current = true; }}
               style={inputStyle}
               onFocus={focusRed}
               onBlur={blurGray}
@@ -246,7 +260,7 @@ export default function ProductForm({ action, defaultValues = {}, submitLabel }:
       <div style={cardStyle}>
         <p style={cardTitleStyle}>🏷️ Categoría</p>
         <label htmlFor="category" style={labelStyle}>Categoría del producto</label>
-        <CategorySelect defaultValue={defaultValues.category ?? ""} />
+        <CategorySelect defaultValue={defaultValues.category ?? ""} onChange={handleCategoryChange} />
       </div>
 
       {/* Card 4 — Rareza (solo Pokémon) */}

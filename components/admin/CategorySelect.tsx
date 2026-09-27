@@ -9,7 +9,13 @@ const categories = [
   { value: "especiales", label: "Especiales", badge: { text: "Especiales", bg: "#FFD700", color: "#1a1a1a" } },
 ];
 
-export default function CategorySelect({ defaultValue = "" }: { defaultValue?: string }) {
+export default function CategorySelect({
+  defaultValue = "",
+  onChange,
+}: {
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+}) {
   const [value, setValue] = useState(defaultValue);
   const current = categories.find((c) => c.value === value) ?? categories[0];
 
@@ -19,7 +25,10 @@ export default function CategorySelect({ defaultValue = "" }: { defaultValue?: s
         id="category"
         name="category"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          setValue(e.target.value);
+          onChange?.(e.target.value);
+        }}
         style={{
           flex: 1,
           height: 44,
