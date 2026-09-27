@@ -36,22 +36,22 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType,
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
-    const url = buildUrl({ q: val || null });
+    const url = buildUrl({ q: val || null, page: null });
     router.replace(url, { scroll: false });
   }
 
   function handleSort(e: React.ChangeEvent<HTMLSelectElement>) {
-    const url = buildUrl({ sort: e.target.value === "newest" ? null : e.target.value });
+    const url = buildUrl({ sort: e.target.value === "newest" ? null : e.target.value, page: null });
     router.replace(url, { scroll: false });
   }
 
   function handleType(value: string) {
-    const url = buildUrl({ type: value || null });
+    const url = buildUrl({ type: value || null, page: null });
     router.replace(url, { scroll: false });
   }
 
   function handleYear(e: React.ChangeEvent<HTMLSelectElement>) {
-    const url = buildUrl({ year: e.target.value || null });
+    const url = buildUrl({ year: e.target.value || null, page: null });
     router.replace(url, { scroll: false });
   }
 
@@ -103,7 +103,7 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType,
           return (
             <Link
               key={label}
-              href={buildUrl({ category: active ? null : value, type: null })}
+              href={buildUrl({ category: active ? null : value, type: null, page: null })}
               className={`${pillBase} ${active ? pillActive : pillInactive}`}
               style={active ? { backgroundColor: "#C0392B" } : undefined}
             >

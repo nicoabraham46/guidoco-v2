@@ -11,6 +11,10 @@ import CatalogoFilters from "@/components/CatalogoFilters";
 
 const POKEMON_TYPES_KEYS = ["fire", "water", "grass", "electric", "psychic", "fighting", "colorless", "metal", "dark", "dragon", "fairy"];
 
+const PAGE_SIZE = 50;
+const MAX_AGOTADOS = 15;
+const PRODUCT_COLUMNS = "id,name,title,slug,price,stock,category,pokemon_type,year,created_at,product_images(url,sort_order)";
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -78,60 +82,119 @@ const categoryCards = [
   },
 ];
 
+// Devuelve los números de página a mostrar, con "..." para los saltos (ventana de 7 como máximo)
+function getPageNumbers(current: number, total: number): (number | "...")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages = new Set<number>([1, 2, total - 1, total, current - 1, current, current + 1]);
+  const sorted = [...pages].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
+  const result: (number | "...")[] = [];
+  let prev = 0;
+  for (const p of sorted) {
+    if (prev && p - prev > 1) result.push("...");
+    result.push(p);
+    prev = p;
+  }
+  return result;
+}
+
 // ── Página ───────────────────────────────────────────────────────────────────
 
 export default async function CatalogoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; q?: string; sort?: string; stock?: string; type?: string; year?: string }>;
+  searchParams: Promise<{ category?: string; q?: string; sort?: string; stock?: string; type?: string; year?: string; page?: string }>;
 }) {
-  const { category, q, sort, stock, type: pokemonType, year: yearParam } = await searchParams;
+  const { category, q, sort, stock, type: pokemonType, year: yearParam, page: pageParam } = await searchParams;
 
   const validCategory = category === "diecast" || category === "pokemon" || category === "especiales" ? category : null;
   const searchQuery = (q?.trim() ?? "").replace(/[%().,]/g, "");
   const sortKey = sort === "price_asc" || sort === "price_desc" ? sort : "newest";
   const stockFilter = stock === "in" ? "in" : null;
+  const requestedPage = (() => {
+    const n = parseInt(pageParam ?? "1", 10);
+    return Number.isFinite(n) && n > 0 ? n : 1;
+  })();
 
-  // ── Query con filtros acumulativos ────────────────────────────────────────
-  let dbQuery = supabaseServer
-    .from("products")
-    .select("id,name,title,slug,price,stock,category,pokemon_type,year,created_at,product_images(url,sort_order)")
-    .limit(80);
-
-  if (validCategory) {
-    dbQuery = dbQuery.eq("category", validCategory);
-  }
-  if (searchQuery) {
-    dbQuery = dbQuery.or(`name.ilike.%${searchQuery}%,title.ilike.%${searchQuery}%`);
-  }
-  if (stockFilter === "in") {
-    dbQuery = dbQuery.gt("stock", 0);
-  }
-  if (pokemonType && POKEMON_TYPES_KEYS.includes(pokemonType)) {
-    dbQuery = dbQuery.eq("pokemon_type", pokemonType);
-  }
-  if (yearParam) {
-    dbQuery = dbQuery.eq("year", parseInt(yearParam, 10));
-  }
-  if (sortKey === "price_asc") {
-    dbQuery = dbQuery.order("price", { ascending: true });
-  } else if (sortKey === "price_desc") {
-    dbQuery = dbQuery.order("price", { ascending: false });
-  } else {
-    dbQuery = dbQuery.order("created_at", { ascending: false });
+  // Aplica los filtros compartidos (category, búsqueda, tipo, año) a cualquier query de "products"
+  function applyFilters(query: any) {
+    let q2 = query;
+    if (validCategory) q2 = q2.eq("category", validCategory);
+    if (searchQuery) q2 = q2.or(`name.ilike.%${searchQuery}%,title.ilike.%${searchQuery}%`);
+    if (pokemonType && POKEMON_TYPES_KEYS.includes(pokemonType)) q2 = q2.eq("pokemon_type", pokemonType);
+    if (yearParam) q2 = q2.eq("year", parseInt(yearParam, 10));
+    return q2;
   }
 
-  const { data: products, error: dbError } = await dbQuery;
-  if (dbError) console.error("[catalogo] Supabase error:", dbError);
+  // ── 1. Total de productos CON stock que matchean los filtros ─────────────
+  const { count: inStockCountRaw, error: countError } = await applyFilters(
+    supabaseServer.from("products").select("id", { count: "exact", head: true }).gt("stock", 0)
+  );
+  const inStockTotal = inStockCountRaw ?? 0;
 
-  const fetched = (products ?? []) as Product[];
-  // In-stock primero, agotados al final (respetando el orden interno de cada grupo)
-  const allProducts = stockFilter === "in"
-    ? fetched
-    : [
-        ...fetched.filter((p) => (p.stock ?? 0) > 0),
-        ...fetched.filter((p) => (p.stock ?? 0) === 0),
-      ];
+  // ── 2. Hasta 15 agotados que matchean los filtros (fijo, no pagina) ──────
+  let agotados: Product[] = [];
+  let agotadosError: unknown = null;
+  if (stockFilter !== "in") {
+    const { data: agotadosData, error } = await applyFilters(
+      supabaseServer
+        .from("products")
+        .select(PRODUCT_COLUMNS)
+        .or("stock.is.null,stock.lte.0")
+        .order("created_at", { ascending: false })
+        .limit(MAX_AGOTADOS)
+    );
+    agotados = (agotadosData ?? []) as unknown as Product[];
+    agotadosError = error;
+  }
+
+  const totalItems = inStockTotal + agotados.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const page = Math.min(Math.max(requestedPage, 1), totalPages);
+
+  // ── 3. Rebanada combinada (con stock primero, agotados al final) para la página pedida ──
+  const pageStart = (page - 1) * PAGE_SIZE;
+  const pageEnd = Math.min(pageStart + PAGE_SIZE - 1, totalItems - 1);
+  const inStockRangeStart = pageStart;
+  const inStockRangeEnd = Math.min(pageEnd, inStockTotal - 1);
+
+  let inStockProducts: Product[] = [];
+  let dbError: unknown = null;
+  if (totalItems > 0 && inStockRangeStart <= inStockRangeEnd) {
+    let inStockQuery = applyFilters(
+      supabaseServer.from("products").select(PRODUCT_COLUMNS).gt("stock", 0).range(inStockRangeStart, inStockRangeEnd)
+    );
+    if (sortKey === "price_asc") {
+      inStockQuery = inStockQuery.order("price", { ascending: true });
+    } else if (sortKey === "price_desc") {
+      inStockQuery = inStockQuery.order("price", { ascending: false });
+    } else {
+      inStockQuery = inStockQuery.order("created_at", { ascending: false });
+    }
+    const { data, error } = await inStockQuery;
+    inStockProducts = (data ?? []) as unknown as Product[];
+    dbError = error;
+  }
+
+  const agotadosSlice = pageEnd >= inStockTotal
+    ? agotados.slice(Math.max(0, pageStart - inStockTotal), pageEnd - inStockTotal + 1)
+    : [];
+
+  const allProducts: Product[] = [...inStockProducts, ...agotadosSlice];
+  const pageError = dbError || countError || agotadosError;
+  if (pageError) console.error("[catalogo] Supabase error:", pageError);
+
+  function buildPageHref(targetPage: number) {
+    const params = new URLSearchParams();
+    if (category) params.set("category", category);
+    if (q) params.set("q", q);
+    if (sort) params.set("sort", sort);
+    if (stock) params.set("stock", stock);
+    if (pokemonType) params.set("type", pokemonType);
+    if (yearParam) params.set("year", yearParam);
+    if (targetPage > 1) params.set("page", String(targetPage));
+    const str = params.toString();
+    return `/catalogo${str ? `?${str}` : ""}`;
+  }
 
   return (
     <main
@@ -223,7 +286,7 @@ export default async function CatalogoPage({
                 Todos los productos
               </h1>
               <span className="text-sm text-gray-400 ml-auto">
-                {allProducts.length} {allProducts.length === 1 ? "producto" : "productos"}
+                {totalItems} {totalItems === 1 ? "producto" : "productos"}
               </span>
             </div>
           </>
@@ -246,7 +309,7 @@ export default async function CatalogoPage({
                 category={validCategory}
                 q={searchQuery}
                 sort={sortKey}
-                total={allProducts.length}
+                total={totalItems}
                 pokemonType={pokemonType ?? null}
                 year={yearParam || null}
               />
@@ -255,12 +318,12 @@ export default async function CatalogoPage({
         )}
 
         {/* Grid / Estado vacío */}
-        {allProducts.length === 0 ? (
+        {totalItems === 0 ? (
           <div className="mt-20 flex flex-col items-center gap-4 text-center">
-            {dbError ? (
+            {pageError ? (
               <>
                 <p className="text-sm font-semibold text-red-500">Error al cargar productos</p>
-                <p className="font-mono text-xs text-gray-400">{dbError.message}</p>
+                <p className="font-mono text-xs text-gray-400">{(pageError as { message?: string }).message}</p>
               </>
             ) : (
               <p className="text-sm text-gray-500">No encontramos productos con esos filtros.</p>
@@ -359,6 +422,56 @@ export default async function CatalogoPage({
               );
             })}
           </div>
+        )}
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Paginación">
+            {page > 1 ? (
+              <Link
+                href={buildPageHref(page - 1)}
+                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:border-gray-400 hover:text-gray-900"
+              >
+                ← Anterior
+              </Link>
+            ) : (
+              <span className="rounded-lg border border-gray-100 px-3 py-1.5 text-sm font-medium text-gray-300">
+                ← Anterior
+              </span>
+            )}
+
+            {getPageNumbers(page, totalPages).map((p, i) =>
+              p === "..." ? (
+                <span key={`ellipsis-${i}`} className="px-1 text-sm text-gray-400">…</span>
+              ) : (
+                <Link
+                  key={p}
+                  href={buildPageHref(p)}
+                  className="rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors"
+                  style={
+                    p === page
+                      ? { backgroundColor: "#C0392B", borderColor: "#C0392B", color: "#fff" }
+                      : { borderColor: "#e5e7eb", color: "#4b5563" }
+                  }
+                >
+                  {p}
+                </Link>
+              )
+            )}
+
+            {page < totalPages ? (
+              <Link
+                href={buildPageHref(page + 1)}
+                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:border-gray-400 hover:text-gray-900"
+              >
+                Siguiente →
+              </Link>
+            ) : (
+              <span className="rounded-lg border border-gray-100 px-3 py-1.5 text-sm font-medium text-gray-300">
+                Siguiente →
+              </span>
+            )}
+          </nav>
         )}
 
         {/* Texto SEO - al final de la página */}
