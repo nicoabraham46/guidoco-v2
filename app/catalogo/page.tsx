@@ -108,7 +108,8 @@ export default async function CatalogoPage({
 
   const validCategory = category === "diecast" || category === "pokemon" || category === "especiales" ? category : null;
   const searchQuery = (q?.trim() ?? "").replace(/[%().,]/g, "");
-  const sortKey = sort === "price_asc" || sort === "price_desc" ? sort : "newest";
+  const sortKey =
+    sort === "price_asc" || sort === "price_desc" || sort === "name_asc" || sort === "name_desc" ? sort : "newest";
   const stockFilter = stock === "in" ? "in" : null;
   const requestedPage = (() => {
     const n = parseInt(pageParam ?? "1", 10);
@@ -167,9 +168,15 @@ export default async function CatalogoPage({
       inStockQuery = inStockQuery.order("price", { ascending: true });
     } else if (sortKey === "price_desc") {
       inStockQuery = inStockQuery.order("price", { ascending: false });
+    } else if (sortKey === "name_asc") {
+      inStockQuery = inStockQuery.order("sort_name", { ascending: true, nullsFirst: false });
+    } else if (sortKey === "name_desc") {
+      inStockQuery = inStockQuery.order("sort_name", { ascending: false, nullsFirst: false });
     } else {
       inStockQuery = inStockQuery.order("created_at", { ascending: false });
     }
+    // Desempate estable para que .range() no repita ni saltee productos entre páginas
+    inStockQuery = inStockQuery.order("id", { ascending: true });
     const { data, error } = await inStockQuery;
     inStockProducts = (data ?? []) as unknown as Product[];
     dbError = error;
@@ -187,7 +194,7 @@ export default async function CatalogoPage({
     const params = new URLSearchParams();
     if (category) params.set("category", category);
     if (q) params.set("q", q);
-    if (sort) params.set("sort", sort);
+    if (sortKey !== "newest") params.set("sort", sortKey);
     if (stock) params.set("stock", stock);
     if (pokemonType) params.set("type", pokemonType);
     if (yearParam) params.set("year", yearParam);

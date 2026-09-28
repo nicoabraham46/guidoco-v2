@@ -153,6 +153,8 @@ export default function CatalogoFilters({ category, q, sort, total, pokemonType,
           <option value="newest">Más recientes</option>
           <option value="price_asc">Precio: menor a mayor</option>
           <option value="price_desc">Precio: mayor a menor</option>
+          <option value="name_asc">Nombre: A a Z</option>
+          <option value="name_desc">Nombre: Z a A</option>
         </select>
 
         {/* Contador */}
