@@ -24,6 +24,35 @@ export default function ProductGallery({
 
   const touchStartX = useRef<number | null>(null);
 
+  // ── Lupa en el lightbox (solo dispositivos con mouse real) ───────────────
+  const [canHoverZoom, setCanHoverZoom] = useState(false);
+  const [isZooming, setIsZooming] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    setCanHoverZoom(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setCanHoverZoom(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // Resetear la lupa al cambiar de imagen o cerrar el lightbox
+  useEffect(() => {
+    setIsZooming(false);
+  }, [lightboxIndex]);
+
+  function handleZoomMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomOrigin({
+      x: Math.min(100, Math.max(0, x)),
+      y: Math.min(100, Math.max(0, y)),
+    });
+    if (!isZooming) setIsZooming(true);
+  }
+
   // ── Cierre con Escape ─────────────────────────────────────────────────────
   useEffect(() => {
     if (lightboxIndex === null) return;
@@ -179,8 +208,13 @@ export default function ProductGallery({
         >
           {/* Contenedor imagen — detiene propagación para no cerrar al click sobre la imagen */}
           <div
-            className="relative flex h-full w-full max-w-5xl items-center justify-center px-16 py-12"
+            className={`relative flex h-full w-full max-w-5xl items-center justify-center overflow-hidden px-16 py-12 ${
+              canHoverZoom ? "cursor-zoom-in" : ""
+            }`}
             onClick={(e) => e.stopPropagation()}
+            onMouseEnter={canHoverZoom ? () => setIsZooming(true) : undefined}
+            onMouseLeave={canHoverZoom ? () => setIsZooming(false) : undefined}
+            onMouseMove={canHoverZoom ? handleZoomMove : undefined}
           >
             <Image
               src={urls[lightboxIndex]}
@@ -189,6 +223,16 @@ export default function ProductGallery({
               className="object-contain"
               sizes="(max-width: 768px) 100vw, 80vw"
               priority
+              style={
+                canHoverZoom
+                  ? {
+                      transform: isZooming ? "scale(2.5)" : "scale(1)",
+                      transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+                      // Solo transiciona el scale; transformOrigin cambia al instante para seguir al cursor sin lag
+                      transition: "transform 200ms ease-out",
+                    }
+                  : undefined
+              }
             />
           </div>
 
