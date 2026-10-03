@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import sharp from "sharp";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { isAdmin } from "@/lib/admin-guard";
 
@@ -77,21 +78,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const extByType: Record<string, string> = {
-      "image/jpeg": "jpg",
-      "image/png": "png",
-      "image/webp": "webp",
-      "image/gif": "gif",
-    };
-    const ext = extByType[detectedType];
-    const safeName = `${Date.now()}.${ext}`;
+    // Comprimir y redimensionar antes de subir: máx 1600px de ancho, JPEG calidad 80.
+    // rotate() aplica la orientación EXIF; flatten() pone fondo blanco a las transparencias (JPEG no tiene alpha).
+    let compressed: Buffer;
+    try {
+      compressed = await sharp(Buffer.from(await file.arrayBuffer()))
+        .rotate()
+        .resize({ width: 1600, withoutEnlargement: true })
+        .flatten({ background: "#ffffff" })
+        .jpeg({ quality: 80, mozjpeg: true })
+        .toBuffer();
+    } catch (err) {
+      console.error("❌ sharp:", err instanceof Error ? err.message : err);
+      return NextResponse.json({ error: "No se pudo procesar la imagen" }, { status: 400 });
+    }
+
+    const safeName = `${Date.now()}.jpg`;
     const storagePath = `${productId}/${safeName}`;
 
     const supabase = getSupabaseAdmin();
 
     const { error: uploadError } = await supabase.storage
       .from("product-images")
-      .upload(storagePath, file, { contentType: detectedType, upsert: false });
+      .upload(storagePath, compressed, { contentType: "image/jpeg", upsert: false });
 
     if (uploadError) {
       console.error("❌ storage upload:", uploadError.message);
