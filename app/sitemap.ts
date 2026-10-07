@@ -1,7 +1,9 @@
 import { supabaseServer } from "@/lib/supabase-server";
 
+export const revalidate = 3600;
+
 export default async function sitemap() {
-  const baseUrl = "https://guidoco.com.ar";
+  const baseUrl = "https://www.guidoco.com.ar";
 
   const { data: products } = await supabaseServer
     .from("products")

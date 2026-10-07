@@ -5,6 +5,6 @@ export default function robots() {
       allow: "/",
       disallow: ["/admin/", "/api/", "/gracias"],
     },
-    sitemap: "https://guidoco.com.ar/sitemap.xml",
+    sitemap: "https://www.guidoco.com.ar/sitemap.xml",
   };
 }

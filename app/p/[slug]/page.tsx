@@ -171,7 +171,7 @@ export default async function ProductPage({
     },
     offers: {
       "@type": "Offer",
-      url: `https://guidoco.com.ar/p/${product.slug}`,
+      url: `https://www.guidoco.com.ar/p/${product.slug}`,
       priceCurrency: "ARS",
       price: product.price ?? 0,
       availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",

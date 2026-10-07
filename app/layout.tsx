@@ -21,7 +21,7 @@ const poppins = Poppins({
 export const WHATSAPP_NUMBER = "5491159599081";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://guidoco.com.ar"),
+  metadataBase: new URL("https://www.guidoco.com.ar"),
   title: {
     default: "Guidoco | Coleccionables originales",
     template: "%s | Guidoco",
@@ -67,9 +67,9 @@ export default function RootLayout({
               "@type": "Store",
               name: "Guidoco",
               description: "Tienda de coleccionables. Diecast escala 1/64 y cartas Pokémon TCG originales.",
-              url: "https://guidoco.com.ar",
-              logo: "https://guidoco.com.ar/logo.png",
-              image: "https://guidoco.com.ar/hero.jpg",
+              url: "https://www.guidoco.com.ar",
+              logo: "https://www.guidoco.com.ar/logo.png",
+              image: "https://www.guidoco.com.ar/hero.jpg",
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "Bernal Centro",
