@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { getOrderById } from "@/lib/orders";
 
+// Mercado Pago limita el largo de los textos de cada ítem
+const MAX_DESCRIPTION_LENGTH = 250;
+const toDescription = (text: string) => text.slice(0, MAX_DESCRIPTION_LENGTH);
+
 export async function POST(request: NextRequest) {
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
   if (!accessToken || accessToken === "TEST-your-access-token-here") {
@@ -42,6 +46,9 @@ export async function POST(request: NextRequest) {
         ? order.order_items.map((item) => ({
             id: item.id,
             title: item.product_name_snapshot || "Pedido Guidoco",
+            description: toDescription(
+              `Coleccionable original - ${item.product_name_snapshot || "Pedido Guidoco"}`
+            ),
             quantity: item.quantity,
             unit_price: item.unit_price,
             currency_id: "ARS" as const,
@@ -50,6 +57,7 @@ export async function POST(request: NextRequest) {
             {
               id: orderId,
               title: "Pedido Guidoco",
+              description: toDescription("Pedido Guidoco - coleccionables"),
               quantity: 1,
               unit_price: order.total_amount,
               currency_id: "ARS" as const,
@@ -64,6 +72,7 @@ export async function POST(request: NextRequest) {
       items.push({
         id: "shipping",
         title: "Costo de envío",
+        description: toDescription("Costo de envío del pedido"),
         quantity: 1,
         unit_price: shippingCost,
         currency_id: "ARS" as const,
