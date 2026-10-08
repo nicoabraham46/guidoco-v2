@@ -42,10 +42,13 @@ export default function PoliticaDevolucionPage() {
           </h2>
           <div className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 px-6 py-5">
             <p className="text-sm leading-7 text-zinc-300">
-              Según el artículo 34 de la Ley 24.240 de Defensa del Consumidor, en las
-              compras a distancia podés revocar tu compra dentro de los{" "}
+              Podés pedir la devolución dentro de los{" "}
               <span className="font-semibold text-white">10 días corridos</span>{" "}
-              desde que recibís el producto, sin necesidad de dar explicaciones.
+              desde que recibís el producto (art. 34 de la Ley 24.240 de Defensa del
+              Consumidor), sin necesidad de dar explicaciones. El producto debe estar
+              sin uso, en el mismo estado en que fue entregado y con su protección y
+              empaque originales. Se realiza reembolso, no cambios. Pasados los 10 días
+              corridos no se aceptan devoluciones por arrepentimiento.
             </p>
           </div>
         </section>
@@ -75,25 +78,6 @@ export default function PoliticaDevolucionPage() {
             indicando tu número de pedido. Te enviaremos un código de confirmación
             dentro de las 24 horas.
           </p>
-        </section>
-
-        {/* Condiciones */}
-        <section className="mt-10">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-            Condiciones
-          </h2>
-          <ul className="mt-4 space-y-3">
-            {[
-              "El producto debe estar sin uso, completo y en el mismo estado en que fue entregado, con su protección y empaque originales.",
-              "Por arrepentimiento se realiza reembolso, no cambios.",
-              "Pasados los 10 días corridos no se aceptan devoluciones por arrepentimiento.",
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-3 text-sm text-zinc-400">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-600" />
-                {item}
-              </li>
-            ))}
-          </ul>
         </section>
 
         {/* Productos con problemas */}
