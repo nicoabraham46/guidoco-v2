@@ -33,8 +33,8 @@ const FAQS = [
     a: "Sí, podés escribirnos antes de comprar si querés confirmar cualquier detalle.",
   },
   {
-    q: "¿Aceptan cambios o devoluciones?",
-    a: "Sí, según las condiciones publicadas en la política de devolución.",
+    q: "¿Aceptan devoluciones?",
+    a: "Sí. Tenés 10 días corridos desde que recibís el producto para arrepentirte y pedir el reembolso, según el artículo 34 de la Ley 24.240. Los detalles están en la política de devolución.",
   },
   {
     q: "¿Qué significan NM, LP, MP, HP y DMG?",

@@ -1,10 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { WHATSAPP_NUMBER } from "@/app/layout";
 
 export const metadata: Metadata = {
   title: "Política de devolución | Guidoco",
-  description: "Conocé nuestra política de devoluciones y cambios en Guidoco.",
+  description:
+    "Conocé nuestra política de devoluciones y tu derecho de arrepentimiento (Ley 24.240) en Guidoco.",
 };
+
+const CONTACT_EMAIL = "guidoco.store@outlook.com";
 
 export default function PoliticaDevolucionPage() {
   return (
@@ -31,15 +35,47 @@ export default function PoliticaDevolucionPage() {
           </p>
         </div>
 
-        {/* Bloque principal */}
-        <div className="mt-10 space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900/60 px-6 py-5">
-          <p className="text-sm leading-7 text-zinc-300">
-            Aceptamos devoluciones dentro de los{" "}
-            <span className="font-semibold text-white">5 días corridos</span>{" "}
-            desde la recepción del producto, siempre que el artículo se encuentre
-            en el mismo estado en que fue entregado.
+        {/* Derecho de arrepentimiento */}
+        <section className="mt-10">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Derecho de arrepentimiento
+          </h2>
+          <div className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 px-6 py-5">
+            <p className="text-sm leading-7 text-zinc-300">
+              Según el artículo 34 de la Ley 24.240 de Defensa del Consumidor, en las
+              compras a distancia podés revocar tu compra dentro de los{" "}
+              <span className="font-semibold text-white">10 días corridos</span>{" "}
+              desde que recibís el producto, sin necesidad de dar explicaciones.
+            </p>
+          </div>
+        </section>
+
+        {/* Cómo solicitarlo */}
+        <section className="mt-10">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Cómo solicitarlo
+          </h2>
+          <p className="mt-4 text-sm leading-7 text-zinc-400">
+            Escribinos por{" "}
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-zinc-200 underline underline-offset-4 hover:text-white"
+            >
+              WhatsApp
+            </a>{" "}
+            o a{" "}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="font-semibold text-zinc-200 underline underline-offset-4 hover:text-white"
+            >
+              {CONTACT_EMAIL}
+            </a>{" "}
+            indicando tu número de pedido. Te enviaremos un código de confirmación
+            dentro de las 24 horas.
           </p>
-        </div>
+        </section>
 
         {/* Condiciones */}
         <section className="mt-10">
@@ -48,10 +84,9 @@ export default function PoliticaDevolucionPage() {
           </h2>
           <ul className="mt-4 space-y-3">
             {[
-              "El producto debe estar sin uso, completo y en su empaque original.",
-              "Si el producto llegó con un problema o no coincide con la publicación, nos hacemos cargo.",
-              "Si la devolución es por decisión del comprador, el costo de envío corre por cuenta del cliente.",
-              "No se aceptan cambios por arrepentimiento. Solo se realizan reembolsos en caso de que el producto llegue con defectos o no coincida con la publicación.",
+              "El producto debe estar sin uso, completo y en el mismo estado en que fue entregado, con su protección y empaque originales.",
+              "Por arrepentimiento se realiza reembolso, no cambios.",
+              "Pasados los 10 días corridos no se aceptan devoluciones por arrepentimiento.",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 text-sm text-zinc-400">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-600" />
@@ -61,24 +96,29 @@ export default function PoliticaDevolucionPage() {
           </ul>
         </section>
 
-        {/* Opciones */}
+        {/* Productos con problemas */}
         <section className="mt-10">
           <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-            Opciones disponibles
+            Productos con problemas
           </h2>
-          <div className="mt-4 grid gap-3">
-            {[
-              { icon: "↩", label: "Reembolso por Mercado Pago", desc: "Procesamos el reembolso a través de Mercado Pago dentro de los 7 días hábiles de aprobada la devolución." },
-            ].map(({ icon, label, desc }) => (
-              <div
-                key={label}
-                className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-4"
-              >
-                <p className="text-lg font-bold text-zinc-400">{icon}</p>
-                <p className="mt-2 text-sm font-semibold text-white">{label}</p>
-                <p className="mt-0.5 text-xs text-zinc-500">{desc}</p>
-              </div>
-            ))}
+          <p className="mt-4 text-sm leading-7 text-zinc-400">
+            Si el producto llegó con un defecto o no coincide con la publicación, nos
+            hacemos cargo. Escribinos y lo resolvemos.
+          </p>
+        </section>
+
+        {/* Reembolso */}
+        <section className="mt-10">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Reembolso
+          </h2>
+          <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-4">
+            <p className="text-lg font-bold text-zinc-400">↩</p>
+            <p className="mt-2 text-sm font-semibold text-white">Reembolso por Mercado Pago</p>
+            <p className="mt-0.5 text-xs text-zinc-500">
+              Se procesa por Mercado Pago dentro de los 7 días hábiles de recibido y
+              aprobado el producto devuelto.
+            </p>
           </div>
         </section>
 
@@ -90,9 +130,7 @@ export default function PoliticaDevolucionPage() {
           <ul className="mt-4 space-y-3">
             {[
               "Productos dañados por mal uso.",
-              "Productos sin empaque original.",
               "Productos intervenidos o alterados luego de la entrega.",
-              "Devoluciones solicitadas después de los 5 días corridos.",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 text-sm text-zinc-400">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-700" />
@@ -101,13 +139,6 @@ export default function PoliticaDevolucionPage() {
             ))}
           </ul>
         </section>
-
-        {/* Cierre */}
-        <div className="mt-10 rounded-2xl border border-zinc-800 bg-zinc-900/40 px-6 py-5">
-          <p className="text-sm leading-7 text-zinc-400">
-            Si necesitás ayuda con una compra, escribinos y lo resolvemos.
-          </p>
-        </div>
 
         {/* CTA */}
         <div className="mt-10 flex flex-wrap items-center gap-4 border-t border-zinc-800 pt-8">
